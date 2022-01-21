@@ -72,6 +72,9 @@ wmp11 | Windows Media Player 11
 * [ ] faudio
 * [ ] quartz
 * [ ] wine prefix handling - win10 setting etc
+* [ ] corefonts
+* [ ] xna40
+* [ ] quicktime
 
 ## Contributing [![contributions](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)](https://github.com/goldenboy313/rumtricks/issues)[![Matrix](https://matrix.to/img/matrix-badge.svg)](https://matrix.to/#/!SlYhhmreXjJylcsjfn:tedomum.net?via=matrix.org&via=tedomum.net)
 
