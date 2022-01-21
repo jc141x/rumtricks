@@ -70,7 +70,6 @@ wmp11 | Windows Media Player 11
 * [ ] cinepak
 * [ ] dotnet 400/450/452/460
 * [ ] faudio
-* [ ] quartz
 * [ ] wine prefix handling - win10 setting etc
 * [ ] corefonts
 * [ ] xna40
