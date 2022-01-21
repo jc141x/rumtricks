@@ -67,3 +67,7 @@ We welcome any type of contribution, not only code. You can help with:
 - **Suggestions**: give suggestions on what to add next
 - **QA**: File bug reports, the more details you can give the better (e.g. console logs)
 - **Code**: Take a look at the [open issues](https://github.com/goldenboy313/rumtricks/issues).
+
+<div align="center">
+  <h1>A johncena141 hacker group production.</h1>
+</div>
