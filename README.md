@@ -17,6 +17,18 @@
 * Install speed: everything installs faster due to minimal and better code
 * Dependencies: depends only on wine and zstd
 
+## Installation
+
+Rumtricks AUR and MPR package is planned to be released in the near future.
+
+In the mean time you can download and test rumtricks with this simple one liner:
+
+```bash
+wget https://raw.githubusercontent.com/goldenboy313/rumtricks/main/rumtricks.sh
+```
+
+The script will be placed in the root of the directory you ran the command from.
+
 ## Basic usage
 
 Rumtricks needs a `WINEPREFIX` to install verbs into
@@ -31,7 +43,7 @@ If `WINEPREFIX` isn't provided rumtricks will install everything into the defaul
 name | Description
 --- | ---
 update-self | Update rumtricks.sh to the latest version
-isolate | Isolate the prefix by removing symbolinks to $HOME
+isolate | Isolate the prefix by removing symbolic links to $HOME
 mf | Microsoft Media Foundation
 directx | Microsoft DirectX End-User Runtime (June 2010)
 vcrun2010 | Microsoft Visual C++ 2010 Redistributable
@@ -64,10 +76,10 @@ Thank you for considering contributing to Rumtricks!
 If you would like to participate, you are welcome on our [matrix](https://matrix.to/#/!SlYhhmreXjJylcsjfn:tedomum.net?via=matrix.org&via=envs.net&via=tedomum.net) room.
 
 We welcome any type of contribution, not only code. You can help with:
-- **Suggestions**: give suggestions on what to add next
+- **Suggestions**: Give suggestions on what to add next
 - **QA**: File bug reports, the more details you can give the better (e.g. console logs)
 - **Code**: Take a look at the [open issues](https://github.com/goldenboy313/rumtricks/issues).
 
 <div align="center">
-  <h1>A johncena141 hacker group production.</h1>
+  <h1>johncena141 hacker group production</h1>
 </div>
