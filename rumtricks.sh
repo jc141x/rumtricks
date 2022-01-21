@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #TODO
-# new structure for archives
+# code clean up
 
 ##########
 
@@ -12,12 +12,15 @@
 cd "$(dirname "$(realpath "$0")")" || exit 1
 
 # Base download URL for the archive
-BASE_URL="https://github.com/goldenboy313/rumtricks/raw/main"
+BASE_URL="https://github.com/goldenboy313/rumtricks/raw/main/archives"
 
 # Use default prefix if nothing is exported
 [ -z "$WINEPREFIX" ] && export WINEPREFIX="$HOME/.wine"
 
-# Wine: don't complain about mono/gecho
+# Use 64bit prefix if nothing is exported
+[ -z "$WINEARCH" ] && export WINEARCH="win64"
+
+# Wine: don't complain about mono/gecko
 export WINEDLLOVERRIDES="mscoree=d;mshtml=d"
 export WINEDEBUG="-all"
 
