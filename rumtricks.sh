@@ -53,7 +53,7 @@ extract()
 
 update()
 {
-    echo "updating prefix" && "$WINE" wineboot -u && "$WINESERVER" -w
+    echo "installing ${FUNCNAME[1]}" && "$WINE" wineboot -u && "$WINESERVER" -w
 }
 
 check()
@@ -99,7 +99,6 @@ isolate()
 directx()
 {
     update
-    echo "installing directx"
     [ ! -f "directx.tar.zst" ] && download "$BASE_URL/directx.tar.zst"
     check directx.tar.zst 1e5c94ab1a4546ecc0281bc0c491178d77650cb2fc59460f03ebd5762af0d9f6
     [ $? -eq 1 ] && echo "download is corrupted (invalid hash), skipping" && rm directx.tar.zst && return
@@ -117,7 +116,6 @@ directx()
 vcrun2010()
 {
     update
-    echo "installing vcrun2010"
     [ ! -f "vcrun2010.tar.zst" ] && download "$BASE_URL/vcrun2010.tar.zst"
     check vcrun2010.tar.zst bb58b714c95373f4ad2d3757d27658c6ce37de5fa4cbc85c16e5ca01178fb883
     [ $? -eq 1 ] && echo "download is corrupted (invalid hash), skipping" && rm vcrun2010.tar.zst && return
@@ -132,7 +130,6 @@ vcrun2010()
 vcrun2012()
 {
     update
-    echo "installing vcrun2012"
     [ ! -f "vcrun2012.tar.zst" ] && download "$BASE_URL/vcrun2012.tar.zst"
     check vcrun2012.tar.zst 6ff3e8896d645c76ec8ef9a7fee613aea0a6b06fad04a35ca8a1fb7a4a314ce6
     [ $? -eq 1 ] && echo "download is corrupted (invalid hash), skipping" && rm vcrun2012.tar.zst && return
@@ -147,7 +144,6 @@ vcrun2012()
 vcrun2013()
 {
     update
-    echo "installing vcrun2013"
     [ ! -f "vcrun2013.tar.zst" ] && download "$BASE_URL/vcrun2013.tar.zst"
     check vcrun2013.tar.zst b9c990f6440e31b8b53ad80e1f1b524a4accadea2bdcfa7f2bddb36c40632610
     [ $? -eq 1 ] && echo "download is corrupted (invalid hash), skipping" && rm vcrun2013.tar.zst && return
@@ -162,7 +158,6 @@ vcrun2013()
 vcrun2015()
 {
     update
-    echo "installing vcrun2015"
     [ ! -f "vcrun2015.tar.zst" ] && download "$BASE_URL/vcrun2015.tar.zst"
     check vcrun2015.tar.zst 2b0bc92d4bd2a48f7e4d0a958d663baa5f3165eab95521e71f812b9030b03eb6
     [ $? -eq 1 ] && echo "download is corrupted (invalid hash), skipping" && rm vcrun2015.tar.zst && return
@@ -177,7 +172,6 @@ vcrun2015()
 vcrun2017()
 {
     update
-    echo "installing vcrun2017"
     [ ! -f "vcrun2017.tar.zst" ] && download "$BASE_URL/vcrun2017.tar.zst"
     check vcrun2017.tar.zst 2bcf9852b02f6e707905f0be0a96542225814a3fc19b3b9dcf066f4dd2789773
     [ $? -eq 1 ] && echo "download is corrupted (invalid hash), skipping" && rm vcrun2017.tar.zst && return
@@ -192,7 +186,6 @@ vcrun2017()
 vcrun2019()
 {
     update
-    echo "installing vcrun2019"
     [ ! -f "vcrun2019.tar.zst" ] && download "$BASE_URL/vcrun2019.tar.zst"
     check vcrun2019.tar.zst f84542198789d35db77ba4bc73990a2122d97546db5aca635b3058fc1830961d
     [ $? -eq 1 ] && echo "download is corrupted (invalid hash), skipping" && rm vcrun2019.tar.zst && return
@@ -207,7 +200,6 @@ vcrun2019()
 mf()
 {
     update
-    echo "installing mf"
     [ ! -f "mf.tar.zst" ] && download "$BASE_URL/mf.tar.zst"
     check mf.tar.zst 42612d19396d791576de9e56ca30de5ae0cd5afd0ba2ac9d411347a2efe5114c
     [ $? -eq 1 ] && echo "download is corrupted (invalid hash), skipping" && rm mf.tar.zst && return
@@ -229,7 +221,6 @@ vdesktop()
 physx()
 {
     update
-    echo "installing physx"
     [ ! -f "physx.tar.zst" ] && download "$BASE_URL/physx.tar.zst"
     check physx.tar.zst eb275e31687173f3accada30c0c8af6456977ac94b52a0fdd17cbbdd5d68f488
     [ $? -eq 1 ] && echo "archive is corrupted (invalid hash), skipping" && rm physx.tar.zst && return
@@ -244,7 +235,6 @@ physx()
 dxvk()
 {
     update
-    echo "installing dxvk"
     DL_URL="$(curl -s https://api.github.com/repos/doitsujin/dxvk/releases/latest | awk -F '["]' '/"browser_download_url":/ {print $4}')"
     DXVK="$(basename "$DL_URL")"
     [ ! -f "$DXVK" ] && download "$DL_URL"
@@ -261,7 +251,6 @@ wmp11()
 {
     mf
     update
-    echo "installing wmp11"
     if [ "$WINEARCH" = "win64" ]; then
     [ ! -f "wmp11.tar.zst" ] && download "$BASE_URL/wmp11.tar.zst"
     check wmp11.tar.zst 4ab14efbf2652fe8898674bfdc39527994015af46ff7e98228bc4e93025902eb
@@ -291,7 +280,6 @@ wmp11()
 mono()
 {
     update
-    echo "installing mono"
     DL_URL="$(curl -s https://api.github.com/repos/madewokherd/wine-mono/releases/latest | awk -F '["]' '/"browser_download_url":/ {print $4}' | awk '/msi/ {print $0}')"
     MONO="$(basename "$DL_URL")"
     OLDMONO="$("$WINE" uninstaller --list | grep 'Wine Mono' | cut -f1 -d\|)"
@@ -309,7 +297,6 @@ mono()
 vkd3d()
 {
     update
-    echo "installing vkd3d"
     DL_URL="$(curl -s https://api.github.com/repos/HansKristian-Work/vkd3d-proton/releases/latest | awk -F '["]' '/"browser_download_url":/ {print $4}')"
     VKD3D="$(basename "$DL_URL")"
     [ ! -f "$VKD3D" ] && download "$DL_URL"
