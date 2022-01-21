@@ -72,7 +72,7 @@ register_dll()
 update-self()
 {
     echo "updating rumtricks"
-    download "$BASE_URL/rumtricks.sh"
+    download "https://github.com/goldenboy313/rumtricks/raw/main/rumtricks.sh"
     chmod +x "$PWD/rumtricks.sh"
     [ "$PWD/rumtricks.sh" != "$(realpath "$0")" ] && mv "$PWD/rumtricks.sh" "$(realpath "$0")"
     echo "done"
