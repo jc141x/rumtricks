@@ -68,6 +68,10 @@ wmp11 | Windows Media Player 11
 * [ ] older vcruns
 * [ ] directshow
 * [ ] cinepak
+* [ ] dotnet 400/450/452/460
+* [ ] faudio
+* [ ] quartz
+* [ ] wine prefix handling - win10 setting etc
 
 ## Contributing [![contributions](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)](https://github.com/goldenboy313/rumtricks/issues)[![Matrix](https://matrix.to/img/matrix-badge.svg)](https://matrix.to/#/!SlYhhmreXjJylcsjfn:tedomum.net?via=matrix.org&via=tedomum.net)
 
