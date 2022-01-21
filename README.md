@@ -44,7 +44,7 @@ vdesktop | Virtual desktop
 physx | Nvidia PhysX
 dxvk | Vulkan-based translation layer for Direct3D 9/10/11
 wmp11 | Windows Media Player 11
-mono | open-source and cross-platform implementation of the .NET Framework
+mono | Open-source and cross-platform implementation of the .NET Framework
 
 ## Planned verbs in order
 
