@@ -56,6 +56,11 @@ update()
     echo "installing ${FUNCNAME[1]}" && "$WINE" wineboot -u && "$WINESERVER" -w
 }
 
+installed()
+{
+    echo "${FUNCNAME[1]} installed"
+}
+
 check()
 {
     [ "$(sha256sum "$PWD/$1" | awk '{print $1}')" = "$2" ] && return 0 || return 1
@@ -93,7 +98,7 @@ isolate()
     done
     cd "$OLDPWD" || exit
     echo "isolate" >> "$WINEPREFIX/rumtricks.log"
-    echo "done"
+    installed
 }
 
 directx()
@@ -110,7 +115,7 @@ directx()
     register_dll xaudio2_0.dll xaudio2_1.dll xaudio2_2.dll xaudio2_3.dll xaudio2_4.dll xaudio2_5.dll xaudio2_6.dll xaudio2_7.dll
     echo "directx" >> "$WINEPREFIX/rumtricks.log"
     rm -rf "$PWD"/directx
-    echo "directx installed"
+    installed
 }
 
 vcrun2010()
@@ -124,7 +129,7 @@ vcrun2010()
     regedit "$PWD"/vcrun2010/vcrun2010.reg
     echo "vcrun2010" >> "$WINEPREFIX/rumtricks.log"
     rm -rf "$PWD"/vcrun2010
-    echo "vcrun2010 installed"
+    installed
 }
 
 vcrun2012()
@@ -138,7 +143,7 @@ vcrun2012()
     regedit "$PWD"/vcrun2012/vcrun2012.reg
     echo "vcrun2012" >> "$WINEPREFIX/rumtricks.log"
     rm -rf "$PWD"/vcrun2012
-    echo "vcrun2012 installed"
+    installed
 }
 
 vcrun2013()
@@ -152,7 +157,7 @@ vcrun2013()
     regedit "$PWD"/vcrun2013/vcrun2013.reg
     echo "vcrun2013" >> "$WINEPREFIX/rumtricks.log"
     rm -rf "$PWD"/vcrun2013
-    echo "vcrun2013 installed"
+    installed
 }
 
 vcrun2015()
@@ -166,7 +171,7 @@ vcrun2015()
     regedit "$PWD"/vcrun2015/vcrun2015.reg
     echo "vcrun2015" >> "$WINEPREFIX/rumtricks.log"
     rm -rf "$PWD"/vcrun2015
-    echo "vcrun2015 installed"
+    installed
 }
 
 vcrun2017()
@@ -180,7 +185,7 @@ vcrun2017()
     regedit "$PWD"/vcrun2017/vcrun2017.reg
     echo "vcrun2017" >> "$WINEPREFIX/rumtricks.log"
     rm -rf "$PWD"/vcrun2017
-    echo "vcrun2017 installed"
+    installed
 }
 
 vcrun2019()
@@ -194,7 +199,7 @@ vcrun2019()
     regedit "$PWD"/vcrun2019/vcrun2019.reg
     echo "vcrun2019" >> "$WINEPREFIX/rumtricks.log"
     rm -rf "$PWD"/vcrun2019
-    echo "vcrun2019 installed"
+    installed
 }
 
 mf()
@@ -209,7 +214,7 @@ mf()
     register_dll colorcnv.dll msmpeg2adec.dll msmpeg2vdec.dll
     echo "mf" >> "$WINEPREFIX/rumtricks.log"
     rm -rf "$PWD"/mf
-    echo "mf installed"
+    installed
 }
 
 vdesktop()
@@ -229,7 +234,7 @@ physx()
     regedit "$PWD"/physx/physx.reg
     echo "physx" >> "$WINEPREFIX/rumtricks.log"
     rm -rf "$PWD"/physx
-    echo "physx installed"
+    installed
 }
 
 dxvk()
@@ -244,7 +249,7 @@ dxvk()
     cd "$OLDPWD" || exit
     echo "dxvk" >> "$WINEPREFIX/rumtricks.log"
     rm -rf "${DXVK//.tar.gz/}"
-    echo "dxvk installed"
+    installed
 }
 
 wmp11()
@@ -261,7 +266,7 @@ wmp11()
     register_dll dispex.dll jscript.dll scrobj.dll scrrun.dll vbscript.dll wshcon.dll
     echo "wmp11" >> "$WINEPREFIX/rumtricks.log"
     rm -rf "$PWD"/wmp11
-    echo "wmp11 installed"
+    installed
 
     #elif [ "$WINEARCH" = "win32" ]; then
     #[ ! -f "wmp11x32.tar.zst" ] && download "$BASE_URL/wmp11x32.tar.zst"
@@ -291,7 +296,7 @@ mono()
     done
     "$WINE" msiexec /i "$MONO"
     echo "mono" >> "$WINEPREFIX/rumtricks.log"
-    echo "mono installed"
+    installed
 }
 
 vkd3d()
@@ -306,7 +311,7 @@ vkd3d()
     cd "$OLDPWD" || exit
     echo "vkd3d" >> "$WINEPREFIX/rumtricks.log"
     rm -rf "${VKD3D//.tar.zst/}"
-    echo "vkd3d installed"
+    installed
 }
 
 template()
@@ -321,7 +326,7 @@ template()
     #regedit "$PWD"/template/template.reg
     #echo "template" >> "$WINEPREFIX/rumtricks.log"
     #rm -rf "$PWD"/template
-    echo "template installed"
+    installed
 }
 
 # Running rumtricks
