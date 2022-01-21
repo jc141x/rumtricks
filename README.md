@@ -42,10 +42,13 @@ If `WINEPREFIX` isn't provided rumtricks will install everything into the defaul
 
 name | Description
 --- | ---
-update-self | Update rumtricks.sh to the latest version
-isolate | Isolate the prefix by removing symbolic links to $HOME
-mf | Microsoft Media Foundation
 directx | Microsoft DirectX End-User Runtime (June 2010)
+dxvk | Vulkan-based translation layer for Direct3D 9/10/11
+isolate | Isolate the prefix by removing symbolinks to $HOME
+mf | Microsoft Media Foundation
+mono | Open-source and cross-platform implementation of the .NET Framework
+physx | Nvidia PhysX
+update-self | Update rumtricks.sh to the latest version
 vcrun2010 | Microsoft Visual C++ 2010 Redistributable
 vcrun2012 | Microsoft Visual C++ 2012 Redistributable
 vcrun2013 | Microsoft Visual C++ 2013 Redistributable
@@ -53,16 +56,11 @@ vcrun2015 | Microsoft Visual C++ 2015 Redistributable
 vcrun2017 | Microsoft Visual C++ 2017 Redistributable
 vcrun2019 | Microsoft Visual C++ 2019 Redistributable
 vdesktop | Virtual desktop
-physx | Nvidia PhysX
-dxvk | Vulkan-based translation layer for Direct3D 9/10/11
-wmp11 | Windows Media Player 11
-mono | Open-source and cross-platform implementation of the .NET Framework
 vkd3d | Direct3D 12 API on top of Vulkan
+wmp11 | Windows Media Player 11
 
 ## Planned verbs in order
 
-* [x] mono
-* [x] vkd3d
 * [ ] amstream
 * [ ] quartz
 * [ ] older vcruns
