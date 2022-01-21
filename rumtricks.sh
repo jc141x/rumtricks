@@ -247,8 +247,8 @@ dxvk()
     echo "installing dxvk"
     DL_URL="$(curl -s https://api.github.com/repos/doitsujin/dxvk/releases/latest | awk -F '["]' '/"browser_download_url":/ {print $4}')"
     DXVK="$(basename "$DL_URL")"
-    [ -f "$DXVK" ] || curl -LO "$DL_URL"
-    extract "$DXVK" || { rm "$DXVK" && echo "failed to install dxvk" && return 1; }
+    [ ! -f "$DXVK" ] && download "$DL_URL"
+    extract "$DXVK" || { rm "$DXVK" && echo "failed to extract dxvk, skipping" && return 1; }
     cd "${DXVK//.tar.gz/}" || exit
     ./setup_dxvk.sh install
     cd "$OLDPWD" || exit
@@ -304,6 +304,22 @@ mono()
     "$WINE" msiexec /i "$MONO"
     echo "mono" >> "$WINEPREFIX/rumtricks.log"
     echo "mono installed"
+}
+
+vkd3d()
+{
+    update
+    echo "installing vkd3d"
+    DL_URL="$(curl -s https://api.github.com/repos/HansKristian-Work/vkd3d-proton/releases/latest | awk -F '["]' '/"browser_download_url":/ {print $4}')"
+    VKD3D="$(basename "$DL_URL")"
+    [ ! -f "$VKD3D" ] && download "$DL_URL"
+    extract "$VKD3D" || { rm "$DXVK" && echo "failed to extract vkd3d, skipping" && return 1; }
+    cd "${VKD3D//.tar.zst/}" || exit
+    ./setup_vkd3d_proton.sh install
+    cd "$OLDPWD" || exit
+    echo "vkd3d" >> "$WINEPREFIX/rumtricks.log"
+    rm -rf "${VKD3D//.tar.zst/}"
+    echo "vkd3d installed"
 }
 
 template()

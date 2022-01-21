@@ -45,11 +45,12 @@ physx | Nvidia PhysX
 dxvk | Vulkan-based translation layer for Direct3D 9/10/11
 wmp11 | Windows Media Player 11
 mono | Open-source and cross-platform implementation of the .NET Framework
+vkd3d | Direct3D 12 API on top of Vulkan
 
 ## Planned verbs in order
 
-* [ ] mono
-* [ ] vkd3d
+* [x] mono
+* [x] vkd3d
 * [ ] amstream
 * [ ] quartz
 * [ ] older vcruns
