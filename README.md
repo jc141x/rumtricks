@@ -21,7 +21,9 @@
 
 Rumtricks AUR and MPR package is planned to be released in the near future.
 
-In the mean time you can download and test rumtricks with this simple one liner:
+Make sure you have `Wine` and `Zstd` installed before you continue.
+
+You can download rumtricks with this simple one liner:
 
 ```bash
 wget https://raw.githubusercontent.com/goldenboy313/rumtricks/main/rumtricks.sh
