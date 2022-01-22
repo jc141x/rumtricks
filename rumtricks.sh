@@ -63,8 +63,8 @@ installed()
 }
 
 check()
-{
-    [ "$(sha256sum "$PWD/$1" | awk '{print $1}')" = "$2" ] && return 0 || return 1
+{   
+    echo "$1  ${FUNCNAME[1]}.tar.zst" | sha256sum -c -
 }
 
 register_dll()
@@ -106,7 +106,7 @@ directx()
 {
     update
     [ ! -f "directx.tar.zst" ] && download "$BASE_URL/directx.tar.zst"
-    check directx.tar.zst 1e5c94ab1a4546ecc0281bc0c491178d77650cb2fc59460f03ebd5762af0d9f6
+    check 1e5c94ab1a4546ecc0281bc0c491178d77650cb2fc59460f03ebd5762af0d9f6
     [ $? -eq 1 ] && echo "download is corrupted (invalid hash), skipping" && rm directx.tar.zst && return
     extract directx.tar.zst
     cp -r "$PWD"/directx/files/drive_c/windows/* "$WINEPREFIX/drive_c/windows/"
@@ -123,7 +123,7 @@ vcrun2010()
 {
     update
     [ ! -f "vcrun2010.tar.zst" ] && download "$BASE_URL/vcrun2010.tar.zst"
-    check vcrun2010.tar.zst bb58b714c95373f4ad2d3757d27658c6ce37de5fa4cbc85c16e5ca01178fb883
+    check bb58b714c95373f4ad2d3757d27658c6ce37de5fa4cbc85c16e5ca01178fb883
     [ $? -eq 1 ] && echo "download is corrupted (invalid hash), skipping" && rm vcrun2010.tar.zst && return
     extract vcrun2010.tar.zst
     cp -r "$PWD"/vcrun2010/files/drive_c/windows/* "$WINEPREFIX/drive_c/windows/"
@@ -137,7 +137,7 @@ vcrun2012()
 {
     update
     [ ! -f "vcrun2012.tar.zst" ] && download "$BASE_URL/vcrun2012.tar.zst"
-    check vcrun2012.tar.zst 6ff3e8896d645c76ec8ef9a7fee613aea0a6b06fad04a35ca8a1fb7a4a314ce6
+    check 6ff3e8896d645c76ec8ef9a7fee613aea0a6b06fad04a35ca8a1fb7a4a314ce6
     [ $? -eq 1 ] && echo "download is corrupted (invalid hash), skipping" && rm vcrun2012.tar.zst && return
     extract vcrun2012.tar.zst
     cp -r "$PWD"/vcrun2012/files/drive_c/windows/* "$WINEPREFIX/drive_c/windows/"
@@ -151,7 +151,7 @@ vcrun2013()
 {
     update
     [ ! -f "vcrun2013.tar.zst" ] && download "$BASE_URL/vcrun2013.tar.zst"
-    check vcrun2013.tar.zst b9c990f6440e31b8b53ad80e1f1b524a4accadea2bdcfa7f2bddb36c40632610
+    check b9c990f6440e31b8b53ad80e1f1b524a4accadea2bdcfa7f2bddb36c40632610
     [ $? -eq 1 ] && echo "download is corrupted (invalid hash), skipping" && rm vcrun2013.tar.zst && return
     extract vcrun2013.tar.zst
     cp -r "$PWD"/vcrun2013/files/drive_c/windows/* "$WINEPREFIX/drive_c/windows/"
@@ -165,7 +165,7 @@ vcrun2015()
 {
     update
     [ ! -f "vcrun2015.tar.zst" ] && download "$BASE_URL/vcrun2015.tar.zst"
-    check vcrun2015.tar.zst 2b0bc92d4bd2a48f7e4d0a958d663baa5f3165eab95521e71f812b9030b03eb6
+    check 2b0bc92d4bd2a48f7e4d0a958d663baa5f3165eab95521e71f812b9030b03eb6
     [ $? -eq 1 ] && echo "download is corrupted (invalid hash), skipping" && rm vcrun2015.tar.zst && return
     extract "vcrun2015.tar.zst"
     cp -r "$PWD"/vcrun2015/files/drive_c/windows/* "$WINEPREFIX/drive_c/windows/"
@@ -179,7 +179,7 @@ vcrun2017()
 {
     update
     [ ! -f "vcrun2017.tar.zst" ] && download "$BASE_URL/vcrun2017.tar.zst"
-    check vcrun2017.tar.zst 2bcf9852b02f6e707905f0be0a96542225814a3fc19b3b9dcf066f4dd2789773
+    check 2bcf9852b02f6e707905f0be0a96542225814a3fc19b3b9dcf066f4dd2789773
     [ $? -eq 1 ] && echo "download is corrupted (invalid hash), skipping" && rm vcrun2017.tar.zst && return
     extract vcrun2017.tar.zst
     cp -r "$PWD"/vcrun2017/drive_c/windows/* "$WINEPREFIX/drive_c/windows/"
@@ -193,7 +193,7 @@ vcrun2019()
 {
     update
     [ ! -f "vcrun2019.tar.zst" ] && download "$BASE_URL/vcrun2019.tar.zst"
-    check vcrun2019.tar.zst f84542198789d35db77ba4bc73990a2122d97546db5aca635b3058fc1830961d
+    check f84542198789d35db77ba4bc73990a2122d97546db5aca635b3058fc1830961d
     [ $? -eq 1 ] && echo "download is corrupted (invalid hash), skipping" && rm vcrun2019.tar.zst && return
     extract vcrun2019.tar.zst
     cp -r "$PWD"/vcrun2019/files/drive_c/windows/* "$WINEPREFIX/drive_c/windows/"
@@ -207,7 +207,7 @@ mf()
 {
     update
     [ ! -f "mf.tar.zst" ] && download "$BASE_URL/mf.tar.zst"
-    check mf.tar.zst 42612d19396d791576de9e56ca30de5ae0cd5afd0ba2ac9d411347a2efe5114c
+    check 42612d19396d791576de9e56ca30de5ae0cd5afd0ba2ac9d411347a2efe5114c
     [ $? -eq 1 ] && echo "download is corrupted (invalid hash), skipping" && rm mf.tar.zst && return
     extract "mf.tar.zst"
     cp -r "$PWD"/mf/files/drive_c/windows/* "$WINEPREFIX/drive_c/windows/"
@@ -228,7 +228,7 @@ physx()
 {
     update
     [ ! -f "physx.tar.zst" ] && download "$BASE_URL/physx.tar.zst"
-    check physx.tar.zst eb275e31687173f3accada30c0c8af6456977ac94b52a0fdd17cbbdd5d68f488
+    check eb275e31687173f3accada30c0c8af6456977ac94b52a0fdd17cbbdd5d68f488
     [ $? -eq 1 ] && echo "archive is corrupted (invalid hash), skipping" && rm physx.tar.zst && return
     extract physx.tar.zst
     cp -r "$PWD"/physx/files/drive_c/* "$WINEPREFIX/drive_c/"
@@ -258,7 +258,7 @@ wmp11()
     mf
     update
     [ ! -f "wmp11.tar.zst" ] && download "$BASE_URL/wmp11.tar.zst"
-    check wmp11.tar.zst 7e68b15655c450a1912e0d5f1fc21c66ee2037d676da1949c6ee93a00d792a3c
+    check 7e68b15655c450a1912e0d5f1fc21c66ee2037d676da1949c6ee93a00d792a3c
     [ $? -eq 1 ] && echo "download is corrupted (invalid hash), skipping" && rm wmp11.tar.zst && return
     extract wmp11.tar.zst
     cp -r "$PWD"/wmp11/files/drive_c/* "$WINEPREFIX/drive_c/"
@@ -294,6 +294,21 @@ vkd3d()
     cd "$OLDPWD" || exit
     echo "vkd3d" >> "$WINEPREFIX/rumtricks.log"
     rm -rf "${VKD3D//.tar.zst/}"
+    installed
+}
+
+directshow()
+{
+    update
+    [ ! -f "directshow.tar.zst" ] && download "$BASE_URL/directshow.tar.zst"
+    check 5fb584ca65c8f8fc6b4910210f355c002fa12dfd4186805ef6e7708e41595e32
+    [ $? -eq 1 ] && echo "download is corrupted (invalid hash), skipping" && rm directshow.tar.zst && return
+    extract directshow.tar.zst
+    cp -r "$PWD"/directshow/files/drive_c/windows/* "$WINEPREFIX/drive_c/windows/"
+    regedit "$PWD"/directshow/directshow.reg
+    register_dll amstream.dll qasf.dll qcap.dll qdvd.dll qedit.dll quartz.dll
+    echo "directshow" >> "$WINEPREFIX/rumtricks.log"
+    rm -rf "$PWD"/directshow
     installed
 }
 

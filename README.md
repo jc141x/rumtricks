@@ -59,22 +59,22 @@ vcrun2017 | Microsoft Visual C++ 2017 Redistributable
 vcrun2019 | Microsoft Visual C++ 2019 Redistributable
 vdesktop | Virtual desktop
 vkd3d | Direct3D 12 API on top of Vulkan
-wmp11 | Windows Media Player 11
+directshow | Microsoft DirectShow runtime
 
 ## Planned verbs in order
 
-* [ ] amstream
-* [ ] quartz
-* [ ] older vcruns
-* [ ] directshow
+* [x] amstream
+* [x] quartz
+* [x] directshow
 * [ ] cinepak
-* [ ] dotnet 400/450/452/460
-* [ ] faudio
-* [ ] wine prefix handling - win10 setting etc
 * [ ] corefonts
+* [ ] faudio
+* [ ] dxvk-async
+* [ ] wine prefix handling - win10 setting etc
 * [ ] xna40
 * [ ] quicktime
-* [ ] dxvk-async
+* [ ] older vcruns
+* [ ] dotnet 400/450/452/460
 
 ## Contributing [![contributions](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)](https://github.com/goldenboy313/rumtricks/issues)[![Matrix](https://matrix.to/img/matrix-badge.svg)](https://matrix.to/#/!SlYhhmreXjJylcsjfn:tedomum.net?via=matrix.org&via=tedomum.net)
 
