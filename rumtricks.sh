@@ -312,11 +312,25 @@ directshow()
     installed
 }
 
+cinepak()
+{
+    update
+    [ ! -f "cinepak.tar.zst" ] && download "$BASE_URL/cinepak.tar.zst"
+    check fb1daa15378f8a70a90617044691e1c5318610939adc0e79ad365bdb31513a38
+    [ $? -eq 1 ] && echo "download is corrupted (invalid hash), skipping" && rm cinepak.tar.zst && return
+    extract cinepak.tar.zst
+    cp -r "$PWD"/cinepak/files/drive_c/windows/* "$WINEPREFIX/drive_c/windows/"
+    regedit "$PWD"/cinepak/cinepak.reg
+    echo "cinepak" >> "$WINEPREFIX/rumtricks.log"
+    rm -rf "$PWD"/cinepak
+    installed
+}
+
 template()
 {
     #update
-    #[ ! -f "template.tar.zst"] && download "$BASE_URL/template.tar.zst"
-    #check template.tar.zst 2bcf9852b02f6e707905f0be0a96542225814a3fc19b3b9dcf066f4dd2781337
+    #[ ! -f "template.tar.zst" ] && download "$BASE_URL/template.tar.zst"
+    #check 2bcf9852b02f6e707905f0be0a96542225814a3fc19b3b9dcf066f4dd2781337
     #[ $? -eq 1 ] && echo "download is corrupted (invalid hash), skipping" && rm template.tar.zst && return
     #extract template.tar.zst
     #cp -r "$PWD"/template/drive_c/windows/* "$WINEPREFIX/drive_c/windows/"

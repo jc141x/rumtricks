@@ -60,13 +60,14 @@ vcrun2019 | Microsoft Visual C++ 2019 Redistributable
 vdesktop | Virtual desktop
 vkd3d | Direct3D 12 API on top of Vulkan
 directshow | Microsoft DirectShow runtime (amstream and quartz)
+cinepak | Cinepak Codec
 
 ## Planned verbs in order
 
 * [x] amstream
 * [x] quartz
 * [x] directshow
-* [ ] cinepak
+* [x] cinepak
 * [ ] corefonts
 * [ ] faudio
 * [ ] dxvk-async
