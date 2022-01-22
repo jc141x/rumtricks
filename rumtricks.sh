@@ -37,7 +37,7 @@ export WINEDEBUG="-all"
 
 download()
 {
-    command -v aria2c >/dev/null 2>&1 && aria2c "$1" && return
+    command -v aria2c >/dev/null 2>&1 && aria2c --allow-overwrite="true" "$1" && return
     command -v wget >/dev/null 2>&1 && wget -N "$1" && return
     command -v curl >/dev/null 2>&1 && curl -LO "$1" && return
 }
