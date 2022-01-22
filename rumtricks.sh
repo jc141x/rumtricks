@@ -326,6 +326,20 @@ cinepak()
     installed
 }
 
+corefonts()
+{
+    update
+    [ ! -f "corefonts.tar.zst" ] && download "$BASE_URL/corefonts.tar.zst"
+    check fb6a4fffaae3c5ae849c0bb5ebf1ed7649ea521fab171166c35f6068b87dc80f
+    [ $? -eq 1 ] && echo "download is corrupted (invalid hash), skipping" && rm corefonts.tar.zst && return
+    extract corefonts.tar.zst
+    cp -r "$PWD"/corefonts/files/drive_c/windows/* "$WINEPREFIX/drive_c/windows/"
+    regedit "$PWD"/corefonts/corefonts.reg
+    echo "corefonts" >> "$WINEPREFIX/rumtricks.log"
+    rm -rf "$PWD"/corefonts
+    installed
+}
+
 template()
 {
     #update
@@ -333,7 +347,7 @@ template()
     #check 2bcf9852b02f6e707905f0be0a96542225814a3fc19b3b9dcf066f4dd2781337
     #[ $? -eq 1 ] && echo "download is corrupted (invalid hash), skipping" && rm template.tar.zst && return
     #extract template.tar.zst
-    #cp -r "$PWD"/template/drive_c/windows/* "$WINEPREFIX/drive_c/windows/"
+    #cp -r "$PWD"/template/files/drive_c/windows/* "$WINEPREFIX/drive_c/windows/"
     #regedit "$PWD"/template/template.reg
     #echo "template" >> "$WINEPREFIX/rumtricks.log"
     #rm -rf "$PWD"/template

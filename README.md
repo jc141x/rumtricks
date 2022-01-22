@@ -61,6 +61,7 @@ vdesktop | Virtual desktop
 vkd3d | Direct3D 12 API on top of Vulkan
 directshow | Microsoft DirectShow runtime (amstream and quartz)
 cinepak | Cinepak Codec
+corefonts | Microsoft Core fonts
 
 ## Planned verbs in order
 
@@ -68,14 +69,14 @@ cinepak | Cinepak Codec
 * [x] quartz
 * [x] directshow
 * [x] cinepak
-* [ ] corefonts
-* [ ] faudio
+* [x] corefonts
+* [ ] quicktime
 * [ ] dxvk-async
 * [ ] wine prefix handling - win10 setting etc
-* [ ] xna40
-* [ ] quicktime
+* [ ] faudio
 * [ ] older vcruns
 * [ ] dotnet 400/450/452/460
+* [ ] xna40
 
 ## Contributing [![contributions](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)](https://github.com/goldenboy313/rumtricks/issues)[![Matrix](https://matrix.to/img/matrix-badge.svg)](https://matrix.to/#/!SlYhhmreXjJylcsjfn:tedomum.net?via=matrix.org&via=tedomum.net)
 
