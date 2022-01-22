@@ -2,6 +2,7 @@
 
 #TODO
 # code clean up
+# allow rumtricks to manage auto updating dxvk and vkd3d 
 
 ##########
 
@@ -256,30 +257,16 @@ wmp11()
 {
     mf
     update
-    if [ "$WINEARCH" = "win64" ]; then
     [ ! -f "wmp11.tar.zst" ] && download "$BASE_URL/wmp11.tar.zst"
-    check wmp11.tar.zst 4ab14efbf2652fe8898674bfdc39527994015af46ff7e98228bc4e93025902eb
+    check wmp11.tar.zst 7e68b15655c450a1912e0d5f1fc21c66ee2037d676da1949c6ee93a00d792a3c
     [ $? -eq 1 ] && echo "download is corrupted (invalid hash), skipping" && rm wmp11.tar.zst && return
     extract wmp11.tar.zst
     cp -r "$PWD"/wmp11/files/drive_c/* "$WINEPREFIX/drive_c/"
     regedit "$PWD"/wmp11/wmp11.reg
-    register_dll dispex.dll jscript.dll scrobj.dll scrrun.dll vbscript.dll wshcon.dll
+    register_dll dispex.dll jscript.dll scrobj.dll scrrun.dll vbscript.dll wshcon.dll wshext.dll
     echo "wmp11" >> "$WINEPREFIX/rumtricks.log"
     rm -rf "$PWD"/wmp11
     installed
-
-    #elif [ "$WINEARCH" = "win32" ]; then
-    #[ ! -f "wmp11x32.tar.zst" ] && download "$BASE_URL/wmp11x32.tar.zst"
-    #check wmp11x32.tar.zst 2319741238047120847120481
-    #[ $? -eq 1 ] && echo "download is corrupted (invalid hash), skipping" && rm wmp11x32.tar.zst && return
-    #extract wmp11x32.tar.zst
-    #cp -r "$PWD"/wmp11/drive_c/windows/* "$WINEPREFIX/drive_c/windows/"
-    #regedit "$PWD"/wmp11x32/wmp11x32.reg
-    #register_dll dispex.dll jscript.dll scrobj.dll scrrun.dll vbscript.dll wshcon.dll wshext.dll
-    #echo "wmp11" >> "$WINEPREFIX/rumtricks.log"
-    #rm -rf "$PWD"/wmp11
-    #echo "wmp11 installed"
-    fi
 }
 
 mono()
@@ -289,11 +276,7 @@ mono()
     MONO="$(basename "$DL_URL")"
     OLDMONO="$("$WINE" uninstaller --list | grep 'Wine Mono' | cut -f1 -d\|)"
     [ ! -f "$MONO" ] && download "$DL_URL"
-    [ -n "$OLDMONO" ] && echo "removing old mono" && \
-    for i in $OLDMONO
-    do
-    "$WINE" uninstaller --remove "$i"
-    done
+    [ -n "$OLDMONO" ] && echo "removing old mono" && for i in $OLDMONO; do "$WINE" uninstaller --remove "$i"; done
     "$WINE" msiexec /i "$MONO"
     echo "mono" >> "$WINEPREFIX/rumtricks.log"
     installed
@@ -317,7 +300,6 @@ vkd3d()
 template()
 {
     #update
-    #echo "installing template"
     #[ ! -f "template.tar.zst"] && download "$BASE_URL/template.tar.zst"
     #check template.tar.zst 2bcf9852b02f6e707905f0be0a96542225814a3fc19b3b9dcf066f4dd2781337
     #[ $? -eq 1 ] && echo "download is corrupted (invalid hash), skipping" && rm template.tar.zst && return
