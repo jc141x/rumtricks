@@ -2,7 +2,7 @@
 
 #TODO
 # code clean up
-# allow rumtricks to manage auto updating dxvk and vkd3d 
+# allow rumtricks to manage auto updating dxvk and vkd3d
 
 ##########
 
@@ -111,7 +111,7 @@ directx()
     extract directx.tar.zst
     cp -r "$PWD"/directx/files/drive_c/windows/* "$WINEPREFIX/drive_c/windows/"
     regedit "$PWD"/directx/directx.reg
-    register_dll xactengine2_0.dll xactengine2_1.dll xactengine2_2.dll xactengine2_3.dll xactengine2_4.dll xactengine2_5.dll xactengine2_6.dll xactengine2_7.dll xactengine2_8.dll xactengine2_9.dll xactengine2_10.dll 
+    register_dll xactengine2_0.dll xactengine2_1.dll xactengine2_2.dll xactengine2_3.dll xactengine2_4.dll xactengine2_5.dll xactengine2_6.dll xactengine2_7.dll xactengine2_8.dll xactengine2_9.dll xactengine2_10.dll
     register_dll xactengine3_0.dll xactengine3_1.dll xactengine3_2.dll xactengine3_3.dll xactengine3_4.dll xactengine3_5.dll xactengine3_6.dll xactengine3_7.dll
     register_dll xaudio2_0.dll xaudio2_1.dll xaudio2_2.dll xaudio2_3.dll xaudio2_4.dll xaudio2_5.dll xaudio2_6.dll xaudio2_7.dll
     echo "directx" >> "$WINEPREFIX/rumtricks.log"
@@ -279,7 +279,7 @@ vkd3d()
     DL_URL="$(curl -s https://api.github.com/repos/HansKristian-Work/vkd3d-proton/releases/latest | awk -F '["]' '/"browser_download_url":/ {print $4}')"
     VKD3D="$(basename "$DL_URL")"
     [ ! -f "$VKD3D" ] && download "$DL_URL"
-    extract "$VKD3D" || { rm "$DXVK" && echo "failed to extract vkd3d, skipping" && return 1; }
+    extract "$VKD3D" || { rm "$VKD3D" && echo "failed to extract vkd3d, skipping" && return 1; }
     cd "${VKD3D//.tar.zst/}" || exit
     ./setup_vkd3d_proton.sh install
     cd "$OLDPWD" || exit
