@@ -44,7 +44,7 @@ download()
 
 regedit()
 {
-    echo "adding registry" && "$WINE" regedit "$1" && "$WINE64" regedit "$1" && "$WINESERVER" -w
+    echo "adding registry" && "$WINE" regedit "$1" & "$WINE64" regedit "$1" && "$WINESERVER" -w
 }
 
 extract()
@@ -63,15 +63,16 @@ installed()
 }
 
 check()
-{   
+{
     echo "$1  ${FUNCNAME[1]}.tar.zst" | sha256sum -c -
+    [ $? -ne 1 ] || { echo "archive is corrupted, skipping" && rm "${FUNCNAME[1]}".tar.zst && return 1; }
 }
 
 register_dll()
 {
     for i in "$@"
     do
-    "$WINE" regsvr32 "$i" && "$WINE64" regsvr32 "$i"
+    "$WINE" regsvr32 "$i" & "$WINE64" regsvr32 "$i"
     done
 }
 
@@ -106,8 +107,7 @@ directx()
 {
     update
     [ ! -f "directx.tar.zst" ] && download "$BASE_URL/directx.tar.zst"
-    check 1e5c94ab1a4546ecc0281bc0c491178d77650cb2fc59460f03ebd5762af0d9f6
-    [ $? -eq 1 ] && echo "download is corrupted (invalid hash), skipping" && rm directx.tar.zst && return
+    check 1e5c94ab1a4546ecc0281bc0c491178d77650cb2fc59460f03ebd5762af0d9f6 || return
     extract directx.tar.zst
     cp -r "$PWD"/directx/files/drive_c/windows/* "$WINEPREFIX/drive_c/windows/"
     regedit "$PWD"/directx/directx.reg
@@ -123,8 +123,7 @@ vcrun2010()
 {
     update
     [ ! -f "vcrun2010.tar.zst" ] && download "$BASE_URL/vcrun2010.tar.zst"
-    check bb58b714c95373f4ad2d3757d27658c6ce37de5fa4cbc85c16e5ca01178fb883
-    [ $? -eq 1 ] && echo "download is corrupted (invalid hash), skipping" && rm vcrun2010.tar.zst && return
+    check bb58b714c95373f4ad2d3757d27658c6ce37de5fa4cbc85c16e5ca01178fb883 || return
     extract vcrun2010.tar.zst
     cp -r "$PWD"/vcrun2010/files/drive_c/windows/* "$WINEPREFIX/drive_c/windows/"
     regedit "$PWD"/vcrun2010/vcrun2010.reg
@@ -137,8 +136,7 @@ vcrun2012()
 {
     update
     [ ! -f "vcrun2012.tar.zst" ] && download "$BASE_URL/vcrun2012.tar.zst"
-    check 6ff3e8896d645c76ec8ef9a7fee613aea0a6b06fad04a35ca8a1fb7a4a314ce6
-    [ $? -eq 1 ] && echo "download is corrupted (invalid hash), skipping" && rm vcrun2012.tar.zst && return
+    check 6ff3e8896d645c76ec8ef9a7fee613aea0a6b06fad04a35ca8a1fb7a4a314ce6 || return
     extract vcrun2012.tar.zst
     cp -r "$PWD"/vcrun2012/files/drive_c/windows/* "$WINEPREFIX/drive_c/windows/"
     regedit "$PWD"/vcrun2012/vcrun2012.reg
@@ -151,8 +149,7 @@ vcrun2013()
 {
     update
     [ ! -f "vcrun2013.tar.zst" ] && download "$BASE_URL/vcrun2013.tar.zst"
-    check b9c990f6440e31b8b53ad80e1f1b524a4accadea2bdcfa7f2bddb36c40632610
-    [ $? -eq 1 ] && echo "download is corrupted (invalid hash), skipping" && rm vcrun2013.tar.zst && return
+    check b9c990f6440e31b8b53ad80e1f1b524a4accadea2bdcfa7f2bddb36c40632610 || return
     extract vcrun2013.tar.zst
     cp -r "$PWD"/vcrun2013/files/drive_c/windows/* "$WINEPREFIX/drive_c/windows/"
     regedit "$PWD"/vcrun2013/vcrun2013.reg
@@ -165,8 +162,7 @@ vcrun2015()
 {
     update
     [ ! -f "vcrun2015.tar.zst" ] && download "$BASE_URL/vcrun2015.tar.zst"
-    check 2b0bc92d4bd2a48f7e4d0a958d663baa5f3165eab95521e71f812b9030b03eb6
-    [ $? -eq 1 ] && echo "download is corrupted (invalid hash), skipping" && rm vcrun2015.tar.zst && return
+    check 2b0bc92d4bd2a48f7e4d0a958d663baa5f3165eab95521e71f812b9030b03eb6 || return
     extract "vcrun2015.tar.zst"
     cp -r "$PWD"/vcrun2015/files/drive_c/windows/* "$WINEPREFIX/drive_c/windows/"
     regedit "$PWD"/vcrun2015/vcrun2015.reg
@@ -179,8 +175,7 @@ vcrun2017()
 {
     update
     [ ! -f "vcrun2017.tar.zst" ] && download "$BASE_URL/vcrun2017.tar.zst"
-    check 2bcf9852b02f6e707905f0be0a96542225814a3fc19b3b9dcf066f4dd2789773
-    [ $? -eq 1 ] && echo "download is corrupted (invalid hash), skipping" && rm vcrun2017.tar.zst && return
+    check 2bcf9852b02f6e707905f0be0a96542225814a3fc19b3b9dcf066f4dd2789773 || return
     extract vcrun2017.tar.zst
     cp -r "$PWD"/vcrun2017/drive_c/windows/* "$WINEPREFIX/drive_c/windows/"
     regedit "$PWD"/vcrun2017/vcrun2017.reg
@@ -193,8 +188,7 @@ vcrun2019()
 {
     update
     [ ! -f "vcrun2019.tar.zst" ] && download "$BASE_URL/vcrun2019.tar.zst"
-    check f84542198789d35db77ba4bc73990a2122d97546db5aca635b3058fc1830961d
-    [ $? -eq 1 ] && echo "download is corrupted (invalid hash), skipping" && rm vcrun2019.tar.zst && return
+    check f84542198789d35db77ba4bc73990a2122d97546db5aca635b3058fc1830961d || return
     extract vcrun2019.tar.zst
     cp -r "$PWD"/vcrun2019/files/drive_c/windows/* "$WINEPREFIX/drive_c/windows/"
     regedit "$PWD"/vcrun2019/vcrun2019.reg
@@ -207,8 +201,7 @@ mf()
 {
     update
     [ ! -f "mf.tar.zst" ] && download "$BASE_URL/mf.tar.zst"
-    check 42612d19396d791576de9e56ca30de5ae0cd5afd0ba2ac9d411347a2efe5114c
-    [ $? -eq 1 ] && echo "download is corrupted (invalid hash), skipping" && rm mf.tar.zst && return
+    check 42612d19396d791576de9e56ca30de5ae0cd5afd0ba2ac9d411347a2efe5114c || return
     extract "mf.tar.zst"
     cp -r "$PWD"/mf/files/drive_c/windows/* "$WINEPREFIX/drive_c/windows/"
     regedit "$PWD"/mf/mf.reg
@@ -228,8 +221,7 @@ physx()
 {
     update
     [ ! -f "physx.tar.zst" ] && download "$BASE_URL/physx.tar.zst"
-    check eb275e31687173f3accada30c0c8af6456977ac94b52a0fdd17cbbdd5d68f488
-    [ $? -eq 1 ] && echo "archive is corrupted (invalid hash), skipping" && rm physx.tar.zst && return
+    check eb275e31687173f3accada30c0c8af6456977ac94b52a0fdd17cbbdd5d68f488 || return
     extract physx.tar.zst
     cp -r "$PWD"/physx/files/drive_c/* "$WINEPREFIX/drive_c/"
     regedit "$PWD"/physx/physx.reg
@@ -258,8 +250,7 @@ wmp11()
     mf
     update
     [ ! -f "wmp11.tar.zst" ] && download "$BASE_URL/wmp11.tar.zst"
-    check 7e68b15655c450a1912e0d5f1fc21c66ee2037d676da1949c6ee93a00d792a3c
-    [ $? -eq 1 ] && echo "download is corrupted (invalid hash), skipping" && rm wmp11.tar.zst && return
+    check 7e68b15655c450a1912e0d5f1fc21c66ee2037d676da1949c6ee93a00d792a3c || return
     extract wmp11.tar.zst
     cp -r "$PWD"/wmp11/files/drive_c/* "$WINEPREFIX/drive_c/"
     regedit "$PWD"/wmp11/wmp11.reg
@@ -301,8 +292,7 @@ directshow()
 {
     update
     [ ! -f "directshow.tar.zst" ] && download "$BASE_URL/directshow.tar.zst"
-    check 5fb584ca65c8f8fc6b4910210f355c002fa12dfd4186805ef6e7708e41595e32
-    [ $? -eq 1 ] && echo "download is corrupted (invalid hash), skipping" && rm directshow.tar.zst && return
+    check 5fb584ca65c8f8fc6b4910210f355c002fa12dfd4186805ef6e7708e41595e32 || return
     extract directshow.tar.zst
     cp -r "$PWD"/directshow/files/drive_c/windows/* "$WINEPREFIX/drive_c/windows/"
     regedit "$PWD"/directshow/directshow.reg
@@ -316,8 +306,7 @@ cinepak()
 {
     update
     [ ! -f "cinepak.tar.zst" ] && download "$BASE_URL/cinepak.tar.zst"
-    check fb1daa15378f8a70a90617044691e1c5318610939adc0e79ad365bdb31513a38
-    [ $? -eq 1 ] && echo "download is corrupted (invalid hash), skipping" && rm cinepak.tar.zst && return
+    check fb1daa15378f8a70a90617044691e1c5318610939adc0e79ad365bdb31513a38 || return
     extract cinepak.tar.zst
     cp -r "$PWD"/cinepak/files/drive_c/windows/* "$WINEPREFIX/drive_c/windows/"
     regedit "$PWD"/cinepak/cinepak.reg
@@ -330,8 +319,7 @@ corefonts()
 {
     update
     [ ! -f "corefonts.tar.zst" ] && download "$BASE_URL/corefonts.tar.zst"
-    check fb6a4fffaae3c5ae849c0bb5ebf1ed7649ea521fab171166c35f6068b87dc80f
-    [ $? -eq 1 ] && echo "download is corrupted (invalid hash), skipping" && rm corefonts.tar.zst && return
+    check fb6a4fffaae3c5ae849c0bb5ebf1ed7649ea521fab171166c35f6068b87dc80f || return
     extract corefonts.tar.zst
     cp -r "$PWD"/corefonts/files/drive_c/windows/* "$WINEPREFIX/drive_c/windows/"
     regedit "$PWD"/corefonts/corefonts.reg
