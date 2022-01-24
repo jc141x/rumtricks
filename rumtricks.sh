@@ -2,7 +2,7 @@
 
 #TODO
 # code clean up
-# allow rumtricks to manage auto updating dxvk and vkd3d
+# allow rumtricks to manage auto updating vkd3d
 
 ##########
 
@@ -236,9 +236,8 @@ physx()
     installed
 }
 
-dxvk()
+github_dxvk()
 {
-    update
     DL_URL="$(curl -s https://api.github.com/repos/doitsujin/dxvk/releases/latest | awk -F '["]' '/"browser_download_url":/ {print $4}')"
     DXVK="$(basename "$DL_URL")"
     [ ! -f "$DXVK" ] && download "$DL_URL"
@@ -247,7 +246,19 @@ dxvk()
     ./setup_dxvk.sh install
     cd "$OLDPWD" || exit
     rm -rf "${DXVK//.tar.gz/}"
-    installed
+}
+
+dxvk()
+{
+    DXVKVER="$(curl -s -m 5 https://api.github.com/repos/doitsujin/dxvk/releases/latest | awk -F '["/]' '/"browser_download_url":/ {print $11}' | cut -c 2-)"; SYSDXVK="$(command -v setup_dxvk 2>/dev/null)"
+    dxvk() {
+        echo "installing dxvk"; update >/dev/null
+        [ -n "$SYSDXVK" ] && echo "using local dxvk" && "$SYSDXVK" install --symlink && installed >/dev/null
+        [ -z "$SYSDXVK" ] && echo "using dxvk from github" && github_dxvk && echo "$DXVKVER" > "$WINEPREFIX/.dxvk"
+    }
+    [[ ! -f "$WINEPREFIX/.dxvk" && -z "$(awk '/dxvk/ {print $1}' "$WINEPREFIX/rumtricks.log" 2>/dev/null)" ]] && dxvk
+    [[ -f "$WINEPREFIX/.dxvk" && -n "$DXVKVER" && "$DXVKVER" != "$(awk '{print $1}' "$WINEPREFIX/.dxvk")" ]] && { rm -f dxvk-*.tar.gz || true; } && echo "updating dxvk" && dxvk
+    echo "dxvk is up-to-date"
 }
 
 wmp11()
