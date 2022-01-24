@@ -2,7 +2,6 @@
 
 #TODO
 # code clean up
-# allow rumtricks to manage auto updating vkd3d
 
 ##########
 
@@ -288,9 +287,8 @@ mono()
     installed
 }
 
-vkd3d()
+github_vkd3d()
 {
-    update
     DL_URL="$(curl -s https://api.github.com/repos/HansKristian-Work/vkd3d-proton/releases/latest | awk -F '["]' '/"browser_download_url":/ {print $4}')"
     VKD3D="$(basename "$DL_URL")"
     [ ! -f "$VKD3D" ] && download "$DL_URL"
@@ -299,7 +297,19 @@ vkd3d()
     ./setup_vkd3d_proton.sh install
     cd "$OLDPWD" || exit
     rm -rf "${VKD3D//.tar.zst/}"
-    installed
+}
+
+vkd3d()
+{
+    VKD3DVER="$(curl -s -m 5 https://api.github.com/repos/HansKristian-Work/vkd3d-proton/releases/latest | awk -F '["/]' '/"browser_download_url":/ {print $11}' | cut -c 2-)"; SYSVKD3D="$(command -v setup_vkd3d_proton)"
+    vkd3d() {
+        echo "installing vkd3d"; update >/dev/null
+        [ -n "$SYSVKD3D" ] && echo "using local vkd3d" && "$SYSVKD3D" install --symlink && installed >/dev/null
+        [ -z "$SYSVKD3D" ] && echo "using vkd3d from github" && github_vkd3d && echo "$VKD3DVER" > "$WINEPREFIX/.vkd3d"
+    }
+    [[ ! -f "$WINEPREFIX/.vkd3d" && -z "$(awk '/vkd3d/ {print $1}' "$WINEPREFIX/rumtricks.log" 2>/dev/null)" ]] && vkd3d
+    [[ -f "$WINEPREFIX/.vkd3d" && -n "$VKD3DVER" && "$VKD3DVER" != "$(awk '{print $1}' "$WINEPREFIX/.vkd3d")" ]] && { rm -f vkd3d-proton-*.tar.zst || true; } && echo "updating vkd3d" && vkd3d
+    echo "vkd3d is up-to-date"
 }
 
 directshow()
