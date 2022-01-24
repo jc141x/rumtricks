@@ -68,7 +68,7 @@ check()
     [ $? -ne 1 ] || { echo "archive is corrupted, skipping" && rm "${FUNCNAME[1]}".tar.zst && return 1; }
 }
 
-register_dll()
+regsvr32()
 {
     for i in "$@"
     do
@@ -111,9 +111,9 @@ directx()
     extract directx.tar.zst
     cp -r "$PWD"/directx/files/drive_c/windows/* "$WINEPREFIX/drive_c/windows/"
     regedit "$PWD"/directx/directx.reg
-    register_dll xactengine2_0.dll xactengine2_1.dll xactengine2_2.dll xactengine2_3.dll xactengine2_4.dll xactengine2_5.dll xactengine2_6.dll xactengine2_7.dll xactengine2_8.dll xactengine2_9.dll xactengine2_10.dll
-    register_dll xactengine3_0.dll xactengine3_1.dll xactengine3_2.dll xactengine3_3.dll xactengine3_4.dll xactengine3_5.dll xactengine3_6.dll xactengine3_7.dll
-    register_dll xaudio2_0.dll xaudio2_1.dll xaudio2_2.dll xaudio2_3.dll xaudio2_4.dll xaudio2_5.dll xaudio2_6.dll xaudio2_7.dll
+    regsvr32 xactengine2_0.dll xactengine2_1.dll xactengine2_2.dll xactengine2_3.dll xactengine2_4.dll xactengine2_5.dll xactengine2_6.dll xactengine2_7.dll xactengine2_8.dll xactengine2_9.dll xactengine2_10.dll
+    regsvr32 xactengine3_0.dll xactengine3_1.dll xactengine3_2.dll xactengine3_3.dll xactengine3_4.dll xactengine3_5.dll xactengine3_6.dll xactengine3_7.dll
+    regsvr32 xaudio2_0.dll xaudio2_1.dll xaudio2_2.dll xaudio2_3.dll xaudio2_4.dll xaudio2_5.dll xaudio2_6.dll xaudio2_7.dll
     echo "directx" >> "$WINEPREFIX/rumtricks.log"
     rm -rf "$PWD"/directx
     installed
@@ -205,7 +205,7 @@ mf()
     extract "mf.tar.zst"
     cp -r "$PWD"/mf/files/drive_c/windows/* "$WINEPREFIX/drive_c/windows/"
     regedit "$PWD"/mf/mf.reg
-    register_dll colorcnv.dll msmpeg2adec.dll msmpeg2vdec.dll
+    regsvr32 colorcnv.dll msmpeg2adec.dll msmpeg2vdec.dll
     echo "mf" >> "$WINEPREFIX/rumtricks.log"
     rm -rf "$PWD"/mf
     installed
@@ -254,7 +254,7 @@ wmp11()
     extract wmp11.tar.zst
     cp -r "$PWD"/wmp11/files/drive_c/* "$WINEPREFIX/drive_c/"
     regedit "$PWD"/wmp11/wmp11.reg
-    register_dll dispex.dll jscript.dll scrobj.dll scrrun.dll vbscript.dll wshcon.dll wshext.dll
+    regsvr32 dispex.dll jscript.dll scrobj.dll scrrun.dll vbscript.dll wshcon.dll wshext.dll
     echo "wmp11" >> "$WINEPREFIX/rumtricks.log"
     rm -rf "$PWD"/wmp11
     installed
@@ -296,7 +296,7 @@ directshow()
     extract directshow.tar.zst
     cp -r "$PWD"/directshow/files/drive_c/windows/* "$WINEPREFIX/drive_c/windows/"
     regedit "$PWD"/directshow/directshow.reg
-    register_dll amstream.dll qasf.dll qcap.dll qdvd.dll qedit.dll quartz.dll
+    regsvr32 amstream.dll qasf.dll qcap.dll qdvd.dll qedit.dll quartz.dll
     echo "directshow" >> "$WINEPREFIX/rumtricks.log"
     rm -rf "$PWD"/directshow
     installed
