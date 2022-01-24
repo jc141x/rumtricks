@@ -58,7 +58,8 @@ update()
 }
 
 installed()
-{
+{   
+    echo "${FUNCNAME[1]}" >> "$WINEPREFIX/rumtricks.log"
     echo "${FUNCNAME[1]} installed"
 }
 
@@ -66,6 +67,12 @@ check()
 {
     echo "$1  ${FUNCNAME[1]}.tar.zst" | sha256sum -c -
     [ $? -ne 1 ] || { echo "archive is corrupted, skipping" && rm "${FUNCNAME[1]}".tar.zst && return 1; }
+}
+
+status()
+{   
+    [[ ! -f "$WINEPREFIX/rumtricks.log" || ! "$(awk -v var="${FUNCNAME[1]}" '{print var}' "$WINEPREFIX/rumtricks.log" 2>/dev/null)" ]] && return
+    [ $? -eq 1 ] && echo "${FUNCNAME[1]} already installed, skipping" && return 1;
 }
 
 regsvr32()
@@ -87,6 +94,7 @@ update-self()
 
 isolate()
 {
+    status || return
     update
     echo "disabling desktop integrations"
     cd "$WINEPREFIX/drive_c/users/${USER}" || exit
@@ -105,6 +113,7 @@ isolate()
 
 directx()
 {
+    status || return
     update
     [ ! -f "directx.tar.zst" ] && download "$BASE_URL/directx.tar.zst"
     check 1e5c94ab1a4546ecc0281bc0c491178d77650cb2fc59460f03ebd5762af0d9f6 || return
@@ -121,6 +130,7 @@ directx()
 
 vcrun2010()
 {
+    status || return
     update
     [ ! -f "vcrun2010.tar.zst" ] && download "$BASE_URL/vcrun2010.tar.zst"
     check bb58b714c95373f4ad2d3757d27658c6ce37de5fa4cbc85c16e5ca01178fb883 || return
@@ -134,6 +144,7 @@ vcrun2010()
 
 vcrun2012()
 {
+    status || return
     update
     [ ! -f "vcrun2012.tar.zst" ] && download "$BASE_URL/vcrun2012.tar.zst"
     check 6ff3e8896d645c76ec8ef9a7fee613aea0a6b06fad04a35ca8a1fb7a4a314ce6 || return
@@ -147,6 +158,7 @@ vcrun2012()
 
 vcrun2013()
 {
+    status || return
     update
     [ ! -f "vcrun2013.tar.zst" ] && download "$BASE_URL/vcrun2013.tar.zst"
     check b9c990f6440e31b8b53ad80e1f1b524a4accadea2bdcfa7f2bddb36c40632610 || return
@@ -160,6 +172,7 @@ vcrun2013()
 
 vcrun2015()
 {
+    status || return
     update
     [ ! -f "vcrun2015.tar.zst" ] && download "$BASE_URL/vcrun2015.tar.zst"
     check 2b0bc92d4bd2a48f7e4d0a958d663baa5f3165eab95521e71f812b9030b03eb6 || return
@@ -173,6 +186,7 @@ vcrun2015()
 
 vcrun2017()
 {
+    status || return
     update
     [ ! -f "vcrun2017.tar.zst" ] && download "$BASE_URL/vcrun2017.tar.zst"
     check 2bcf9852b02f6e707905f0be0a96542225814a3fc19b3b9dcf066f4dd2789773 || return
@@ -186,6 +200,7 @@ vcrun2017()
 
 vcrun2019()
 {
+    status || return
     update
     [ ! -f "vcrun2019.tar.zst" ] && download "$BASE_URL/vcrun2019.tar.zst"
     check f84542198789d35db77ba4bc73990a2122d97546db5aca635b3058fc1830961d || return
@@ -199,6 +214,7 @@ vcrun2019()
 
 mf()
 {
+    status || return
     update
     [ ! -f "mf.tar.zst" ] && download "$BASE_URL/mf.tar.zst"
     check 42612d19396d791576de9e56ca30de5ae0cd5afd0ba2ac9d411347a2efe5114c || return
@@ -219,6 +235,7 @@ vdesktop()
 
 physx()
 {
+    status || return
     update
     [ ! -f "physx.tar.zst" ] && download "$BASE_URL/physx.tar.zst"
     check eb275e31687173f3accada30c0c8af6456977ac94b52a0fdd17cbbdd5d68f488 || return
@@ -247,6 +264,7 @@ dxvk()
 
 wmp11()
 {
+    status || return
     mf
     update
     [ ! -f "wmp11.tar.zst" ] && download "$BASE_URL/wmp11.tar.zst"
@@ -290,6 +308,7 @@ vkd3d()
 
 directshow()
 {
+    status || return
     update
     [ ! -f "directshow.tar.zst" ] && download "$BASE_URL/directshow.tar.zst"
     check 5fb584ca65c8f8fc6b4910210f355c002fa12dfd4186805ef6e7708e41595e32 || return
@@ -304,6 +323,7 @@ directshow()
 
 cinepak()
 {
+    status || return
     update
     [ ! -f "cinepak.tar.zst" ] && download "$BASE_URL/cinepak.tar.zst"
     check fb1daa15378f8a70a90617044691e1c5318610939adc0e79ad365bdb31513a38 || return
@@ -317,6 +337,7 @@ cinepak()
 
 corefonts()
 {
+    status || return
     update
     [ ! -f "corefonts.tar.zst" ] && download "$BASE_URL/corefonts.tar.zst"
     check fb6a4fffaae3c5ae849c0bb5ebf1ed7649ea521fab171166c35f6068b87dc80f || return
