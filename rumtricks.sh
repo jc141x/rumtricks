@@ -260,6 +260,26 @@ dxvk()
     echo "dxvk is up-to-date"
 }
 
+dxvk-async()
+{
+    DXVKVER="$(curl -s -m 5 https://api.github.com/repos/Sporif/dxvk-async/releases/latest | awk -F '["/]' '/"browser_download_url":/ {print $11}')"
+    dxvk-async() {
+        update
+        DL_URL="$(curl -s https://api.github.com/repos/Sporif/dxvk-async/releases/latest | awk -F '["]' '/"browser_download_url":/ {print $4}')"
+        DXVK="$(basename "$DL_URL")"
+        [ ! -f "$DXVK" ] && download "$DL_URL"
+        extract "$DXVK" || { rm "$DXVK" && echo "failed to extract dxvk, skipping" && return 1; }
+        cd "${DXVK//.tar.gz/}" || exit
+        chmod +x ./setup_dxvk.sh && ./setup_dxvk.sh install
+        cd "$OLDPWD" || exit
+        rm -rf "${DXVK//.tar.gz/}"
+        installed >/dev/null
+    }
+    [[ -z "$(awk '/dxvk/ {print $1}' "$WINEPREFIX/rumtricks.log" 2>/dev/null)" ]] && dxvk-async
+    [[ -f "$WINEPREFIX/.dxvk-async" && -n "$DXVKVER" && "$DXVKVER" != "$(awk '{print $1}' "$WINEPREFIX/.dxvk-async")" ]] && { rm -f dxvk-async-*.tar.gz || true; } && echo "updating dxvk-async" && dxvk-async
+    echo "dxvk-async is up-to-date"
+}
+
 wmp11()
 {
     status || return
