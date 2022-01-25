@@ -386,6 +386,23 @@ win10()
     installed
 }
 
+win7()
+{   
+    status || return
+    update
+    "$WINE" winecfg -v win7
+    installed
+}
+
+winxp()
+{   
+    status || return
+    update
+    [ "$WINEARCH" = "win64" ] && echo "wine64 detect" && "$WINE" winecfg -v winxp64
+    [ "$WINEARCH" = "win32" ] && echo "wine32 detect" && "$WINE" winecfg -v winxp
+    installed
+}
+
 template()
 {
     #update
