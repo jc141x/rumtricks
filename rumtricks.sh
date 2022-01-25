@@ -372,6 +372,19 @@ corefonts()
     installed
 }
 
+quicktime()
+{
+    status || return
+    update
+    [ ! -f "quicktime.tar.zst" ] && download "$BASE_URL/quicktime.tar.zst"
+    check 5adc5d05c94339d17814cb1a831c994e2b14ba9fbda0339d2add19c856f483a6 || return
+    extract quicktime.tar.zst
+    cp -r "$PWD"/quicktime/files/drive_c/* "$WINEPREFIX/drive_c/"
+    regedit "$PWD"/quicktime/quicktime.reg
+    rm -rf "$PWD"/quicktime
+    installed
+}
+
 template()
 {
     #update

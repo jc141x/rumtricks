@@ -63,6 +63,7 @@ vkd3d | Direct3D 12 API on top of Vulkan
 directshow | Microsoft DirectShow runtime (amstream and quartz)
 cinepak | Cinepak Codec
 corefonts | Microsoft Core fonts
+quicktime | Apple QuickTime
 
 ## Planned verbs in order
 
@@ -71,8 +72,8 @@ corefonts | Microsoft Core fonts
 * [x] directshow
 * [x] cinepak
 * [x] corefonts
-* [ ] quicktime
-* [ ] dxvk-async
+* [x] quicktime
+* [x] dxvk-async
 * [ ] wine prefix handling - win10 setting etc
 * [ ] faudio
 * [ ] older vcruns
