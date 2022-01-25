@@ -46,7 +46,7 @@ extract()
 
 update()
 {
-    echo "installing ${FUNCNAME[1]}" && "$WINE" wineboot -u && "$WINESERVER" -w
+    echo "installing ${FUNCNAME[1]}" && "$WINE" wineboot && "$WINESERVER" -w
 }
 
 installed()
@@ -244,7 +244,7 @@ dxvk()
 {
     DXVKVER="$(curl -s -m 5 https://api.github.com/repos/doitsujin/dxvk/releases/latest | awk -F '["/]' '/"browser_download_url":/ {print $11}' | cut -c 2-)"; SYSDXVK="$(command -v setup_dxvk 2>/dev/null)"
     dxvk() {
-        echo "installing dxvk"; update >/dev/null
+        update
         [ -n "$SYSDXVK" ] && echo "using local dxvk" && "$SYSDXVK" install --symlink && installed >/dev/null
         [ -z "$SYSDXVK" ] && echo "using dxvk from github" && github_dxvk && echo "$DXVKVER" > "$WINEPREFIX/.dxvk"
     }
@@ -316,7 +316,7 @@ vkd3d()
 {
     VKD3DVER="$(curl -s -m 5 https://api.github.com/repos/HansKristian-Work/vkd3d-proton/releases/latest | awk -F '["/]' '/"browser_download_url":/ {print $11}' | cut -c 2-)"; SYSVKD3D="$(command -v setup_vkd3d_proton)"
     vkd3d() {
-        echo "installing vkd3d"; update >/dev/null
+        update
         [ -n "$SYSVKD3D" ] && echo "using local vkd3d" && "$SYSVKD3D" install --symlink && installed >/dev/null
         [ -z "$SYSVKD3D" ] && echo "using vkd3d from github" && github_vkd3d && echo "$VKD3DVER" > "$WINEPREFIX/.vkd3d"
     }
@@ -375,6 +375,14 @@ quicktime()
     cp -r "$PWD"/quicktime/files/drive_c/* "$WINEPREFIX/drive_c/"
     regedit "$PWD"/quicktime/quicktime.reg
     rm -rf "$PWD"/quicktime
+    installed
+}
+
+win10()
+{   
+    status || return
+    update
+    "$WINE" winecfg -v win10
     installed
 }
 
