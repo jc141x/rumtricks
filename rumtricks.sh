@@ -398,8 +398,8 @@ winxp()
 {   
     status || return
     update
-    [ "$WINEARCH" = "win64" ] && echo "wine64 detect" && "$WINE" winecfg -v winxp64
-    [ "$WINEARCH" = "win32" ] && echo "wine32 detect" && "$WINE" winecfg -v winxp
+    [ "$WINEARCH" = "win64" ] && "$WINE" winecfg -v winxp64
+    [ "$WINEARCH" = "win32" ] && "$WINE" winecfg -v winxp
     installed
 }
 
