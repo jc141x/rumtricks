@@ -266,9 +266,9 @@ dxvk-async()
         chmod +x ./setup_dxvk.sh && ./setup_dxvk.sh install
         cd "$OLDPWD" || exit
         rm -rf "${DXVK//.tar.gz/}"
-        installed >/dev/null
+        installed >/dev/null; echo "$DXVKVER" > "$WINEPREFIX/.dxvk-async"
     }
-    [[ -z "$(awk '/dxvk/ {print $1}' "$WINEPREFIX/rumtricks.log" 2>/dev/null)" ]] && dxvk-async
+    [[ -z "$(awk '/dxvk-async/ {print $1}' "$WINEPREFIX/rumtricks.log" 2>/dev/null)" ]] && dxvk-async
     [[ -f "$WINEPREFIX/.dxvk-async" && -n "$DXVKVER" && "$DXVKVER" != "$(awk '{print $1}' "$WINEPREFIX/.dxvk-async")" ]] && { rm -f dxvk-async-*.tar.gz || true; } && echo "updating dxvk-async" && dxvk-async
     echo "dxvk-async is up-to-date"
 }
