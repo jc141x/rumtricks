@@ -1,12 +1,5 @@
 #!/bin/bash
-
-#TODO
-# code clean up
-
-##########
-
-# Forbid root rights
-[ "$EUID" = "0" ] && echo -e "\e[91mDon't use sudo or root user to execute rumtricks!\e[0m" && exit
+[ "$EUID" = "0" ] && exit
 
 # All operations are relative to rumtricks' location
 cd "$(dirname "$(realpath "$0")")" || exit 1
