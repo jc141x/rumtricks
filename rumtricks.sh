@@ -235,7 +235,7 @@ github_dxvk()
     [ ! -f "$DXVK" ] && download "$DL_URL"
     extract "$DXVK" || { rm "$DXVK" && echo "failed to extract dxvk, skipping" && return 1; }
     cd "${DXVK//.tar.gz/}" || exit
-    ./setup_dxvk.sh install
+    ./setup_dxvk.sh install && "$WINESERVER" -w
     cd "$OLDPWD" || exit
     rm -rf "${DXVK//.tar.gz/}"
 }
@@ -245,7 +245,7 @@ dxvk()
     DXVKVER="$(curl -s -m 5 https://api.github.com/repos/doitsujin/dxvk/releases/latest | awk -F '["/]' '/"browser_download_url":/ {print $11}' | cut -c 2-)"; SYSDXVK="$(command -v setup_dxvk 2>/dev/null)"
     dxvk() {
         update
-        [ -n "$SYSDXVK" ] && echo "using local dxvk" && "$SYSDXVK" install --symlink && installed >/dev/null
+        [ -n "$SYSDXVK" ] && echo "using local dxvk" && "$SYSDXVK" install --symlink && "$WINESERVER" -w && installed
         [ -z "$SYSDXVK" ] && echo "using dxvk from github" && github_dxvk && echo "$DXVKVER" > "$WINEPREFIX/.dxvk"
     }
     [[ ! -f "$WINEPREFIX/.dxvk" && -z "$(awk '/dxvk/ {print $1}' "$WINEPREFIX/rumtricks.log" 2>/dev/null)" ]] && dxvk
@@ -263,10 +263,10 @@ dxvk-async()
         [ ! -f "$DXVK" ] && download "$DL_URL"
         extract "$DXVK" || { rm "$DXVK" && echo "failed to extract dxvk, skipping" && return 1; }
         cd "${DXVK//.tar.gz/}" || exit
-        chmod +x ./setup_dxvk.sh && ./setup_dxvk.sh install
+        chmod +x ./setup_dxvk.sh && ./setup_dxvk.sh install && "$WINESERVER" -w
         cd "$OLDPWD" || exit
         rm -rf "${DXVK//.tar.gz/}"
-        installed >/dev/null; echo "$DXVKVER" > "$WINEPREFIX/.dxvk-async"
+        installed ; echo "$DXVKVER" > "$WINEPREFIX/.dxvk-async"
     }
     [[ -z "$(awk '/dxvk-async/ {print $1}' "$WINEPREFIX/rumtricks.log" 2>/dev/null)" ]] && dxvk-async
     [[ -f "$WINEPREFIX/.dxvk-async" && -n "$DXVKVER" && "$DXVKVER" != "$(awk '{print $1}' "$WINEPREFIX/.dxvk-async")" ]] && { rm -f dxvk-async-*.tar.gz || true; } && echo "updating dxvk-async" && dxvk-async
@@ -290,14 +290,20 @@ wmp11()
 
 mono()
 {
-    update
-    DL_URL="$(curl -s https://api.github.com/repos/madewokherd/wine-mono/releases/latest | awk -F '["]' '/"browser_download_url":/ {print $4}' | awk '/msi/ {print $0}')"
-    MONO="$(basename "$DL_URL")"
-    OLDMONO="$("$WINE" uninstaller --list | grep 'Wine Mono' | cut -f1 -d\|)"
-    [ ! -f "$MONO" ] && download "$DL_URL"
-    [ -n "$OLDMONO" ] && echo "removing old mono" && for i in $OLDMONO; do "$WINE" uninstaller --remove "$i"; done
-    "$WINE" msiexec /i "$MONO"
-    installed
+    MONOVER="$(curl -s https://api.github.com/repos/madewokherd/wine-mono/releases/latest | awk -F '["]' '/"browser_download_url":/ {print $4}' | awk -F '[-]' '/.msi/ {print $6}')"
+    mono() {
+        update
+        DL_URL="$(curl -s https://api.github.com/repos/madewokherd/wine-mono/releases/latest | awk -F '["]' '/"browser_download_url":/ {print $4}' | awk '/msi/ {print $0}')"
+        MONO="$(basename "$DL_URL")"
+        [ ! -f "$MONO" ] && download "$DL_URL"
+        OLDMONO="$("$WINE" uninstaller --list | grep 'Wine Mono' | cut -f1 -d\|)"
+        [ -n "$OLDMONO" ] && echo "removing old mono" && for i in $OLDMONO; do "$WINE" uninstaller --remove "$i"; done
+        "$WINE" msiexec /i "$MONO"
+        installed ; echo "$MONOVER" > "$WINEPREFIX/.mono"
+    }
+    [[ -z "$(awk '/mono/ {print $1}' "$WINEPREFIX/rumtricks.log" 2>/dev/null)" ]] && mono
+    [[ -f "$WINEPREFIX/.mono" && -n "$MONOVER" && "$MONOVER" != "$(awk '{print $1}' "$WINEPREFIX/.mono")" ]] && { rm -f wine-mono-*.msi || true; } && echo "updating mono" && mono
+    echo "mono is up-to-date"
 }
 
 github_vkd3d()
@@ -307,7 +313,7 @@ github_vkd3d()
     [ ! -f "$VKD3D" ] && download "$DL_URL"
     extract "$VKD3D" || { rm "$VKD3D" && echo "failed to extract vkd3d, skipping" && return 1; }
     cd "${VKD3D//.tar.zst/}" || exit
-    ./setup_vkd3d_proton.sh install
+    ./setup_vkd3d_proton.sh install && "$WINESERVER" -w
     cd "$OLDPWD" || exit
     rm -rf "${VKD3D//.tar.zst/}"
 }
@@ -317,7 +323,7 @@ vkd3d()
     VKD3DVER="$(curl -s -m 5 https://api.github.com/repos/HansKristian-Work/vkd3d-proton/releases/latest | awk -F '["/]' '/"browser_download_url":/ {print $11}' | cut -c 2-)"; SYSVKD3D="$(command -v setup_vkd3d_proton)"
     vkd3d() {
         update
-        [ -n "$SYSVKD3D" ] && echo "using local vkd3d" && "$SYSVKD3D" install --symlink && installed >/dev/null
+        [ -n "$SYSVKD3D" ] && echo "using local vkd3d" && "$SYSVKD3D" install --symlink && "$WINESERVER" -w && installed
         [ -z "$SYSVKD3D" ] && echo "using vkd3d from github" && github_vkd3d && echo "$VKD3DVER" > "$WINEPREFIX/.vkd3d"
     }
     [[ ! -f "$WINEPREFIX/.vkd3d" && -z "$(awk '/vkd3d/ {print $1}' "$WINEPREFIX/rumtricks.log" 2>/dev/null)" ]] && vkd3d
