@@ -384,6 +384,20 @@ quicktime()
     installed
 }
 
+template()
+{
+    #update
+    #[ ! -f "template.tar.zst" ] && download "$BASE_URL/template.tar.zst"
+    #check 2bcf9852b02f6e707905f0be0a96542225814a3fc19b3b9dcf066f4dd2781337
+    #[ $? -eq 1 ] && echo "download is corrupted (invalid hash), skipping" && rm template.tar.zst && return
+    #extract template.tar.zst
+    #cp -r "$PWD"/template/files/drive_c/windows/* "$WINEPREFIX/drive_c/windows/"
+    #regedit "$PWD"/template/template.reg
+    #echo "template" >> "$WINEPREFIX/rumtricks.log"
+    #rm -rf "$PWD"/template
+    installed
+}
+
 win10()
 {   
     status || return
@@ -392,11 +406,59 @@ win10()
     installed
 }
 
+win81()
+{   
+    status || return
+    update
+    "$WINE" winecfg -v win81
+    installed
+}
+
+win8()
+{   
+    status || return
+    update
+    "$WINE" winecfg -v win8
+    installed
+}
+
+win2008r2()
+{   
+    status || return
+    update
+    "$WINE" winecfg -v win2008r2
+    installed
+}
+
+win2008()
+{   
+    status || return
+    update
+    "$WINE" winecfg -v win2008
+    installed
+}
+
 win7()
 {   
     status || return
     update
     "$WINE" winecfg -v win7
+    installed
+}
+
+winvista()
+{   
+    status || return
+    update
+    "$WINE" winecfg -v vista
+    installed
+}
+
+win2003
+{
+    status || return
+    update
+    "$WINE" winecfg -v win2003
     installed
 }
 
@@ -409,17 +471,83 @@ winxp()
     installed
 }
 
-template()
+win2k()
 {
-    #update
-    #[ ! -f "template.tar.zst" ] && download "$BASE_URL/template.tar.zst"
-    #check 2bcf9852b02f6e707905f0be0a96542225814a3fc19b3b9dcf066f4dd2781337
-    #[ $? -eq 1 ] && echo "download is corrupted (invalid hash), skipping" && rm template.tar.zst && return
-    #extract template.tar.zst
-    #cp -r "$PWD"/template/files/drive_c/windows/* "$WINEPREFIX/drive_c/windows/"
-    #regedit "$PWD"/template/template.reg
-    #echo "template" >> "$WINEPREFIX/rumtricks.log"
-    #rm -rf "$PWD"/template
+    status || return
+    update
+    "$WINE" winecfg -v win2k
+    installed
+}
+
+winme()
+{
+    status || return
+    update
+    "$WINE" winecfg -v winme
+    installed
+}
+
+win98()
+{
+    status || return
+    update
+    "$WINE" winecfg -v win98
+    installed
+}
+
+win95()
+{
+    status || return
+    update
+    "$WINE" winecfg -v win95
+    installed
+}
+
+win98()
+{
+    status || return
+    update
+    "$WINE" winecfg -v win98
+    installed
+}
+
+winnt40()
+{
+    status || return
+    update
+    "$WINE" winecfg -v nt40
+    installed
+}
+
+winnt351()
+{
+    status || return
+    update
+    "$WINE" winecfg -v nt351
+    installed
+}
+
+win31()
+{
+    status || return
+    update
+    "$WINE" winecfg -v win31
+    installed
+}
+
+win30()
+{
+    status || return
+    update
+    "$WINE" winecfg -v win30
+    installed
+}
+
+win20()
+{
+    status || return
+    update
+    "$WINE" winecfg -v win20
     installed
 }
 
