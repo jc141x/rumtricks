@@ -122,7 +122,7 @@ vcrun2010()
     status || return
     update
     [ ! -f "vcrun2010.tar.zst" ] && download "$BASE_URL/vcrun2010.tar.zst"
-    check 005aedb8404becd16995c94d0794d956d29d858f027c530c3a8d74d2bdccfdda || return
+    check 5ba7ffed884cb25ef77f9f2470a85a31743f79ca1610b6d7cbeda31ce0ac3a35 || return
     extract vcrun2010.tar.zst
     cp -r "$PWD"/vcrun2010/files/drive_c/windows/* "$WINEPREFIX/drive_c/windows/"
     regedit "$PWD"/vcrun2010/vcrun2010.reg
