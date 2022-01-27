@@ -454,7 +454,7 @@ winvista()
     installed
 }
 
-win2003
+win2003()
 {
     status || return
     update
