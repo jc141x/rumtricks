@@ -174,7 +174,7 @@ vcrun2017()
     status || return
     update
     [ ! -f "vcrun2017.tar.zst" ] && download "$BASE_URL/vcrun2017.tar.zst"
-    check 2bcf9852b02f6e707905f0be0a96542225814a3fc19b3b9dcf066f4dd2789773 || return
+    check b76a4ac0a4231594816aad58f676ee68da12d0e7ef47e2fdd1ce1e4249ddc5df || return
     extract vcrun2017.tar.zst
     cp -r "$PWD"/vcrun2017/drive_c/windows/* "$WINEPREFIX/drive_c/windows/"
     regedit "$PWD"/vcrun2017/vcrun2017.reg
