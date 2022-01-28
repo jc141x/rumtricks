@@ -44,6 +44,9 @@ If `WINEPREFIX` isn't provided rumtricks will install everything into the defaul
 
 name | Description
 --- | ---
+cinepak | Cinepak Codec
+corefonts | Microsoft Core fonts
+directshow | Microsoft DirectShow runtime (amstream and quartz)
 directx | Microsoft DirectX End-User Runtime (June 2010)
 dxvk | Vulkan-based translation layer for Direct3D 9/10/11
 dxvk-async | dxvk with async patches
@@ -51,6 +54,7 @@ isolate | Isolate the prefix by removing symbolinks to $HOME
 mf | Microsoft Media Foundation
 mono | Open-source and cross-platform implementation of the .NET Framework
 physx | Nvidia PhysX
+quicktime | Apple QuickTime
 update-self | Update rumtricks.sh to the latest version
 vcrun2010 | Microsoft Visual C++ 2010 Redistributable
 vcrun2012 | Microsoft Visual C++ 2012 Redistributable
@@ -60,24 +64,35 @@ vcrun2017 | Microsoft Visual C++ 2017 Redistributable
 vcrun2019 | Microsoft Visual C++ 2019 Redistributable
 vdesktop | Virtual desktop
 vkd3d | Direct3D 12 API on top of Vulkan
-directshow | Microsoft DirectShow runtime (amstream and quartz)
-cinepak | Cinepak Codec
-corefonts | Microsoft Core fonts
-quicktime | Apple QuickTime
+
+## List of verbs for wineprefix windows version
+
+name | Description
+--- | ---
+win10 | Set wineprefix version Windows to 10
+win81 | Set wineprefix version Windows to 8.1
+win8 | Set wineprefix version to Windows 8
+win7 | Set wineprefix version to Windows 7
+win2008r2 | Set wineprefix version to Windows 2008 R2
+win2008 | Set wineprefix version to Windows 2008
+winvista | Set wineprefix version to Windows Vista
+win2003 | Set wineprefix version to Windows 2003
+winxp | Set wineprefix version to Windows XP
+winme | Set wineprefix version to Windows ME (32bit only)
+win2k | Set wineprefix version to Windows 2000 (32bit only)
+win98 | Set wineprefix version to Windows 98 (32bit only)
+winnt40 | Set wineprefix version to Windows NT 4.0 (32bit only)
+win95 | Set wineprefix version to Windows 95 (32bit only)
+winnt351 | Set wineprefix version to Windows NT 3.51 (32bit only)
+win31 | Set wineprefix version to Windows 3.1 (32bit only)
+win30 | Set wineprefix version to Windows 3.0 (32bit only)
+win20 | Set wineprefix version to Windows 2.0 (32bit only)
 
 ## Planned verbs in order
 
-* [x] amstream
-* [x] quartz
-* [x] directshow
-* [x] cinepak
-* [x] corefonts
-* [x] quicktime
-* [x] dxvk-async
-* [ ] wine prefix handling - win10 setting etc
+* [ ] vcrun2003-2008
 * [ ] faudio
-* [ ] older vcruns
-* [ ] dotnet 400/450/452/460
+* [ ] dotnet 1.1-4.8
 * [ ] xna40
 
 ## Contributing [![contributions](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)](https://github.com/goldenboy313/rumtricks/issues)[![Matrix](https://matrix.to/img/matrix-badge.svg)](https://matrix.to/#/!SlYhhmreXjJylcsjfn:tedomum.net?via=matrix.org&via=tedomum.net)
