@@ -129,6 +129,18 @@ vcrun2003()
     installed
 }
 
+vcrun2005()
+{
+    status || return
+    update
+    [ ! -f "vcrun2005.tar.zst" ] && download "$BASE_URL/vcrun2005.tar.zst"
+    check bfac1513476690f15fc7c2fcfee744e00da88ba28ba43580e9cbf660ae4039cd || return
+    extract vcrun2005.tar.zst
+    cp -r "$PWD"/vcrun2005/files/drive_c/windows/* "$WINEPREFIX/drive_c/windows/"
+    rm -rf "$PWD"/vcrun2005
+    installed
+}
+
 vcrun2010()
 {
     status || return
