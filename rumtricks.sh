@@ -117,6 +117,18 @@ directx()
     installed
 }
 
+vcrun2003()
+{
+    status || return
+    update
+    [ ! -f "vcrun2003.tar.zst" ] && download "$BASE_URL/vcrun2003.tar.zst"
+    check 6af8efa5829b489b70a72b0e13510e9a1e3f92e700fca6d27140483d15364244 || return
+    extract vcrun2003.tar.zst
+    cp -r "$PWD"/vcrun2003/files/drive_c/windows/* "$WINEPREFIX/drive_c/windows/"
+    rm -rf "$PWD"/vcrun2003
+    installed
+}
+
 vcrun2010()
 {
     status || return
