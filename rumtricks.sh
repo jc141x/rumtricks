@@ -142,6 +142,19 @@ vcrun2005()
     installed
 }
 
+vcrun2008()
+{
+    status || return
+    update
+    [ ! -f "vcrun2008.tar.zst" ] && download "$BASE_URL/vcrun2008.tar.zst"
+    check 38cf9eb253324ef27ccf3b4e47e3281287acf9e1db48a19bc21c226d53cf8299 || return
+    extract vcrun2008.tar.zst
+    cp -r "$PWD"/vcrun2008/files/drive_c/* "$WINEPREFIX/drive_c/"
+    regedit "$PWD"/vcrun2008/vcrun2008.reg
+    rm -rf "$PWD"/vcrun2008
+    installed
+}
+
 vcrun2010()
 {
     status || return
