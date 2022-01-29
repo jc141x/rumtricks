@@ -50,6 +50,7 @@ directshow | Microsoft DirectShow runtime (amstream and quartz)
 directx | Microsoft DirectX End-User Runtime (June 2010)
 dxvk | Vulkan-based translation layer for Direct3D 9/10/11
 dxvk-async | dxvk with async patches
+dxvk-custom | install any dxvk version (usage: ./rumtricks.sh dxvk-custom <<< "0.54")
 isolate | Isolate the prefix by removing symbolinks to $HOME
 mf | Microsoft Media Foundation
 mono | Open-source and cross-platform implementation of the .NET Framework

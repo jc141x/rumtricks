@@ -311,6 +311,23 @@ dxvk-async()
     echo "dxvk-async is up-to-date"
 }
 
+dxvk-custom()
+{
+    status || return
+    read -r -p "What version do you want? (0.54, 1.8.1, etc.): " DXVKVER 
+    DL_URL="https://github.com/doitsujin/dxvk/releases/download/v$DXVKVER/dxvk-$DXVKVER.tar.gz"
+    DXVK="$(basename "$DL_URL")"
+    [ ! -f "$DXVK" ] && download "$DL_URL"
+    extract "$DXVK" || { rm "$DXVK" && echo "failed to extract dxvk-custom, skipping" && return 1; }
+    cd "${DXVK//.tar.gz/}" || exit
+    [ -f setup_dxvk.sh ] && ./setup_dxvk.sh install && "$WINESERVER" -w
+    [ ! -f setup_dxvk.sh ] && cd x32 && ./setup_dxvk.sh && "$WINESERVER" -w && cd ..
+    [ ! -f setup_dxvk.sh ] && [ "$WINEARCH" = "win64" ] && cd x64 && ./setup_dxvk.sh && "$WINESERVER" -w && cd ..
+    cd ..
+    rm -rf "${DXVK//.tar.gz/}"
+    installed
+}
+
 wmp11()
 {
     status || return
