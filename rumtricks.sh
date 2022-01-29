@@ -187,7 +187,7 @@ vcrun2019()
     status || return
     update
     [ ! -f "vcrun2019.tar.zst" ] && download "$BASE_URL/vcrun2019.tar.zst"
-    check f84542198789d35db77ba4bc73990a2122d97546db5aca635b3058fc1830961d || return
+    check c3af3a1760dbeb0aa7c57e45a00e972a98a20600a2412e896778bc214d6e9bbf || return
     extract vcrun2019.tar.zst
     cp -r "$PWD"/vcrun2019/files/drive_c/windows/* "$WINEPREFIX/drive_c/windows/"
     regedit "$PWD"/vcrun2019/vcrun2019.reg
