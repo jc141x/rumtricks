@@ -134,7 +134,7 @@ vcrun2005()
     status || return
     update
     [ ! -f "vcrun2005.tar.zst" ] && download "$BASE_URL/vcrun2005.tar.zst"
-    check bfac1513476690f15fc7c2fcfee744e00da88ba28ba43580e9cbf660ae4039cd || return
+    check 8d365bd38ddf341cec4f93b6a89027fe3d7065797e6062aa7b5b5cad7ef98099 || return
     extract vcrun2005.tar.zst
     cp -r "$PWD"/vcrun2005/files/drive_c/* "$WINEPREFIX/drive_c/"
     rm -rf "$PWD"/vcrun2005
