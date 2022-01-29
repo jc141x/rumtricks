@@ -137,6 +137,7 @@ vcrun2005()
     check 8d365bd38ddf341cec4f93b6a89027fe3d7065797e6062aa7b5b5cad7ef98099 || return
     extract vcrun2005.tar.zst
     cp -r "$PWD"/vcrun2005/files/drive_c/* "$WINEPREFIX/drive_c/"
+    regedit "$PWD"/vcrun2005/vcrun2005.reg
     rm -rf "$PWD"/vcrun2005
     installed
 }
