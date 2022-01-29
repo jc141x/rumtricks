@@ -56,6 +56,9 @@ mono | Open-source and cross-platform implementation of the .NET Framework
 physx | Nvidia PhysX
 quicktime | Apple QuickTime
 update-self | Update rumtricks.sh to the latest version
+vcrun2003 | Microsoft Visual C++ 2003 Redistributable
+vcrun2005 | Microsoft Visual C++ 2005 Redistributable
+vcrun2008 | Microsoft Visual C++ 2008 Redistributable
 vcrun2010 | Microsoft Visual C++ 2010 Redistributable
 vcrun2012 | Microsoft Visual C++ 2012 Redistributable
 vcrun2013 | Microsoft Visual C++ 2013 Redistributable
@@ -90,7 +93,6 @@ win20 | Set wineprefix version to Windows 2.0 (32bit only)
 
 ## Planned verbs in order
 
-* [ ] vcrun2003-2008
 * [ ] faudio
 * [ ] dotnet 1.1-4.8
 * [ ] xna40
