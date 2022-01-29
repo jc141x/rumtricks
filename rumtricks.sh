@@ -136,7 +136,7 @@ vcrun2005()
     [ ! -f "vcrun2005.tar.zst" ] && download "$BASE_URL/vcrun2005.tar.zst"
     check bfac1513476690f15fc7c2fcfee744e00da88ba28ba43580e9cbf660ae4039cd || return
     extract vcrun2005.tar.zst
-    cp -r "$PWD"/vcrun2005/files/drive_c/windows/* "$WINEPREFIX/drive_c/windows/"
+    cp -r "$PWD"/vcrun2005/files/drive_c/* "$WINEPREFIX/drive_c/"
     rm -rf "$PWD"/vcrun2005
     installed
 }
