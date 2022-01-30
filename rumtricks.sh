@@ -442,8 +442,8 @@ quicktime()
 rumtime32()
 {
     status || return
-    [ ! -f "rumtime32.tar.zst" ] && download "$BASE_URL/quicktime32.tar.zst"
-    check bfd2806ff8d64d06c8e216bebe04aec303bdc9633749911abd6264358a01e5d9 || return
+    [ ! -f "rumtime32.tar.zst" ] && download "$BASE_URL/rumtime32.tar.zst"
+    check 4f37b69873cb1fdf908e4584dfe2eca215952ffd6306025504e563e223680065 || return
     extract rumtime32.tar.zst
     installed
 }
@@ -452,7 +452,7 @@ rumtime64()
 {
     status || return
     [ ! -f "rumtime64.tar.zst" ] && download "$BASE_URL/rumtime64.tar.zst"
-    check 89ce0485793953e3a813e0c6609afaa52e73bc8b13368d6292842fcad09eacbf || return
+    check 8b2fa7566ff5eff9d4cfb474fe554adf1f4c876b3ff48588165811f8f4bba548 || return
     extract rumtime64.tar.zst
     installed
 }
