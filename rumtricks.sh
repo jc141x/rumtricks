@@ -314,6 +314,7 @@ dxvk-async()
 dxvk-custom()
 {
     status || return
+    update
     read -r -p "What version do you want? (0.54, 1.8.1, etc.): " DXVKVER
     DL_URL="https://github.com/doitsujin/dxvk/releases/download/v$DXVKVER/dxvk-$DXVKVER.tar.gz"
     DXVK="$(basename "$DL_URL")"
