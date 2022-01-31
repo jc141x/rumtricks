@@ -63,7 +63,7 @@ check()
 
 status()
 {
-    [[ ! -f "$WINEPREFIX/rumtricks.log" || -z "$(awk "/${FUNCNAME[1]}/ {print \$1}" "$WINEPREFIX/rumtricks.log" 2>/dev/null)" ]] || { echo "${FUNCNAME[1]} already installed, skipping" && return 1; }
+    [[ ! -f "$WINEPREFIX/rumtricks.log" || -z "$(awk "/^${FUNCNAME[1]}\$/ {print \$1}" "$WINEPREFIX/rumtricks.log" 2>/dev/null)" ]] || { echo "${FUNCNAME[1]} already installed, skipping" && return 1; }
 }
 
 regsvr32()
@@ -286,7 +286,7 @@ dxvk()
         [ -n "$SYSDXVK" ] && echo "using local dxvk" && "$SYSDXVK" install --symlink && "$WINESERVER" -w && installed
         [ -z "$SYSDXVK" ] && echo "using dxvk from github" && github_dxvk && echo "$DXVKVER" > "$WINEPREFIX/.dxvk"
     }
-    [[ ! -f "$WINEPREFIX/.dxvk" && -z "$(awk '/dxvk/ {print $1}' "$WINEPREFIX/rumtricks.log" 2>/dev/null)" ]] && dxvk
+    [[ ! -f "$WINEPREFIX/.dxvk" && -z "$(status)" ]] && dxvk
     [[ -f "$WINEPREFIX/.dxvk" && -n "$DXVKVER" && "$DXVKVER" != "$(awk '{print $1}' "$WINEPREFIX/.dxvk")" ]] && { rm -f dxvk-*.tar.gz || true; } && echo "updating dxvk" && dxvk
     echo "dxvk is up-to-date"
 }
@@ -306,7 +306,7 @@ dxvk-async()
         rm -rf "${DXVK//.tar.gz/}"
         installed ; echo "$DXVKVER" > "$WINEPREFIX/.dxvk-async"
     }
-    [[ -z "$(awk '/dxvk-async/ {print $1}' "$WINEPREFIX/rumtricks.log" 2>/dev/null)" ]] && dxvk-async
+    [[ -z "$(status)" ]] && dxvk-async
     [[ -f "$WINEPREFIX/.dxvk-async" && -n "$DXVKVER" && "$DXVKVER" != "$(awk '{print $1}' "$WINEPREFIX/.dxvk-async")" ]] && { rm -f dxvk-async-*.tar.gz || true; } && echo "updating dxvk-async" && dxvk-async
     echo "dxvk-async is up-to-date"
 }
@@ -314,7 +314,7 @@ dxvk-async()
 dxvk-custom()
 {
     status || return
-    read -r -p "What version do you want? (0.54, 1.8.1, etc.): " DXVKVER 
+    read -r -p "What version do you want? (0.54, 1.8.1, etc.): " DXVKVER
     DL_URL="https://github.com/doitsujin/dxvk/releases/download/v$DXVKVER/dxvk-$DXVKVER.tar.gz"
     DXVK="$(basename "$DL_URL")"
     [ ! -f "$DXVK" ] && download "$DL_URL"
@@ -381,7 +381,7 @@ vkd3d()
         [ -n "$SYSVKD3D" ] && echo "using local vkd3d" && "$SYSVKD3D" install --symlink && "$WINESERVER" -w && installed
         [ -z "$SYSVKD3D" ] && echo "using vkd3d from github" && github_vkd3d && echo "$VKD3DVER" > "$WINEPREFIX/.vkd3d"
     }
-    [[ ! -f "$WINEPREFIX/.vkd3d" && -z "$(awk '/vkd3d/ {print $1}' "$WINEPREFIX/rumtricks.log" 2>/dev/null)" ]] && vkd3d
+    [[ ! -f "$WINEPREFIX/.vkd3d" && -z "$(status)" ]] && vkd3d
     [[ -f "$WINEPREFIX/.vkd3d" && -n "$VKD3DVER" && "$VKD3DVER" != "$(awk '{print $1}' "$WINEPREFIX/.vkd3d")" ]] && { rm -f vkd3d-proton-*.tar.zst || true; } && echo "updating vkd3d" && vkd3d
     echo "vkd3d is up-to-date"
 }
