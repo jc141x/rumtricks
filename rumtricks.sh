@@ -406,7 +406,9 @@ provided_vkd3d()
 
 vkd3d-jc141()
 {
-    USE_GITHUB="$(curl -sL -m 5 https://johncena141.eu.org:8141/johncena141/vkd3d-jc141/raw/branch/main/use-github)"
+    read -r -p "Game: " GAME
+    [ -z "$GAME" ] && GAME="all"
+    USE_GITHUB="$(curl -sL -m 5 "https://johncena141.eu.org:8141/johncena141/vkd3d-jc141/raw/branch/main/use-github/$GAME")"
     [ "$USE_GITHUB" = "true" ] && touch "$WINEPREFIX/.github-vkd3d"
     if [ -f "$WINEPREFIX/.github-vkd3d" ]; then
         vkd3d
