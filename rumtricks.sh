@@ -441,20 +441,28 @@ quicktime()
 
 rumtime32()
 {
-    status || return
+    [ -d "$PWD"/files/rumtime32 ] && echo "rumtime32 already installed, skipping" && return
     [ ! -f "rumtime32.tar.zst" ] && download "$BASE_URL/rumtime32.tar.zst"
     check 4f37b69873cb1fdf908e4584dfe2eca215952ffd6306025504e563e223680065 || return
+    mv rumtime32.tar.zst "$PWD"/files
+    cd "$PWD"/files || exit
     extract rumtime32.tar.zst
-    installed
+    rm rumtime32.tar.zst
+    cd "$OLDPWD" || exit
+    echo "rumtime32 installed"
 }
 
 rumtime64()
 {
-    status || return
+    [ -d "$PWD"/files/rumtime64 ] && echo "rumtime64 already installed, skipping" && return
     [ ! -f "rumtime64.tar.zst" ] && download "$BASE_URL/rumtime64.tar.zst"
     check 8b2fa7566ff5eff9d4cfb474fe554adf1f4c876b3ff48588165811f8f4bba548 || return
+    mv rumtime64.tar.zst "$PWD"/files
+    cd "$PWD"/files || exit
     extract rumtime64.tar.zst
-    installed
+    rm rumtime64.tar.zst
+    cd "$OLDPWD" || exit
+    echo "rumtime64 installed"
 }
 
 template()
