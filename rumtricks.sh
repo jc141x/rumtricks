@@ -387,6 +387,36 @@ vkd3d()
     echo "vkd3d is up-to-date"
 }
 
+provided_vkd3d()
+{
+    update
+    TARGET="vkd3d-proton-master.tar.zst"
+    if [ ! -f "$TARGET" ]; then
+        echo "Downloading latest vkd3d..."
+        DL_URL="$(curl -s 'https://johncena141.eu.org:8141/api/v1/repos/johncena141/vkd3d-jc141/releases?draft=false&pre-release=false&limit=1' -H 'accept: application/json' | jq '.[].assets[0].browser_download_url' | awk -F'"' '{print $2}')"
+        [ -z "$DL_URL" ] && { echo "couldn't get the latest vkd3d build; skipping"; return 1; }
+        curl -L "$DL_URL" -o "$TARGET"
+    fi
+    extract "$TARGET" || { rm "$TARGET" && echo "failed to extract vkd3d, skipping" && return 1; }
+    cd "${TARGET//.tar.zst/}" || exit
+    ./setup_vkd3d_proton.sh install && "$WINESERVER" -w
+    cd "$OLDPWD" || exit
+    rm -rf "${TARGET//.tar.zst/}"
+}
+
+vkd3d-jc141()
+{
+    USE_GITHUB="$(curl -sL -m 5 https://johncena141.eu.org:8141/johncena141/vkd3d-jc141/raw/branch/main/use-github)"
+    [ "$USE_GITHUB" = "true" ] && touch "$WINEPREFIX/.github-vkd3d"
+    if [ -f "$WINEPREFIX/.github-vkd3d" ]; then
+        vkd3d
+    else
+        status || return
+        provided_vkd3d
+        installed
+    fi
+}
+
 directshow()
 {
     status || return

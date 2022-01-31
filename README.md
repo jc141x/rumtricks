@@ -68,6 +68,7 @@ vcrun2017 | Microsoft Visual C++ 2017 Redistributable
 vcrun2019 | Microsoft Visual C++ 2019 Redistributable
 vdesktop | Virtual desktop
 vkd3d | Direct3D 12 API on top of Vulkan
+vkd3d-jc141 | Use our master builds of vkd3d 'till we say to stop
 
 ## List of verbs for wineprefix windows version
 
