@@ -389,7 +389,6 @@ vkd3d()
 
 provided_vkd3d()
 {
-    update
     TARGET="vkd3d-proton-master.tar.zst"
     if [ ! -f "$TARGET" ]; then
         echo "Downloading latest vkd3d..."
@@ -414,6 +413,7 @@ vkd3d-jc141()
         vkd3d
     else
         status || return
+        update
         provided_vkd3d
         installed
     fi
