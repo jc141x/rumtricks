@@ -68,9 +68,10 @@ status()
 
 regsvr32()
 {
+    echo "registering dlls"
     for i in "$@"
     do
-    "$WINE" regsvr32 "$i" & "$WINE64" regsvr32 "$i"
+    "$WINE" regsvr32 /s "$i" & "$WINE64" regsvr32 /s "$i"
     done
 }
 
@@ -496,6 +497,20 @@ rumtime64()
     rm rumtime64.tar.zst
     cd "$OLDPWD" || exit
     echo "rumtime64 installed"
+}
+
+directplay()
+{
+    status || return
+    update
+    [ ! -f "directplay.tar.zst" ] && download "$BASE_URL/directplay.tar.zst"
+    check 8e4c467685011ac0818b99333061758f69cc5f0bd0680b83a507c8a6765c79fd || return
+    extract directplay.tar.zst
+    cp -r "$PWD"/directplay/files/drive_c/windows/syswow64/* "$WINEPREFIX/drive_c/windows/syswow64"
+    regedit "$PWD"/directplay/directplay.reg
+    regsvr32 dplayx.dll dpnet.dll dpnhpast.dll dpnhupnp.dll
+    rm -rf "$PWD"/directplay
+    installed
 }
 
 template()

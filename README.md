@@ -47,6 +47,7 @@ name | Description
 cinepak | Cinepak Codec
 corefonts | Microsoft Core fonts
 directshow | Microsoft DirectShow runtime (amstream and quartz)
+directplay | Microsoft Directplay
 directx | Microsoft DirectX End-User Runtime (June 2010)
 dxvk | Vulkan-based translation layer for Direct3D 9/10/11
 dxvk-async | dxvk with async patches
