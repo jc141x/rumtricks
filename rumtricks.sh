@@ -17,9 +17,6 @@ BASE_URL="https://github.com/goldenboy313/rumtricks/raw/main/archives"
 export WINEDLLOVERRIDES="mscoree=d;mshtml=d"
 export WINEDEBUG="-all"
 
-# Hide wineboot pop-up
-export DISPLAY=""
-
 # Support custom Wine versions
 [ -z "$WINE" ] && WINE="$(command -v wine)"
 [ ! -x "$WINE" ] && echo "${WINE} is not an executable, exiting" && exit 1
@@ -47,9 +44,19 @@ extract()
     echo "extracting $1" && tar -xf "$1"
 }
 
+# shellcheck disable=SC2120
+# Hide wineboot pop-up
+wineboot()
+{
+    unset DISPLAY
+    echo "updating prefix"
+    # shellcheck disable=SC2068
+    "$WINE" wineboot $@
+}
+
 update()
 {
-    echo "installing ${FUNCNAME[1]}" && "$WINE" wineboot && "$WINESERVER" -w
+    echo "installing ${FUNCNAME[1]}" && wineboot && "$WINESERVER" -w
 }
 
 installed()
