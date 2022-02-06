@@ -48,15 +48,15 @@ extract()
 }
 
 # Hide wineboot pop-up
-wineboot()
-{
-    echo "updating prefix"
-    DISPLAY="" "$WINE" wineboot $@
-}
+#wineboot()
+
+#    echo "updating prefix"
+#	DISPLAY="" "$WINE" wineboot $@
+
 
 update()
 {
-    echo "installing ${FUNCNAME[1]}" && wineboot && "$WINESERVER" -w
+    echo "installing ${FUNCNAME[1]}" && DISPLAY="" "$WINE" wineboot && "$WINESERVER" -w
 }
 
 installed()
@@ -284,7 +284,7 @@ github_dxvk()
     [ ! -f "$DXVK" ] && download "$DL_URL"
     extract "$DXVK" || { rm "$DXVK" && echo "failed to extract dxvk, skipping" && return 1; }
     cd "${DXVK//.tar.gz/}" || exit
-    ./setup_dxvk.sh install && "$WINESERVER" -w
+    DISPLAY="" ./setup_dxvk.sh install && "$WINESERVER" -w
     cd "$OLDPWD" || exit
     rm -rf "${DXVK//.tar.gz/}"
 }
@@ -294,7 +294,7 @@ dxvk()
     DXVKVER="$(curl -s -m 5 https://api.github.com/repos/doitsujin/dxvk/releases/latest | awk -F '["/]' '/"browser_download_url":/ {print $11}' | cut -c 2-)"; SYSDXVK="$(command -v setup_dxvk 2>/dev/null)"
     dxvk() {
         update
-        [ -n "$SYSDXVK" ] && echo "using local dxvk" && "$SYSDXVK" install --symlink && "$WINESERVER" -w && installed
+        [ -n "$SYSDXVK" ] && echo "using local dxvk" && DISPLAY="" "$SYSDXVK" install --symlink && "$WINESERVER" -w && installed
         [ -z "$SYSDXVK" ] && echo "using dxvk from github" && github_dxvk && echo "$DXVKVER" > "$WINEPREFIX/.dxvk"
     }
     [[ ! -f "$WINEPREFIX/.dxvk" && -z "$(status)" ]] && dxvk
@@ -312,7 +312,7 @@ dxvk-async()
         [ ! -f "$DXVK" ] && download "$DL_URL"
         extract "$DXVK" || { rm "$DXVK" && echo "failed to extract dxvk, skipping" && return 1; }
         cd "${DXVK//.tar.gz/}" || exit
-        chmod +x ./setup_dxvk.sh && ./setup_dxvk.sh install && "$WINESERVER" -w
+        chmod +x ./setup_dxvk.sh && DISPLAY="" ./setup_dxvk.sh install && "$WINESERVER" -w
         cd "$OLDPWD" || exit
         rm -rf "${DXVK//.tar.gz/}"
         installed ; echo "$DXVKVER" > "$WINEPREFIX/.dxvk-async"
@@ -332,7 +332,7 @@ dxvk-custom()
     [ ! -f "$DXVK" ] && download "$DL_URL"
     extract "$DXVK" || { rm "$DXVK" && echo "failed to extract dxvk-custom, skipping" && return 1; }
     cd "${DXVK//.tar.gz/}" || exit
-    [ -f setup_dxvk.sh ] && ./setup_dxvk.sh install && "$WINESERVER" -w
+    [ -f setup_dxvk.sh ] && DISPLAY="" ./setup_dxvk.sh install && "$WINESERVER" -w
     [ ! -f setup_dxvk.sh ] && cd x32 && ./setup_dxvk.sh && "$WINESERVER" -w && cd ..
     [ ! -f setup_dxvk.sh ] && [ "$WINEARCH" = "win64" ] && cd x64 && ./setup_dxvk.sh && "$WINESERVER" -w && cd ..
     cd ..
@@ -380,7 +380,7 @@ github_vkd3d()
     [ ! -f "$VKD3D" ] && download "$DL_URL"
     extract "$VKD3D" || { rm "$VKD3D" && echo "failed to extract vkd3d, skipping" && return 1; }
     cd "${VKD3D//.tar.zst/}" || exit
-    ./setup_vkd3d_proton.sh install && "$WINESERVER" -w
+    DISPLAY="" ./setup_vkd3d_proton.sh install && "$WINESERVER" -w
     cd "$OLDPWD" || exit
     rm -rf "${VKD3D//.tar.zst/}"
 }
@@ -390,7 +390,7 @@ vkd3d()
     VKD3DVER="$(curl -s -m 5 https://api.github.com/repos/HansKristian-Work/vkd3d-proton/releases/latest | awk -F '["/]' '/"browser_download_url":/ {print $11}' | cut -c 2-)"; SYSVKD3D="$(command -v setup_vkd3d_proton)"
     vkd3d() {
         update
-        [ -n "$SYSVKD3D" ] && echo "using local vkd3d" && "$SYSVKD3D" install --symlink && "$WINESERVER" -w && installed
+        [ -n "$SYSVKD3D" ] && echo "using local vkd3d" && DISPLAY="" "$SYSVKD3D" install --symlink && "$WINESERVER" -w && installed
         [ -z "$SYSVKD3D" ] && echo "using vkd3d from github" && github_vkd3d && echo "$VKD3DVER" > "$WINEPREFIX/.vkd3d"
     }
     [[ ! -f "$WINEPREFIX/.vkd3d" && -z "$(status)" ]] && vkd3d
@@ -409,7 +409,7 @@ provided_vkd3d()
     fi
     extract "$TARGET" || { rm "$TARGET" && echo "failed to extract vkd3d, skipping" && return 1; }
     cd "${TARGET//.tar.zst/}" || exit
-    ./setup_vkd3d_proton.sh install && "$WINESERVER" -w
+    DISPLAY="" ./setup_vkd3d_proton.sh install && "$WINESERVER" -w
     cd "$OLDPWD" || exit
     rm -rf "${TARGET//.tar.zst/}"
 }
