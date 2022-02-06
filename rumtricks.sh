@@ -47,13 +47,6 @@ extract()
     echo "extracting $1" && tar -xf "$1"
 }
 
-# Hide wineboot pop-up
-#wineboot()
-
-#    echo "updating prefix"
-#	DISPLAY="" "$WINE" wineboot $@
-
-
 update()
 {
     echo "installing ${FUNCNAME[1]}" && DISPLAY="" "$WINE" wineboot && "$WINESERVER" -w
