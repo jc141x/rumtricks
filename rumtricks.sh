@@ -1,4 +1,7 @@
 #!/bin/bash
+# shellcheck disable=SC2068
+# shellcheck disable=SC2120
+
 [ "$EUID" = "0" ] && exit
 
 # All operations are relative to rumtricks' location
@@ -44,14 +47,11 @@ extract()
     echo "extracting $1" && tar -xf "$1"
 }
 
-# shellcheck disable=SC2120
 # Hide wineboot pop-up
 wineboot()
 {
-    unset DISPLAY
     echo "updating prefix"
-    # shellcheck disable=SC2068
-    "$WINE" wineboot $@
+    DISPLAY="" "$WINE" wineboot $@
 }
 
 update()
