@@ -530,6 +530,20 @@ directplay()
     installed
 }
 
+dotnet35()
+{
+    status || return
+    remove-mono
+    update
+    [ ! -f "dotnet35.tar.zst" ] && download "$BASE_URL/dotnet35.tar.zst"
+    check 146f567c0b4ee080600d2cd7343238058e28008fc0c7d80d968da8611e63563a || return
+    extract dotnet35.tar.zst
+    cp -r "$PWD"/dotnet35/files/drive_c/* "$WINEPREFIX/drive_c/"
+    regedit "$PWD"/dotnet35/dotnet35.reg
+    rm -rf "$PWD/dotnet35"
+    installed
+}
+
 template()
 {
     #update
