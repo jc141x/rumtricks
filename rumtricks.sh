@@ -7,8 +7,8 @@
 # All operations are relative to rumtricks' location
 cd "$(dirname "$(realpath "$0")")" || exit 1
 
-# Base download URL for the archive
-BASE_URL="https://github.com/goldenboy313/rumtricks/raw/main/archives"
+# Base download URL for the archives
+BASE_URL="https://johncena141.eu.org:8141/johncena141/rumtricks/media/branch/main/archives/"
 
 # Use default prefix if nothing is exported
 [ -z "$WINEPREFIX" ] && export WINEPREFIX="$HOME/.wine"
