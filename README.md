@@ -55,6 +55,7 @@ dxvk-custom | install any dxvk version (usage: ./rumtricks.sh dxvk-custom <<< "0
 isolate | Isolate the prefix by removing symbolinks to $HOME
 mf | Microsoft Media Foundation
 mono | Open-source and cross-platform implementation of the .NET Framework
+remove-mono | Remove mono installation from the prefix
 physx | Nvidia PhysX
 quicktime | Apple QuickTime
 update-self | Update rumtricks.sh to the latest version
@@ -68,6 +69,7 @@ vcrun2015 | Microsoft Visual C++ 2015 Redistributable
 vcrun2017 | Microsoft Visual C++ 2017 Redistributable
 vcrun2019 | Microsoft Visual C++ 2019 Redistributable
 vdesktop | Virtual desktop
+vkdestop-d | Disable virtual desktop
 vkd3d | Direct3D 12 API on top of Vulkan
 vkd3d-jc141 | Use our master builds of vkd3d 'till we say to stop
 
