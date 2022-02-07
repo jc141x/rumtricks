@@ -81,7 +81,7 @@ regsvr32()
 update-self()
 {
     echo "updating rumtricks"
-    download "https://github.com/goldenboy313/rumtricks/raw/main/rumtricks.sh"
+    download "https://johncena141.eu.org:8141/johncena141/rumtricks/raw/branch/main/rumtricks.sh"
     chmod +x "$PWD/rumtricks.sh"
     [ "$PWD/rumtricks.sh" != "$(realpath "$0")" ] && mv "$PWD/rumtricks.sh" "$(realpath "$0")"
     echo "done"
@@ -257,6 +257,12 @@ vdesktop()
     echo "explorer /desktop=Game,$(./rres)"
 }
 
+vdesktop-d()
+{
+    [ ! -f "$PWD"/vdesktop-d.reg ] && printf 'Windows Registry Editor Version 5.00\n\n[HKEY_CURRENT_USER\Software\Wine\Explorer]\n"Desktop"=-\n[HKEY_CURRENT_USER\Software\Wine\Explorer\Desktops]\n"Default"=-' > vdesktop-d.reg
+    "$WINE" regedit vdesktop-d.reg
+}
+
 physx()
 {
     status || return
@@ -356,14 +362,22 @@ mono()
         DL_URL="$(curl -s https://api.github.com/repos/madewokherd/wine-mono/releases/latest | awk -F '["]' '/"browser_download_url":/ {print $4}' | awk '/msi/ {print $0}')"
         MONO="$(basename "$DL_URL")"
         [ ! -f "$MONO" ] && download "$DL_URL"
-        OLDMONO="$("$WINE" uninstaller --list | grep 'Wine Mono' | cut -f1 -d\|)"
-        [ -n "$OLDMONO" ] && echo "removing old mono" && for i in $OLDMONO; do "$WINE" uninstaller --remove "$i"; done
+        for i in $("$WINE" uninstaller --list | awk -F '[|]' '/Wine Mono/ {print $1}'); do "$WINE" uninstaller --remove "$i"; done
         "$WINE" msiexec /i "$MONO"
         installed ; echo "$MONOVER" > "$WINEPREFIX/.mono"
     }
     [[ -z "$(awk '/mono/ {print $1}' "$WINEPREFIX/rumtricks.log" 2>/dev/null)" ]] && mono
     [[ -f "$WINEPREFIX/.mono" && -n "$MONOVER" && "$MONOVER" != "$(awk '{print $1}' "$WINEPREFIX/.mono")" ]] && { rm -f wine-mono-*.msi || true; } && echo "updating mono" && mono
     echo "mono is up-to-date"
+}
+
+remove-mono()
+{
+    status || return
+    update
+    echo "removing mono"
+    for i in $("$WINE" uninstaller --list | awk -F '[|]' '/Wine Mono/ {print $1}'); do "$WINE" uninstaller --remove "$i"; done
+    installed
 }
 
 github_vkd3d()
