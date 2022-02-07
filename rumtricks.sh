@@ -375,6 +375,7 @@ remove-mono()
 {
     echo "removing mono"
     for i in $("$WINE" uninstaller --list | awk -F '[|]' '/Wine Mono/ {print $1}'); do "$WINE" uninstaller --remove "$i"; done
+    echo "mono removed"
 }
 
 github_vkd3d()
