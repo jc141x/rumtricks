@@ -362,7 +362,7 @@ mono()
         DL_URL="$(curl -s https://api.github.com/repos/madewokherd/wine-mono/releases/latest | awk -F '["]' '/"browser_download_url":/ {print $4}' | awk '/msi/ {print $0}')"
         MONO="$(basename "$DL_URL")"
         [ ! -f "$MONO" ] && download "$DL_URL"
-        for i in $("$WINE" uninstaller --list | awk -F '[|]' '/Wine Mono/ {print $1}'); do "$WINE" uninstaller --remove "$i"; done
+        remove-mono
         "$WINE" msiexec /i "$MONO"
         installed ; echo "$MONOVER" > "$WINEPREFIX/.mono"
     }
@@ -373,11 +373,8 @@ mono()
 
 remove-mono()
 {
-    status || return
-    update
     echo "removing mono"
     for i in $("$WINE" uninstaller --list | awk -F '[|]' '/Wine Mono/ {print $1}'); do "$WINE" uninstaller --remove "$i"; done
-    installed
 }
 
 github_vkd3d()
