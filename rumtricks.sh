@@ -259,7 +259,7 @@ vdesktop()
 
 vdesktop-d()
 {
-    [ ! -f "$PWD"/vdesktop-d.reg ] && printf 'Windows Registry Editor Version 5.00\n\n[HKEY_CURRENT_USER\Software\Wine\Explorer]\n"Desktop"=-\n[HKEY_CURRENT_USER\Software\Wine\Explorer\Desktops]\n"Default"=-' > vdesktop-d.reg
+    [ ! -f "$PWD"/vdesktop-d.reg ] && printf 'Windows Registry Editor Version 5.00\n\n[HKEY_CURRENT_USER\Software\Wine\\Explorer]\n"Desktop"=\n[HKEY_CURRENT_USER\Software\Wine\\Explorer\Desktops]\n"Default"=-' > vdesktop-d.reg
     "$WINE" regedit vdesktop-d.reg
 }
 
