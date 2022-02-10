@@ -109,8 +109,8 @@ We welcome any type of contribution, not only code. You can help with:
 - **Suggestions**: Give suggestions on what to add next.
 - **QA**: Send bug reports, the more details you can give the better. (e.g. console logs)
 
+<br>
 <div align="center">
   <img src="https://i.postimg.cc/bvj89mLW/434.png">
 </div>
-<br>
 Donations (Monero): 4ABGQLAeAgiauvay11VRrWXRRtraRCU6oaC6uG9RUnNCHN4eepzWjEB6sHF92sUrSED5b8GyY7Ayh57R1jUdcKZg7is2DW3
