@@ -115,5 +115,5 @@ We welcome any type of contribution, not only code. You can help with:
 - **Code**: Take a look at the [open issues](https://github.com/goldenboy313/rumtricks/issues).
 
 <div align="center">
-  <h1>johncena141 hacker group production</h1>
+  <img src="https://i.postimg.cc/bvj89mLW/434.png">
 </div>
