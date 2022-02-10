@@ -6,8 +6,6 @@
   Installer-less proper alternative to winetricks focused on speed and reliability.
 </p>
 
-![reposize](https://img.shields.io/github/repo-size/goldenboy313/rumtricks)![lines](https://img.shields.io/tokei/lines/github/goldenboy313/rumtricks)![licence](https://img.shields.io/github/license/goldenboy313/rumtricks)![lastcommit](https://img.shields.io/github/last-commit/goldenboy313/rumtricks)[![Matrix](https://matrix.to/img/matrix-badge.svg)](https://matrix.to/#/!SlYhhmreXjJylcsjfn:tedomum.net?via=matrix.org&via=tedomum.net)
-
 ## Features
 
 * Stability: not relying on exes to install means better reliability
