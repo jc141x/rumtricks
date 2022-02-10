@@ -21,7 +21,7 @@
 
 Rumtricks AUR and MPR package is planned to be released in the near future.
 
-Make sure you have `Wine` and `Zstd` installed before you continue.
+Make sure you have `wine` and `zstd` installed before you continue.
 
 You can download rumtricks with this simple one liner:
 
@@ -110,10 +110,11 @@ Thank you for considering contributing to Rumtricks!
 If you would like to participate, you are welcome on our [matrix](https://matrix.to/#/!SlYhhmreXjJylcsjfn:tedomum.net?via=matrix.org&via=envs.net&via=tedomum.net) room.
 
 We welcome any type of contribution, not only code. You can help with:
-- **Suggestions**: Give suggestions on what to add next
-- **QA**: File bug reports, the more details you can give the better (e.g. console logs)
-- **Code**: Take a look at the [open issues](https://github.com/goldenboy313/rumtricks/issues).
+- **Suggestions**: Give suggestions on what to add next.
+- **QA**: File bug reports, the more details you can give the better. (e.g. console logs)
 
 <div align="center">
   <img src="https://i.postimg.cc/bvj89mLW/434.png">
 </div>
+
+Donations (Monero): 4ABGQLAeAgiauvay11VRrWXRRtraRCU6oaC6uG9RUnNCHN4eepzWjEB6sHF92sUrSED5b8GyY7Ayh57R1jUdcKZg7is2DW3
