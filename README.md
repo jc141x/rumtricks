@@ -103,15 +103,13 @@ win20 | Set wineprefix version to Windows 2.0 (32bit only)
 * [ ] dotnet 1.1-4.8
 * [ ] xna40
 
-## Contributing [![contributions](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)](https://github.com/goldenboy313/rumtricks/issues)[![Matrix](https://matrix.to/img/matrix-badge.svg)](https://matrix.to/#/!SlYhhmreXjJylcsjfn:tedomum.net?via=matrix.org&via=tedomum.net)
-
-Thank you for considering contributing to Rumtricks!
+## Contributing
 
 If you would like to participate, you are welcome on our [matrix](https://matrix.to/#/!SlYhhmreXjJylcsjfn:tedomum.net?via=matrix.org&via=envs.net&via=tedomum.net) room.
 
 We welcome any type of contribution, not only code. You can help with:
 - **Suggestions**: Give suggestions on what to add next.
-- **QA**: File bug reports, the more details you can give the better. (e.g. console logs)
+- **QA**: Send bug reports, the more details you can give the better. (e.g. console logs)
 
 <div align="center">
   <img src="https://i.postimg.cc/bvj89mLW/434.png">
