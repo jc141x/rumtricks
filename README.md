@@ -24,7 +24,7 @@ Make sure you have `wine` and `zstd` installed before you continue.
 You can download rumtricks with this simple one liner:
 
 ```bash
-wget https://raw.githubusercontent.com/goldenboy313/rumtricks/main/rumtricks.sh
+wget https://johncena141.eu.org:8141/johncena141/rumtricks/raw/branch/main/rumtricks.sh
 ```
 
 The script will be placed in the root of the directory you ran the command from.
