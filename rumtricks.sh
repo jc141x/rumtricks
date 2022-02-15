@@ -8,7 +8,7 @@
 cd "$(dirname "$(realpath "$0")")" || exit 1
 
 # Base download URL for the archives
-BASE_URL="https://johncena141.eu.org:8141/johncena141/rumtricks/media/branch/main/archives/"
+BASE_URL="https://johncena141.eu.org:8141/johncena141/rumtricks/media/branch/main/archives"
 
 # Use default prefix if nothing is exported
 [ -z "$WINEPREFIX" ] && export WINEPREFIX="$HOME/.wine"
@@ -101,6 +101,8 @@ isolate()
             mkdir -p "$entry"
         fi
     done
+    rm -rf "$PWD/AppData/Roaming/Microsoft/Windows/Templates"
+    mkdir -p "$PWD/AppData/Roaming/Microsoft/Windows/Templates"
     cd "$OLDPWD" || exit
     installed
 }
