@@ -231,7 +231,7 @@ vcrun2019()
     status || return
     update
     [ ! -f "vcrun2019.tar.zst" ] && download "$BASE_URL/vcrun2019.tar.zst"
-    check c3af3a1760dbeb0aa7c57e45a00e972a98a20600a2412e896778bc214d6e9bbf || return
+    check 0a04b662319a9344f42efc70168990b0085b9e42fea43568ab224b73b2ca08bb || return
     extract vcrun2019.tar.zst
     cp -r "$PWD"/vcrun2019/files/drive_c/windows/* "$WINEPREFIX/drive_c/windows/"
     regedit "$PWD"/vcrun2019/vcrun2019.reg
@@ -261,8 +261,9 @@ vdesktop()
 
 vdesktop-d()
 {
-    [ ! -f "$PWD"/vdesktop-d.reg ] && printf 'Windows Registry Editor Version 5.00\n\n[HKEY_CURRENT_USER\Software\Wine\\Explorer]\n"Desktop"=\n[HKEY_CURRENT_USER\Software\Wine\\Explorer\Desktops]\n"Default"=-' > vdesktop-d.reg
+    [ ! -f "$PWD"/vdesktop-d.reg ] && printf 'Windows Registry Editor Version 5.00\n\n[HKEY_CURRENT_USER\Software\Wine\\Explorer]\n"Desktop"=-\n[HKEY_CURRENT_USER\Software\Wine\\Explorer\Desktops]\n"Default"=-' > vdesktop-d.reg
     "$WINE" regedit vdesktop-d.reg
+    rm vdesktop-d.reg
 }
 
 physx()
