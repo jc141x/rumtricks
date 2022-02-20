@@ -718,3 +718,4 @@ for i in "$@"
 do
    "$i"
 done
+killall wineserver
