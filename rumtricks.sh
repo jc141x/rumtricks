@@ -121,6 +121,7 @@ directx()
     regsvr32 xaudio2_0.dll xaudio2_1.dll xaudio2_2.dll xaudio2_3.dll xaudio2_4.dll xaudio2_5.dll xaudio2_6.dll xaudio2_7.dll
     rm -rf "$PWD"/directx
     installed
+    killall wineserver
 }
 
 vcrun2003()
@@ -251,6 +252,7 @@ mf()
     regsvr32 colorcnv.dll msmpeg2adec.dll msmpeg2vdec.dll
     rm -rf "$PWD"/mf
     installed
+    killall wineserver
 }
 
 vdesktop()
@@ -355,6 +357,7 @@ wmp11()
     regsvr32 dispex.dll jscript.dll scrobj.dll scrrun.dll vbscript.dll wshcon.dll wshext.dll
     rm -rf "$PWD"/wmp11
     installed
+    killall wineserver
 }
 
 mono()
@@ -450,6 +453,7 @@ directshow()
     regsvr32 amstream.dll qasf.dll qcap.dll qdvd.dll qedit.dll quartz.dll
     rm -rf "$PWD"/directshow
     installed
+    killall wineserver
 }
 
 cinepak()
@@ -529,6 +533,7 @@ directplay()
     regsvr32 dplayx.dll dpnet.dll dpnhpast.dll dpnhupnp.dll
     rm -rf "$PWD"/directplay
     installed
+    killall wineserver
 }
 
 dotnet35()
@@ -718,4 +723,3 @@ for i in "$@"
 do
    "$i"
 done
-killall wineserver
