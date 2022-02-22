@@ -75,8 +75,8 @@ regsvr32()
     for i in "$@"
     do
     "$WINE" regsvr32 /s "$i" & "$WINE64" regsvr32 /s "$i"
-    "$WINESERVER" -w
     done
+    "$WINESERVER" -w
 }
 
 update-self()
