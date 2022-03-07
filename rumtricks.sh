@@ -687,6 +687,53 @@ win20()
     installed
 }
 
+wine-jc141()
+{
+WINEJC="groot"
+VERSION_FILE=".wine-jc141-current-version"
+latest_release="$(curl -s https://johncena141.eu.org:8141/api/v1/repos/johncena141/wine-jc141/releases?limit=1)"
+tag_name=$(echo "$latest_release" | yq -r  '[.[].tag_name][0]')
+update=1
+if [ -d "$WINEJC/wine" ]; then
+    if [ -f "$VERSION_FILE" ]; then
+        version=$(cat "$VERSION_FILE")
+        # Is the version the same? Do not download again,
+        # we set update to 0
+        if [ "$tag_name" = "$version" ]; then
+            echo "INFO: You have the latest wine version ($version)."
+            update=0
+        else
+            echo "INFO: New version found! Updating.."
+        fi
+    fi
+fi
+if [ "$update" -eq "1" ]; then
+    download_url=$(echo "$latest_release" | yq -r  '[.[].assets[0].browser_download_url][0]')
+    if [ "$download_url" = "null" ]; then
+        echo "ERROR: Could not find the download URL. Abort"
+        exit 1
+    fi
+
+    # Store version file
+    echo "$tag_name" > "$VERSION_FILE"
+    echo "Downloading... $download_url"
+
+    # Clean existing downloaded file (just in case)
+    DOWNLOAD_FILE=wine.tar.zst
+    rm -f "$DOWNLOAD_FILE"
+
+    # Start download
+    [ ! -f "$WINEJC/$DOWNLOAD_FILE" ] && wget -O "$DOWNLOAD_FILE" "$download_url"
+    if [ -d "$WINEJC/wine-backup" ]; then mv "$WINEJC/wine-backup" "$WINEJC/wine-old"; fi
+    if [ -d "$WINEJC/wine" ]; then mv "$WINEJC/wine" "$WINEJC/wine-backup"; fi
+
+    # Extract & clean-up
+    echo "extracting wine-jc141"
+    tar -xvf "$DOWNLOAD_FILE" && mv "wine" "$WINEJC/wine"
+    rm -rf "$WINEJC/wine-old" && rm -f "$WINEJC/$DOWNLOAD_FILE"
+fi
+}
+
 # Running rumtricks
 [ $# = 0 ] && echo "add rumtricks" && exit 1
 for i in "$@"
