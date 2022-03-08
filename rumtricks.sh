@@ -729,7 +729,7 @@ if [ "$update" -eq "1" ]; then
 
     # Extract & clean-up
     echo "extracting wine-jc141"
-    tar -xvf "$DOWNLOAD_FILE" && mv "wine" "$WINEJC/wine"
+    tar -xvf "$DOWNLOAD_FILE" && mv "$PWD/wine" "$WINEJC/wine"
     rm -rf "$WINEJC/wine-old" && rm -f "$WINEJC/$DOWNLOAD_FILE"
 fi
 }
