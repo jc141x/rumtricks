@@ -37,6 +37,21 @@ download()
     command -v curl >/dev/null 2>&1 && curl -LO "$1" && return
 }
 
+check_connectivity() {
+
+    local test_ip
+    local test_count
+
+    test_ip="johncena141.eu.org"
+    test_count=1
+
+    if ping -c ${test_count} ${test_ip} > /dev/null; then
+       echo "Have internet connectivity"
+    else
+       echo "Do not have connectivity" && exit 1
+    fi
+ }
+
 regedit()
 {
     echo "adding registry" && "$WINE" regedit "$1" & "$WINE64" regedit "$1" && "$WINESERVER" -w
@@ -689,6 +704,7 @@ win20()
 
 wine-jc141()
 {
+check_connectivity
 WINEJC="groot"
 VERSION_FILE="$PWD/.wine-jc141-current-version"
 latest_release="$(curl -s https://johncena141.eu.org:8141/api/v1/repos/johncena141/wine-jc141/releases?limit=1)"
