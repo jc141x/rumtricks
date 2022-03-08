@@ -690,7 +690,7 @@ win20()
 wine-jc141()
 {
 WINEJC="groot"
-VERSION_FILE=".wine-jc141-current-version"
+VERSION_FILE="$PWD/.wine-jc141-current-version"
 latest_release="$(curl -s https://johncena141.eu.org:8141/api/v1/repos/johncena141/wine-jc141/releases?limit=1)"
 tag_name=$(echo "$latest_release" | yq -r  '[.[].tag_name][0]')
 update=1
