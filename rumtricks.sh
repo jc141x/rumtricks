@@ -1,9 +1,5 @@
 #!/bin/bash
-# shellcheck disable=SC2068
-# shellcheck disable=SC2120
-
 [ "$EUID" = "0" ] && exit
-
 # All operations are relative to rumtricks' location
 cd "$(dirname "$(realpath "$0")")" || exit 1
 
@@ -708,7 +704,7 @@ check_connectivity
 WINEJC="groot"
 VERSION_FILE="$PWD/.wine-jc141-current-version"
 latest_release="$(curl -s https://johncena141.eu.org:8141/api/v1/repos/johncena141/wine-jc141/releases?limit=1)"
-tag_name=$(echo "$latest_release" | yq -r  '[.[].tag_name][0]')
+tag_name=$(echo "$latest_release" | jq -r  '[.[].tag_name][0]')
 update=1
 if [ -d "$WINEJC/wine" ]; then
     if [ -f "$VERSION_FILE" ]; then
@@ -724,7 +720,7 @@ if [ -d "$WINEJC/wine" ]; then
     fi
 fi
 if [ "$update" -eq "1" ]; then
-    download_url=$(echo "$latest_release" | yq -r  '[.[].assets[0].browser_download_url][0]')
+    download_url=$(echo "$latest_release" | jq -r  '[.[].assets[0].browser_download_url][0]')
     if [ "$download_url" = "null" ]; then
         echo "ERROR: Could not find the download URL. Abort"
         exit 1
