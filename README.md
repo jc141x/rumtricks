@@ -10,7 +10,6 @@
 
 * Stability: not relying on exes to install means better reliability
 * Small size: uses ZSTD to compress and decompress files
-* Download speed: downloads fast from a github repository
 * Hash check: checking hashes to be sure our installation works
 * Install speed: everything installs faster due to minimal and better code
 * Dependencies: depends only on wine and zstd
