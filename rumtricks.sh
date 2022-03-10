@@ -689,7 +689,7 @@ wget -q --tries=2 --timeout=10 https://johncena141.eu.org:8141 -O /tmp/johncena1
 JQ="$(command -v jq)"; [ ! -x "$JQ" ] && exit 1 && echo "ERROR: jq not found, skipping updates. (read the requirements guide)" || echo "INFO: jq found"
 WINEJC="groot"; VERSION_FILE="$PWD/.wine-jc141-current-version"; LATEST_WINE="$(curl -s https://johncena141.eu.org:8141/api/v1/repos/johncena141/wine-jc141/releases?limit=1)"; TAGVERS=$(echo "$LATEST_WINE" | jq -r  '[.[].tag_name][0]'); UPDATE_STATE=1
 
-[ -f "$VERSION_FILE" ] && version=$(cat "$VERSION_FILE") && [ "$TAGVERS" = "$version" ] && echo "INFO: You have the latest wine version ($version)."; UPDATE_STATE=0 || echo "INFO: New version found! Updating.."
+[ -f "$VERSION_FILE" ] && VERSION=$(cat "$VERSION_FILE") && [ "$TAGVERS" = "$VERSION" ] && echo "INFO: You have the latest wine version ($version)."; UPDATE_STATE=0 || echo "INFO: New version found! Updating.."
 [ "$UPDATE_STATE" -eq "1" ] && DOWNLOAD_URL=$(echo "$LATEST_WINE" | jq -r  '[.[].assets[0].browser_download_url][0]')
 [ "$DOWNLOAD_URL" = "null" ] && echo "ERROR: Could not find the download URL. Abort" || exit 1
 echo "$TAGVERS" > "$VERSION_FILE"; echo "INFO: Downloading... $DOWNLOAD_URL"
