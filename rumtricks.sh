@@ -705,12 +705,12 @@ JQ="$(command -v jq)"; [ ! -x "$JQ" ] && exit 1 && echo "ERROR: jq not found, sk
 WINEJC="groot"; VERSION_FILE="$PWD/.wine-jc141-current-version"; LATEST_WINE="$(curl -s https://johncena141.eu.org:8141/api/v1/repos/johncena141/wine-jc141/releases?limit=1)"; TAGVERS=$(echo "$LATEST_WINE" | jq -r  '[.[].tag_name][0]'); UPDATE_STATE=1
 
 [ -f "$VERSION_FILE" ] && version=$(cat "$VERSION_FILE") && [ "$TAGVERS" = "$version" ] && echo "INFO: You have the latest wine version ($version)."; UPDATE_STATE=0 || echo "INFO: New version found! Updating.."
-[ "$UPDATE_STATE" -eq "1" ] && download_url=$(echo "$LATEST_WINE" | jq -r  '[.[].assets[0].browser_download_url][0]')
-[ "$download_url" = "null" ] && echo "ERROR: Could not find the download URL. Abort" || exit 1
-echo "$TAGVERS" > "$VERSION_FILE"; echo "INFO: Downloading... $download_url"
+[ "$UPDATE_STATE" -eq "1" ] && DOWNLOAD_URL=$(echo "$LATEST_WINE" | jq -r  '[.[].assets[0].browser_download_url][0]')
+[ "$DOWNLOAD_URL" = "null" ] && echo "ERROR: Could not find the download URL. Abort" || exit 1
+echo "$TAGVERS" > "$VERSION_FILE"; echo "INFO: Downloading... $DOWNLOAD_URL"
 
 DOWNLOAD_FILE=wine.tar.zst; rm -f "$DOWNLOAD_FILE"
-[ ! -f "$WINEJC/$DOWNLOAD_FILE" ] && wget -O "$DOWNLOAD_FILE" "$download_url"
+[ ! -f "$WINEJC/$DOWNLOAD_FILE" ] && wget -O "$DOWNLOAD_FILE" "$DOWNLOAD_URL"
 [ -d "$WINEJC/wine-backup" ] &&  mv "$WINEJC/wine-backup" "$WINEJC/wine-old"
 [ -d "$WINEJC/wine" ] && mv "$WINEJC/wine" "$WINEJC/wine-backup"
 
