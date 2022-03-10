@@ -42,25 +42,25 @@ check_connectivity() {
     test_count=1
 
     if ping -c ${test_count} ${test_ip} > /dev/null; then
-       echo "Have internet connectivity"
+       echo "INFO: Internet connectivity present"
     else
-       echo "Do not have connectivity" && exit 1
+       echo "INFO: Internet connectivity not present" && exit 1
     fi
  }
 
 regedit()
 {
-    echo "adding registry" && "$WINE" regedit "$1" & "$WINE64" regedit "$1" && "$WINESERVER" -w
+    echo "INFO: Adding registry" && "$WINE" regedit "$1" & "$WINE64" regedit "$1" && "$WINESERVER" -w
 }
 
 extract()
 {
-    echo "extracting $1" && tar -xf "$1"
+    echo "INFO: Extracting $1" && tar -xf "$1"
 }
 
 update()
 {
-    echo "installing ${FUNCNAME[1]}" && DISPLAY="" "$WINE" wineboot && "$WINESERVER" -w
+    echo "INFO: Installing ${FUNCNAME[1]}" && DISPLAY="" "$WINE" wineboot && "$WINESERVER" -w
 }
 
 installed()
@@ -72,7 +72,7 @@ installed()
 check()
 {
     echo "$1  ${FUNCNAME[1]}.tar.zst" | sha256sum -c -
-    [ $? -ne 1 ] || { echo "archive is corrupted, skipping" && rm "${FUNCNAME[1]}".tar.zst && return 1; }
+    [ $? -ne 1 ] || { echo "ERROR: Archive is corrupted, skipping" && rm "${FUNCNAME[1]}".tar.zst && return 1; }
 }
 
 status()
@@ -82,7 +82,7 @@ status()
 
 regsvr32()
 {
-    echo "registering dlls"
+    echo "INFO: Registering dlls"
     for i in "$@"
     do
     "$WINE" regsvr32 /s "$i" & "$WINE64" regsvr32 /s "$i"
@@ -92,18 +92,18 @@ regsvr32()
 
 update-self()
 {
-    echo "updating rumtricks"
+    echo "INFO: Updating rumtricks"
     download "https://johncena141.eu.org:8141/johncena141/rumtricks/raw/branch/main/rumtricks.sh"
     chmod +x "$PWD/rumtricks.sh"
     [ "$PWD/rumtricks.sh" != "$(realpath "$0")" ] && mv "$PWD/rumtricks.sh" "$(realpath "$0")"
-    echo "done"
+    echo "INFO: Updated rumtricks"
 }
 
 isolate()
 {
     status || return
     update
-    echo "disabling desktop integrations"
+    echo "INFO: Disabling desktop integrations (isolation)"
     cd "$WINEPREFIX/drive_c/users/${USER}" || exit
     for entry in *
     do
@@ -296,7 +296,7 @@ github_dxvk()
     DL_URL="$(curl -s https://api.github.com/repos/doitsujin/dxvk/releases/latest | awk -F '["]' '/"browser_download_url":/ {print $4}')"
     DXVK="$(basename "$DL_URL")"
     [ ! -f "$DXVK" ] && download "$DL_URL"
-    extract "$DXVK" || { rm "$DXVK" && echo "failed to extract dxvk, skipping" && return 1; }
+    extract "$DXVK" || { rm "$DXVK" && echo "ERROR: Failed to extract dxvk, skipping" && return 1; }
     cd "${DXVK//.tar.gz/}" || exit
     DISPLAY="" ./setup_dxvk.sh install && "$WINESERVER" -w
     cd "$OLDPWD" || exit
@@ -308,12 +308,12 @@ dxvk()
     DXVKVER="$(curl -s -m 5 https://api.github.com/repos/doitsujin/dxvk/releases/latest | awk -F '["/]' '/"browser_download_url":/ {print $11}' | cut -c 2-)"; SYSDXVK="$(command -v setup_dxvk 2>/dev/null)"
     dxvk() {
         update
-        [ -n "$SYSDXVK" ] && echo "using local dxvk" && DISPLAY="" "$SYSDXVK" install --symlink && "$WINESERVER" -w && installed
-        [ -z "$SYSDXVK" ] && echo "using dxvk from github" && github_dxvk && echo "$DXVKVER" > "$WINEPREFIX/.dxvk"
+        [ -n "$SYSDXVK" ] && echo "INFO: Using local dxvk" && DISPLAY="" "$SYSDXVK" install --symlink && "$WINESERVER" -w && installed
+        [ -z "$SYSDXVK" ] && echo "INFO: Using dxvk from github" && github_dxvk && echo "$DXVKVER" > "$WINEPREFIX/.dxvk"
     }
     [[ ! -f "$WINEPREFIX/.dxvk" && -z "$(status)" ]] && dxvk
     [[ -f "$WINEPREFIX/.dxvk" && -n "$DXVKVER" && "$DXVKVER" != "$(awk '{print $1}' "$WINEPREFIX/.dxvk")" ]] && { rm -f dxvk-*.tar.gz || true; } && echo "updating dxvk" && dxvk
-    echo "dxvk is up-to-date"
+    echo "INFO: dxvk is up-to-date"
 }
 
 dxvk-async()
@@ -324,7 +324,7 @@ dxvk-async()
         DL_URL="$(curl -s https://api.github.com/repos/Sporif/dxvk-async/releases/latest | awk -F '["]' '/"browser_download_url":/ {print $4}')"
         DXVK="$(basename "$DL_URL")"
         [ ! -f "$DXVK" ] && download "$DL_URL"
-        extract "$DXVK" || { rm "$DXVK" && echo "failed to extract dxvk, skipping" && return 1; }
+        extract "$DXVK" || { rm "$DXVK" && echo "ERROR: Failed to extract dxvk, skipping" && return 1; }
         cd "${DXVK//.tar.gz/}" || exit
         chmod +x ./setup_dxvk.sh && DISPLAY="" ./setup_dxvk.sh install && "$WINESERVER" -w
         cd "$OLDPWD" || exit
@@ -333,7 +333,7 @@ dxvk-async()
     }
     [[ -z "$(status)" ]] && dxvk-async
     [[ -f "$WINEPREFIX/.dxvk-async" && -n "$DXVKVER" && "$DXVKVER" != "$(awk '{print $1}' "$WINEPREFIX/.dxvk-async")" ]] && { rm -f dxvk-async-*.tar.gz || true; } && echo "updating dxvk-async" && dxvk-async
-    echo "dxvk-async is up-to-date"
+    echo "INFO: dxvk-async is up-to-date"
 }
 
 dxvk-custom()
@@ -344,7 +344,7 @@ dxvk-custom()
     DL_URL="https://github.com/doitsujin/dxvk/releases/download/v$DXVKVER/dxvk-$DXVKVER.tar.gz"
     DXVK="$(basename "$DL_URL")"
     [ ! -f "$DXVK" ] && download "$DL_URL"
-    extract "$DXVK" || { rm "$DXVK" && echo "failed to extract dxvk-custom, skipping" && return 1; }
+    extract "$DXVK" || { rm "$DXVK" && echo "ERROR: Failed to extract dxvk-custom, skipping" && return 1; }
     cd "${DXVK//.tar.gz/}" || exit
     [ -f setup_dxvk.sh ] && DISPLAY="" ./setup_dxvk.sh install && "$WINESERVER" -w
     [ ! -f setup_dxvk.sh ] && cd x32 && ./setup_dxvk.sh && "$WINESERVER" -w && cd ..
@@ -383,14 +383,14 @@ mono()
     }
     [[ -z "$(awk '/mono/ {print $1}' "$WINEPREFIX/rumtricks.log" 2>/dev/null)" ]] && mono
     [[ -f "$WINEPREFIX/.mono" && -n "$MONOVER" && "$MONOVER" != "$(awk '{print $1}' "$WINEPREFIX/.mono")" ]] && { rm -f wine-mono-*.msi || true; } && echo "updating mono" && mono
-    echo "mono is up-to-date"
+    echo "INFO: mono is up-to-date"
 }
 
 remove-mono()
 {
-    echo "removing mono"
+    echo "INFO: Removing mono"
     for i in $("$WINE" uninstaller --list | awk -F '[|]' '/Wine Mono/ {print $1}'); do "$WINE" uninstaller --remove "$i"; done
-    echo "mono removed"
+    echo "INFO: Mono removed"
 }
 
 github_vkd3d()
@@ -398,7 +398,7 @@ github_vkd3d()
     DL_URL="$(curl -s https://api.github.com/repos/HansKristian-Work/vkd3d-proton/releases/latest | awk -F '["]' '/"browser_download_url":/ {print $4}')"
     VKD3D="$(basename "$DL_URL")"
     [ ! -f "$VKD3D" ] && download "$DL_URL"
-    extract "$VKD3D" || { rm "$VKD3D" && echo "failed to extract vkd3d, skipping" && return 1; }
+    extract "$VKD3D" || { rm "$VKD3D" && echo "ERROR: Failed to extract vkd3d, skipping" && return 1; }
     cd "${VKD3D//.tar.zst/}" || exit
     DISPLAY="" ./setup_vkd3d_proton.sh install && "$WINESERVER" -w
     cd "$OLDPWD" || exit
@@ -410,24 +410,24 @@ vkd3d()
     VKD3DVER="$(curl -s -m 5 https://api.github.com/repos/HansKristian-Work/vkd3d-proton/releases/latest | awk -F '["/]' '/"browser_download_url":/ {print $11}' | cut -c 2-)"; SYSVKD3D="$(command -v setup_vkd3d_proton)"
     vkd3d() {
         update
-        [ -n "$SYSVKD3D" ] && echo "using local vkd3d" && DISPLAY="" "$SYSVKD3D" install --symlink && "$WINESERVER" -w && installed
-        [ -z "$SYSVKD3D" ] && echo "using vkd3d from github" && github_vkd3d && echo "$VKD3DVER" > "$WINEPREFIX/.vkd3d"
+        [ -n "$SYSVKD3D" ] && echo "INFO: Using local vkd3d" && DISPLAY="" "$SYSVKD3D" install --symlink && "$WINESERVER" -w && installed
+        [ -z "$SYSVKD3D" ] && echo "INFO: Using vkd3d from github" && github_vkd3d && echo "$VKD3DVER" > "$WINEPREFIX/.vkd3d"
     }
     [[ ! -f "$WINEPREFIX/.vkd3d" && -z "$(status)" ]] && vkd3d
     [[ -f "$WINEPREFIX/.vkd3d" && -n "$VKD3DVER" && "$VKD3DVER" != "$(awk '{print $1}' "$WINEPREFIX/.vkd3d")" ]] && { rm -f vkd3d-proton-*.tar.zst || true; } && echo "updating vkd3d" && vkd3d
-    echo "vkd3d is up-to-date"
+    echo "INFO: vkd3d is up-to-date"
 }
 
 provided_vkd3d()
 {
     TARGET="vkd3d-proton-master.tar.zst"
     if [ ! -f "$TARGET" ]; then
-        echo "Downloading latest vkd3d..."
+        echo "INFO: Downloading latest vkd3d..."
         DL_URL="$(curl -s 'https://johncena141.eu.org:8141/api/v1/repos/johncena141/vkd3d-jc141/releases?draft=false&pre-release=false&limit=1' -H 'accept: application/json' | jq '.[].assets[0].browser_download_url' | awk -F'"' '{print $2}')"
-        [ -z "$DL_URL" ] && { echo "couldn't get the latest vkd3d build; skipping"; return 1; }
+        [ -z "$DL_URL" ] && { echo "ERROR: Couldn't download latest vkd3d"; return 1; }
         curl -L "$DL_URL" -o "$TARGET"
     fi
-    extract "$TARGET" || { rm "$TARGET" && echo "failed to extract vkd3d, skipping" && return 1; }
+    extract "$TARGET" || { rm "$TARGET" && echo "ERROR: Failed to extract vkd3d" && return 1; }
     cd "${TARGET//.tar.zst/}" || exit
     DISPLAY="" ./setup_vkd3d_proton.sh install && "$WINESERVER" -w
     cd "$OLDPWD" || exit
@@ -536,7 +536,7 @@ template()
     #update
     #[ ! -f "template.tar.zst" ] && download "$BASE_URL/template.tar.zst"
     #check 2bcf9852b02f6e707905f0be0a96542225814a3fc19b3b9dcf066f4dd2781337
-    #[ $? -eq 1 ] && echo "download is corrupted (invalid hash), skipping" && rm template.tar.zst && return
+    #[ $? -eq 1 ] && echo "ERROR: Download is corrupted (invalid hash), skipping" && rm template.tar.zst && return
     #extract template.tar.zst
     #cp -r "$PWD"/template/files/drive_c/windows/* "$WINEPREFIX/drive_c/windows/"
     #regedit "$PWD"/template/template.reg
@@ -701,7 +701,7 @@ win20()
 wine-jc141()
 {
 check_connectivity
-JQ="$(command -v jq)"; [ ! -x "$JQ" ] && exit 1 && echo "jq not found, skipping updates" || echo "jq found"
+JQ="$(command -v jq)"; [ ! -x "$JQ" ] && exit 1 && echo "ERROR: jq not found, skipping updates. (read the requirements guide)" || echo "INFO: jq found"
 WINEJC="groot"; VERSION_FILE="$PWD/.wine-jc141-current-version"
 latest_release="$(curl -s https://johncena141.eu.org:8141/api/v1/repos/johncena141/wine-jc141/releases?limit=1)"
 tag_name=$(echo "$latest_release" | jq -r  '[.[].tag_name][0]')
@@ -726,7 +726,7 @@ if [ "$update" -eq "1" ]; then
 
     # Store version file
     echo "$tag_name" > "$VERSION_FILE"
-    echo "Downloading... $download_url"
+    echo "INFO: Downloading... $download_url"
 
     # Clean existing downloaded file (just in case)
     DOWNLOAD_FILE=wine.tar.zst
@@ -738,14 +738,14 @@ if [ "$update" -eq "1" ]; then
     if [ -d "$WINEJC/wine" ]; then mv "$WINEJC/wine" "$WINEJC/wine-backup"; fi
 
     # Extract & clean-up
-    echo "extracting wine-jc141"
+    echo "INFO: Extracting wine-jc141"
     tar -xvf "$DOWNLOAD_FILE" && mv "$PWD/wine" "$WINEJC/wine"
     rm -rf "$WINEJC/wine-old" && rm -f "$WINEJC/$DOWNLOAD_FILE"
 fi
 }
 
 # Running rumtricks
-[ $# = 0 ] && echo "add rumtricks" && exit 1
+[ $# = 0 ] && echo "INFO: Add rumtricks" && exit 1
 for i in "$@"
 do
    "$i"
