@@ -702,46 +702,21 @@ wine-jc141()
 {
 check_connectivity
 JQ="$(command -v jq)"; [ ! -x "$JQ" ] && exit 1 && echo "ERROR: jq not found, skipping updates. (read the requirements guide)" || echo "INFO: jq found"
-WINEJC="groot"; VERSION_FILE="$PWD/.wine-jc141-current-version"
-latest_release="$(curl -s https://johncena141.eu.org:8141/api/v1/repos/johncena141/wine-jc141/releases?limit=1)"
-tag_name=$(echo "$latest_release" | jq -r  '[.[].tag_name][0]')
-update=1
-if [ -f "$VERSION_FILE" ]; then
-   version=$(cat "$VERSION_FILE")
-   # Is the version the same? Do not download again,
-   # we set update to 0
-   if [ "$tag_name" = "$version" ]; then
-   echo "INFO: You have the latest wine version ($version)."
-   update=0
-   else
-   echo "INFO: New version found! Updating.."
-  fi
-fi
-if [ "$update" -eq "1" ]; then
-    download_url=$(echo "$latest_release" | jq -r  '[.[].assets[0].browser_download_url][0]')
-    if [ "$download_url" = "null" ]; then
-        echo "ERROR: Could not find the download URL. Abort"
-        exit 1
-    fi
+WINEJC="groot"; VERSION_FILE="$PWD/.wine-jc141-current-version"; LATEST_WINE="$(curl -s https://johncena141.eu.org:8141/api/v1/repos/johncena141/wine-jc141/releases?limit=1)"; TAGVERS=$(echo "$LATEST_WINE" | jq -r  '[.[].tag_name][0]'); UPDATE_STATE=1
 
-    # Store version file
-    echo "$tag_name" > "$VERSION_FILE"
-    echo "INFO: Downloading... $download_url"
+[ -f "$VERSION_FILE" ] && version=$(cat "$VERSION_FILE") && [ "$TAGVERS" = "$version" ] && echo "INFO: You have the latest wine version ($version)."; UPDATE_STATE=0 || echo "INFO: New version found! Updating.."
+[ "$UPDATE_STATE" -eq "1" ] && download_url=$(echo "$LATEST_WINE" | jq -r  '[.[].assets[0].browser_download_url][0]')
+[ "$download_url" = "null" ] && echo "ERROR: Could not find the download URL. Abort" || exit 1
+echo "$TAGVERS" > "$VERSION_FILE"; echo "INFO: Downloading... $download_url"
 
-    # Clean existing downloaded file (just in case)
-    DOWNLOAD_FILE=wine.tar.zst
-    rm -f "$DOWNLOAD_FILE"
+DOWNLOAD_FILE=wine.tar.zst; rm -f "$DOWNLOAD_FILE"
+[ ! -f "$WINEJC/$DOWNLOAD_FILE" ] && wget -O "$DOWNLOAD_FILE" "$download_url"
+[ -d "$WINEJC/wine-backup" ] &&  mv "$WINEJC/wine-backup" "$WINEJC/wine-old"
+[ -d "$WINEJC/wine" ] && mv "$WINEJC/wine" "$WINEJC/wine-backup"
 
-    # Start download
-    [ ! -f "$WINEJC/$DOWNLOAD_FILE" ] && wget -O "$DOWNLOAD_FILE" "$download_url"
-    if [ -d "$WINEJC/wine-backup" ]; then mv "$WINEJC/wine-backup" "$WINEJC/wine-old"; fi
-    if [ -d "$WINEJC/wine" ]; then mv "$WINEJC/wine" "$WINEJC/wine-backup"; fi
-
-    # Extract & clean-up
-    echo "INFO: Extracting wine-jc141"
-    tar -xvf "$DOWNLOAD_FILE" && mv "$PWD/wine" "$WINEJC/wine"
-    rm -rf "$WINEJC/wine-old" && rm -f "$WINEJC/$DOWNLOAD_FILE"
-fi
+echo "INFO: Extracting wine-jc141"
+tar -xvf "$DOWNLOAD_FILE" && mv "$PWD/wine" "$WINEJC/wine"
+rm -rf "$WINEJC/wine-old" && rm -f "$WINEJC/$DOWNLOAD_FILE"
 }
 
 # Running rumtricks
