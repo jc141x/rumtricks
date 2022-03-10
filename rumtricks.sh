@@ -685,8 +685,7 @@ win20()
 
 wine-jc141()
 {
-local test_ip; local test_count; test_ip="johncena141.eu.org"; test_count=1
-ping -c ${test_count} ${test_ip} > /dev/null && echo "INFO: Internet connectivity present" || echo "INFO: Internet connectivity not present" && exit 1
+wget -q --tries=2 --timeout=10 https://johncena141.eu.org:8141 -O /tmp/johncena141.eu.org.idx &> /dev/null; [ ! -s /tmp/johncena141.eu.org.idx ] && echo "INFO: Could contact Gitea" || echo "INFO: Could not contact Gitea, skipping updating" && exit 1
 JQ="$(command -v jq)"; [ ! -x "$JQ" ] && exit 1 && echo "ERROR: jq not found, skipping updates. (read the requirements guide)" || echo "INFO: jq found"
 WINEJC="groot"; VERSION_FILE="$PWD/.wine-jc141-current-version"; LATEST_WINE="$(curl -s https://johncena141.eu.org:8141/api/v1/repos/johncena141/wine-jc141/releases?limit=1)"; TAGVERS=$(echo "$LATEST_WINE" | jq -r  '[.[].tag_name][0]'); UPDATE_STATE=1
 
