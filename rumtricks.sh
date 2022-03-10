@@ -33,21 +33,6 @@ download()
     command -v curl >/dev/null 2>&1 && curl -LO "$1" && return
 }
 
-check_connectivity() {
-
-    local test_ip
-    local test_count
-
-    test_ip="johncena141.eu.org"
-    test_count=1
-
-    if ping -c ${test_count} ${test_ip} > /dev/null; then
-       echo "INFO: Internet connectivity present"
-    else
-       echo "INFO: Internet connectivity not present" && exit 1
-    fi
- }
-
 regedit()
 {
     echo "INFO: Adding registry" && "$WINE" regedit "$1" & "$WINE64" regedit "$1" && "$WINESERVER" -w
@@ -700,7 +685,8 @@ win20()
 
 wine-jc141()
 {
-check_connectivity
+local test_ip; local test_count; test_ip="johncena141.eu.org"; test_count=1
+ping -c ${test_count} ${test_ip} > /dev/null && echo "INFO: Internet connectivity present" || echo "INFO: Internet connectivity not present" && exit 1
 JQ="$(command -v jq)"; [ ! -x "$JQ" ] && exit 1 && echo "ERROR: jq not found, skipping updates. (read the requirements guide)" || echo "INFO: jq found"
 WINEJC="groot"; VERSION_FILE="$PWD/.wine-jc141-current-version"; LATEST_WINE="$(curl -s https://johncena141.eu.org:8141/api/v1/repos/johncena141/wine-jc141/releases?limit=1)"; TAGVERS=$(echo "$LATEST_WINE" | jq -r  '[.[].tag_name][0]'); UPDATE_STATE=1
 
