@@ -71,7 +71,7 @@ vdesktop | Virtual desktop
 vkdestop-d | Disable virtual desktop
 vkd3d | Direct3D 12 API on top of Vulkan
 vkd3d-jc141 | Use our master builds of vkd3d 'till we say to stop
-wine-jc141 | Wine with patches needed somtimes.
+wine-jc141 | Wine with patches needed somtimes. (always put it as last verb)
 
 ## List of verbs for wineprefix windows version
 
