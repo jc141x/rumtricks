@@ -546,7 +546,7 @@ template()
 }
 
 win10()
-{   
+{
     status || return
     update
     "$WINE" winecfg -v win10
@@ -554,7 +554,7 @@ win10()
 }
 
 win81()
-{   
+{
     status || return
     update
     "$WINE" winecfg -v win81
@@ -562,7 +562,7 @@ win81()
 }
 
 win8()
-{   
+{
     status || return
     update
     "$WINE" winecfg -v win8
@@ -570,7 +570,7 @@ win8()
 }
 
 win2008r2()
-{   
+{
     status || return
     update
     "$WINE" winecfg -v win2008r2
@@ -578,7 +578,7 @@ win2008r2()
 }
 
 win2008()
-{   
+{
     status || return
     update
     "$WINE" winecfg -v win2008
@@ -586,7 +586,7 @@ win2008()
 }
 
 win7()
-{   
+{
     status || return
     update
     "$WINE" winecfg -v win7
@@ -594,7 +594,7 @@ win7()
 }
 
 winvista()
-{   
+{
     status || return
     update
     "$WINE" winecfg -v vista
@@ -610,7 +610,7 @@ win2003()
 }
 
 winxp()
-{   
+{
     status || return
     update
     [ "$WINEARCH" = "win64" ] && "$WINE" winecfg -v winxp64
@@ -701,23 +701,21 @@ win20()
 wine-jc141()
 {
 check_connectivity
-WINEJC="groot"
-VERSION_FILE="$PWD/.wine-jc141-current-version"
+JQ="$(command -v jq)"; [ ! -x "$JQ" ] && exit 1 && echo "jq not found, skipping updates" || echo "jq found"
+WINEJC="groot"; VERSION_FILE="$PWD/.wine-jc141-current-version"
 latest_release="$(curl -s https://johncena141.eu.org:8141/api/v1/repos/johncena141/wine-jc141/releases?limit=1)"
 tag_name=$(echo "$latest_release" | jq -r  '[.[].tag_name][0]')
 update=1
-if [ -d "$WINEJC/wine" ]; then
-    if [ -f "$VERSION_FILE" ]; then
-        version=$(cat "$VERSION_FILE")
-        # Is the version the same? Do not download again,
-        # we set update to 0
-        if [ "$tag_name" = "$version" ]; then
-            echo "INFO: You have the latest wine version ($version)."
-            update=0
-        else
-            echo "INFO: New version found! Updating.."
-        fi
-    fi
+if [ -f "$VERSION_FILE" ]; then
+   version=$(cat "$VERSION_FILE")
+   # Is the version the same? Do not download again,
+   # we set update to 0
+   if [ "$tag_name" = "$version" ]; then
+   echo "INFO: You have the latest wine version ($version)."
+   update=0
+   else
+   echo "INFO: New version found! Updating.."
+  fi
 fi
 if [ "$update" -eq "1" ]; then
     download_url=$(echo "$latest_release" | jq -r  '[.[].assets[0].browser_download_url][0]')
