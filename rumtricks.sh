@@ -683,25 +683,50 @@ win20()
     installed
 }
 
+check_connectivity() {
+    local test_ip
+    local test_count
+
+    test_ip="johncena141.eu.org"
+    test_count=1
+
+    if ping -c ${test_count} ${test_ip} > /dev/null; then
+       echo "INFO: Internet connectivity present"
+    else
+       echo "INFO: Internet connectivity not present" && exit 1
+    fi
+}
+
 wine-jc141()
 {
-wget -q --tries=2 --timeout=10 https://johncena141.eu.org:8141 -O /tmp/johncena141.eu.org.idx &> /dev/null; [ ! -s /tmp/johncena141.eu.org.idx ] && echo "INFO: Could contact Gitea" || echo "INFO: Could not contact Gitea, skipping updating" && exit 1
+check_connectivity
 JQ="$(command -v jq)"; [ ! -x "$JQ" ] && exit 1 && echo "ERROR: jq not found, skipping updates. (read the requirements guide)" || echo "INFO: jq found"
-WINEJC="groot"; VERSION_FILE="$PWD/.wine-jc141-current-version"; LATEST_WINE="$(curl -s https://johncena141.eu.org:8141/api/v1/repos/johncena141/wine-jc141/releases?limit=1)"; TAGVERS=$(echo "$LATEST_WINE" | jq -r  '[.[].tag_name][0]'); UPDATE_STATE=1
-
-[ -f "$VERSION_FILE" ] && VERSION=$(cat "$VERSION_FILE") && [ "$TAGVERS" = "$VERSION" ] && echo "INFO: You have the latest wine version ($version)."; UPDATE_STATE=0 || echo "INFO: New version found! Updating.."
-[ "$UPDATE_STATE" -eq "1" ] && DOWNLOAD_URL=$(echo "$LATEST_WINE" | jq -r  '[.[].assets[0].browser_download_url][0]')
-[ "$DOWNLOAD_URL" = "null" ] && echo "ERROR: Could not find the download URL. Abort" || exit 1
-echo "$TAGVERS" > "$VERSION_FILE"; echo "INFO: Downloading... $DOWNLOAD_URL"
-
-DOWNLOAD_FILE=wine.tar.zst; rm -f "$DOWNLOAD_FILE"
-[ ! -f "$WINEJC/$DOWNLOAD_FILE" ] && wget -O "$DOWNLOAD_FILE" "$DOWNLOAD_URL"
-[ -d "$WINEJC/wine-backup" ] &&  mv "$WINEJC/wine-backup" "$WINEJC/wine-old"
-[ -d "$WINEJC/wine" ] && mv "$WINEJC/wine" "$WINEJC/wine-backup"
-
-echo "INFO: Extracting wine-jc141"
-tar -xvf "$DOWNLOAD_FILE" && mv "$PWD/wine" "$WINEJC/wine"
-rm -rf "$WINEJC/wine-old" && rm -f "$WINEJC/$DOWNLOAD_FILE"
+WINEJC="groot"; VERSION_FILE="$PWD/.wine-jc141-current-version"
+latest_release="$(curl -s https://johncena141.eu.org:8141/api/v1/repos/johncena141/wine-jc141/releases?limit=1)"
+tag_name=$(echo "$latest_release" | jq -r  '[.[].tag_name][0]')
+update=1
+if [ -f "$VERSION_FILE" ]; then
+   version=$(cat "$VERSION_FILE")
+   if [ "$tag_name" = "$version" ]; then
+   echo "INFO: You have the latest wine version ($version)."
+   update=0
+   else
+   echo "INFO: New version found! Updating.."
+  fi
+fi
+if [ "$update" -eq "1" ]; then
+    download_url=$(echo "$latest_release" | jq -r  '[.[].assets[0].browser_download_url][0]')
+    if [ "$download_url" = "null" ]; then
+        echo "ERROR: Could not find the download URL. Abort"
+        exit 1
+    fi
+    echo "$tag_name" > "$VERSION_FILE" && echo "INFO: Downloading... $download_url"
+    DOWNLOAD_FILE=wine.tar.zst && rm -f "$DOWNLOAD_FILE"
+    [ ! -f "$WINEJC/$DOWNLOAD_FILE" ] && wget -O "$DOWNLOAD_FILE" "$download_url"
+    [ -d "$WINEJC/wine-backup" ] && mv "$WINEJC/wine-backup" "$WINEJC/wine-old"
+    [ -d "$WINEJC/wine" ] && mv "$WINEJC/wine" "$WINEJC/wine-backup"
+    echo "INFO: Extracting wine-jc141" && tar -xvf "$DOWNLOAD_FILE" && mv "$PWD/wine" "$WINEJC/wine" && rm -rf "$WINEJC/wine-old" && rm -f "$WINEJC/$DOWNLOAD_FILE"
+fi
 }
 
 # Running rumtricks
