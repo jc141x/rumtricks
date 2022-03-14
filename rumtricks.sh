@@ -5,6 +5,8 @@ cd "$(dirname "$(realpath "$0")")" || exit 1
 
 # Base download URL for the archives
 BASE_URL="https://johncena141.eu.org:8141/johncena141/rumtricks/media/branch/main/archives"
+DOWNLOAD_LOCATION="${HOME}/.cache/rumtricks"
+mkdir -p "$DOWNLOAD_LOCATION"
 
 # Use default prefix if nothing is exported
 [ -z "$WINEPREFIX" ] && export WINEPREFIX="$HOME/.wine"
@@ -28,9 +30,8 @@ export WINEDEBUG="-all"
 
 download()
 {
-    command -v aria2c >/dev/null 2>&1 && aria2c --allow-overwrite="true" "$1" && return
-    command -v wget >/dev/null 2>&1 && wget -N "$1" && return
-    command -v curl >/dev/null 2>&1 && curl -LO "$1" && return
+    command -v curl >/dev/null 2>&1 && curl --etag-save $DOWNLOAD_LOCATION/${1##*/}.etag --etag-compare $DOWNLOAD_LOCATION/${1##*/}.etag --output-dir "$DOWNLOAD_LOCATION" -LO "$1"
+    cp "$DOWNLOAD_LOCATION/${1##*/}" "./"
 }
 
 regedit()
