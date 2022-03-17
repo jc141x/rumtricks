@@ -144,7 +144,7 @@ check() {
 }
 
 status() {
-    [[ ! -f "$WINEPREFIX/rumtricks.log" || -z "$(awk "/^${FUNCNAME[1]}\$/ {print \$1}" "$WINEPREFIX/rumtricks.log" 2>/dev/null)" ]] || { echo "${FUNCNAME[1]} already installed, skipping" && return 1; }
+    [[ ! -f "$WINEPREFIX/rumtricks.log" || -z "$(awk "/^${FUNCNAME[1]}\$/ {print \$1}" "$WINEPREFIX/rumtricks.log" 2>/dev/null)" ]] || { echo "INFO: ${FUNCNAME[1]} already installed, skipping" && return 1; }
 }
 
 regsvr32() {
