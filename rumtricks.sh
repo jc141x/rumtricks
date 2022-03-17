@@ -3,8 +3,6 @@
 # All operations are relative to rumtricks' location
 cd "$(dirname "$(realpath "$0")")" || exit 1
 
-REQUIREMENTS_URL="https://johncena141.eu.org:8141/reqs"
-
 # Base download URL for the archives
 BASE_URL="https://johncena141.eu.org:8141/johncena141/rumtricks/media/branch/main/archives"
 DOWNLOAD_LOCATION="${XDG_CACHE_HOME:-$HOME/.cache}/rumtricks"
@@ -29,6 +27,10 @@ export WINEDEBUG="-all"
 
 [ -z "$WINESERVER" ] && WINESERVER="${WINE}server"
 [ ! -x "$WINESERVER" ] && echo "${WINESERVER} is not an executable, exiting" && exit 1
+
+# Global vars
+REQUIREMENTS_URL="https://johncena141.eu.org:8141/reqs"
+RUMTRICKS_LOGFILE="$WINEPREFIX/rumtricks.log"
 
 # Pre execution checks (validating requirements)
 pre-checks() {
@@ -135,7 +137,7 @@ update() {
 }
 
 installed() {
-    echo "${FUNCNAME[1]}" >>"$WINEPREFIX/rumtricks.log"
+    echo "${FUNCNAME[1]}" >>"$RUMTRICKS_LOGFILE"
     echo "INFO: ${FUNCNAME[1]} installed"
 }
 
@@ -145,7 +147,7 @@ check() {
 }
 
 status() {
-    [[ ! -f "$WINEPREFIX/rumtricks.log" || -z "$(awk "/^${FUNCNAME[1]}\$/ {print \$1}" "$WINEPREFIX/rumtricks.log" 2>/dev/null)" ]] || { echo "INFO: ${FUNCNAME[1]} already installed, skipping" && return 1; }
+    [[ ! -f "$RUMTRICKS_LOGFILE" || -z "$(awk "/^${FUNCNAME[1]}\$/ {print \$1}" "$RUMTRICKS_LOGFILE" 2>/dev/null)" ]] || { echo "INFO: ${FUNCNAME[1]} already installed, skipping" && return 1; }
 }
 
 regsvr32() {
@@ -427,7 +429,7 @@ mono() {
         installed
         echo "$MONOVER" >"$WINEPREFIX/.mono"
     }
-    [[ -z "$(awk '/mono/ {print $1}' "$WINEPREFIX/rumtricks.log" 2>/dev/null)" ]] && mono
+    [[ -z "$(awk '/mono/ {print $1}' "$RUMTRICKS_LOGFILE" 2>/dev/null)" ]] && mono
     [[ -f "$WINEPREFIX/.mono" && -n "$MONOVER" && "$MONOVER" != "$(awk '{print $1}' "$WINEPREFIX/.mono")" ]] && { rm -f wine-mono-*.msi || true; } && echo "updating mono" && mono
     echo "INFO: mono is up-to-date"
 }
@@ -578,7 +580,7 @@ template() {
     #extract template.tar.zst
     #cp -r "$PWD"/template/files/drive_c/windows/* "$WINEPREFIX/drive_c/windows/"
     #regedit "$PWD"/template/template.reg
-    #echo "template" >> "$WINEPREFIX/rumtricks.log"
+    #echo "template" >> "$RUMTRICKS_LOGFILE"
     #rm -rf "$PWD"/template
     installed
 }
