@@ -113,7 +113,10 @@ print_commands() {
 }
 
 download() {
-    command -v curl >/dev/null 2>&1 && curl --etag-save $DOWNLOAD_LOCATION/${1##*/}.etag --etag-compare $DOWNLOAD_LOCATION/${1##*/}.etag --output-dir "$DOWNLOAD_LOCATION" -LO "$1"
+    cd "$DOWNLOAD_LOCATION"
+    # Avoid using --output-dir option (for older distros that doesn't have the latest greatest cURL)
+    command -v curl >/dev/null 2>&1 && curl --etag-save $DOWNLOAD_LOCATION/${1##*/}.etag --etag-compare $DOWNLOAD_LOCATION/${1##*/}.etag -LO "$1"
+    cd "$OLDPWD"
     cp "$DOWNLOAD_LOCATION/${1##*/}" "./"
 }
 
@@ -132,7 +135,7 @@ update() {
 
 installed() {
     echo "${FUNCNAME[1]}" >>"$WINEPREFIX/rumtricks.log"
-    echo "${FUNCNAME[1]} installed"
+    echo "INFO: ${FUNCNAME[1]} installed"
 }
 
 check() {
