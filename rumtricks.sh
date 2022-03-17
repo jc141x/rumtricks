@@ -54,6 +54,7 @@ print_usage() {
     echo "Options:"
     echo "  -h, --help     Print this Help."
     echo "  -v, --verbose  Verbose mode."
+    echo "  -u, --update   Update rumstricks.sh."
     echo "  -l, --list     List all available COMMANDs."
 }
 
@@ -772,6 +773,7 @@ for arg in "$@"; do
     case "$arg" in
     "--help") set -- "$@" "-h" ;;
     "--list") set -- "$@" "-l" ;;
+    "--update") set -- "$@" "-u" ;;
     "--verbose") set -- "$@" "-v" ;;
     *) set -- "$@" "$arg" ;;
     esac
@@ -782,7 +784,7 @@ verbose=false
 
 # Parsing paramater using getopts
 OPTIND=1
-while getopts "hvl" opt; do
+while getopts "hvlu" opt; do
     case "$opt" in
     "h")
         print_usage
@@ -791,6 +793,9 @@ while getopts "hvl" opt; do
     "l")
         print_commands
         exit 0
+        ;;
+    "u")
+        update-self
         ;;
     "v") verbose=true ;;
     "?")
