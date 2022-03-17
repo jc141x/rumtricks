@@ -3,6 +3,8 @@
 # All operations are relative to rumtricks' location
 cd "$(dirname "$(realpath "$0")")" || exit 1
 
+REQUIREMENTS_URL="https://johncena141.eu.org:8141/reqs"
+
 # Base download URL for the archives
 BASE_URL="https://johncena141.eu.org:8141/johncena141/rumtricks/media/branch/main/archives"
 DOWNLOAD_LOCATION="${XDG_CACHE_HOME:-$HOME/.cache}/rumtricks"
@@ -28,6 +30,91 @@ export WINEDEBUG="-all"
 [ -z "$WINESERVER" ] && WINESERVER="${WINE}server"
 [ ! -x "$WINESERVER" ] && echo "${WINESERVER} is not an executable, exiting" && exit 1
 
+# Pre execution checks (validating requirements)
+pre_checks()
+{
+    # Validate if unzstd is installed
+    if ! command -v unzstd &> /dev/null; then
+        echo "ERROR: Missing zstd package. Zstd is required to be installed, please follow our requirements."
+        echo "Visit: ${REQUIREMENTS_URL}"
+        exit 1
+    fi
+    # Validate if wine is installed
+    if ! command -v wine &> /dev/null; then
+        echo "ERROR: Missing wine package. Wine is required to be installed, please follow our requirements."
+        echo "Visit: ${REQUIREMENTS_URL}"
+        exit 1
+    fi
+}
+
+print_usage()
+{
+    # Display Help
+    echo "Usage: runtricks.sh [OPTION] [COMMAND]"
+    echo "Installer-less proper alternative to winetricks focused on speed and reliability."
+    echo
+    echo "Options:"
+    echo "  -h, --help     Print this Help."
+    echo "  -v, --verbose  Verbose mode."
+    echo "  -l, --list     List all available COMMANDs."
+}
+
+print_commands()
+{
+    print_usage
+    echo
+    echo "Available commands:"
+    echo "cinepak        Cinepak Codec"
+    echo "corefonts      Microsoft Core fonts"
+    echo "directshow     Microsoft DirectShow runtime (amstream and quartz)"
+    echo "directplay     Microsoft Directplay"
+    echo "directx        Microsoft DirectX End-User Runtime (June 2010)"
+    echo "dxvk           Vulkan-based translation layer for Direct3D 9/10/11"
+    echo "dxvk-async     dxvk with async patches"
+    echo "dxvk-custom    install any dxvk version (usage: ./rumtricks.sh dxvk-custom <<< \"0.54\")"
+    echo "dotnet35       Microsoft .NET 3.5"
+    echo "isolate        Isolate the prefix by removing symbolinks to \$HOME"
+    echo "mf             Microsoft Media Foundation"
+    echo "mono           Open-source and cross-platform implementation of the .NET Framework"
+    echo "remove-mono    Remove mono installation from the prefix"
+    echo "physx          Nvidia PhysX"
+    echo "quicktime      Apple QuickTime"
+    echo "update-self    Update rumtricks.sh to the latest version"
+    echo "vcrun2003      Microsoft Visual C++ 2003 Redistributable"
+    echo "vcrun2005      Microsoft Visual C++ 2005 Redistributable"
+    echo "vcrun2008      Microsoft Visual C++ 2008 Redistributable"
+    echo "vcrun2010      Microsoft Visual C++ 2010 Redistributable"
+    echo "vcrun2012      Microsoft Visual C++ 2012 Redistributable"
+    echo "vcrun2013      Microsoft Visual C++ 2013 Redistributable"
+    echo "vcrun2015      Microsoft Visual C++ 2015 Redistributable"
+    echo "vcrun2017      Microsoft Visual C++ 2017 Redistributable"
+    echo "vcrun2019      Microsoft Visual C++ 2019 Redistributable"
+    echo "vdesktop       Virtual desktop"
+    echo "vkdestop-d     Disable virtual desktop"
+    echo "vkd3d          Direct3D 12 API on top of Vulkan"
+    echo "vkd3d-jc141    Use our master builds of vkd3d"
+    echo "wine-jc141     Wine with patches needed somtimes"
+    echo "win10          Set wineprefix version Windows to 10"
+    echo "win81          Set wineprefix version Windows to 8.1"
+    echo "win8           Set wineprefix version to Windows 8"
+    echo "win7           Set wineprefix version to Windows 7"
+    echo "win2008r2      Set wineprefix version to Windows 2008 R2"
+    echo "win2008        Set wineprefix version to Windows 2008"
+    echo "winvista       Set wineprefix version to Windows Vista"
+    echo "win2003        Set wineprefix version to Windows 2003"
+    echo "winxp          Set wineprefix version to Windows XP"
+    echo "winme          Set wineprefix version to Windows ME (32bit only)"
+    echo "win2k          Set wineprefix version to Windows 2000 (32bit only)"
+    echo "win98          Set wineprefix version to Windows 98 (32bit only)"
+    echo "winnt40        Set wineprefix version to Windows NT 4.0 (32bit only)"
+    echo "win95          Set wineprefix version to Windows 95 (32bit only)"
+    echo "winnt351       Set wineprefix version to Windows NT 3.51 (32bit only)"
+    echo "win31          Set wineprefix version to Windows 3.1 (32bit only)"
+    echo "win30          Set wineprefix version to Windows 3.0 (32bit only)"
+    echo "win20          Set wineprefix version to Windows 2.0 (32bit only)"
+    echo
+}
+
 download()
 {
     command -v curl >/dev/null 2>&1 && curl --etag-save $DOWNLOAD_LOCATION/${1##*/}.etag --etag-compare $DOWNLOAD_LOCATION/${1##*/}.etag --output-dir "$DOWNLOAD_LOCATION" -LO "$1"
@@ -41,7 +128,7 @@ regedit()
 
 extract()
 {
-    echo "INFO: Extracting $1" && tar -xf "$1"
+    echo "INFO: Extracting $1" && tar --use-compress-program=unzstd -xf "$1"
 }
 
 update()
@@ -69,9 +156,8 @@ status()
 regsvr32()
 {
     echo "INFO: Registering dlls"
-    for i in "$@"
-    do
-    "$WINE" regsvr32 /s "$i" & "$WINE64" regsvr32 /s "$i"
+    for i in "$@"; do
+        "$WINE" regsvr32 /s "$i" & "$WINE64" regsvr32 /s "$i"
     done
     "$WINESERVER" -w
 }
@@ -91,8 +177,7 @@ isolate()
     update
     echo "INFO: Disabling desktop integrations (isolation)"
     cd "$WINEPREFIX/drive_c/users/${USER}" || exit
-    for entry in *
-    do
+    for entry in *; do
         if [ -L "$entry" ] && [ -d "$entry" ]
         then
             rm -f "$entry"
@@ -730,9 +815,52 @@ if [ "$update" -eq "1" ]; then
 fi
 }
 
-# Running rumtricks
-[ $# = 0 ] && echo "INFO: Add rumtricks" && exit 1
-for i in "$@"
+## Main ##
+pre_checks
+
+# Transform long options to short ones
+for arg in "$@"; do
+  shift
+  case "$arg" in
+    "--help")    set -- "$@" "-h" ;;
+    "--list")    set -- "$@" "-l" ;;
+    "--verbose") set -- "$@" "-v" ;;
+    *)           set -- "$@" "$arg"
+  esac
+done
+
+# Default values
+verbose=false
+
+# Parsing paramater using getopts
+OPTIND=1
+while getopts "hvl" opt
 do
-   "$i"
+  case "$opt" in
+    "h") print_usage; exit 0 ;;
+    "l") print_commands; exit 0 ;;
+    "v") verbose=true ;;
+    "?") print_usage >&2; exit 1 ;;
+  esac
+done
+shift $(expr $OPTIND - 1) # remove options from positional parameters
+
+if [ $# = 0 ]; then
+    echo "INFO: Nothing provided. Provide some command(s)"
+    echo 
+    print_usage
+    exit 1
+else
+    echo "INFO: Executing rumtricks"
+fi
+
+for i in "$@"; do
+    # Check if function exists
+    if type "$i" 2>/dev/null | grep -q 'function'; then
+        "$i"
+    else
+        echo "WARN: Command: '$i' does not exists. Try another command/option."
+        echo
+        print_usage
+    fi
 done
