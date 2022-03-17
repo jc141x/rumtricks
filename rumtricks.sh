@@ -5,7 +5,7 @@ cd "$(dirname "$(realpath "$0")")" || exit 1
 
 # Base download URL for the archives
 BASE_URL="https://johncena141.eu.org:8141/johncena141/rumtricks/media/branch/main/archives"
-DOWNLOAD_LOCATION="${HOME}/.cache/rumtricks"
+DOWNLOAD_LOCATION="${XDG_CAHCE_HOME:-$HOME/.cache}/rumtricks"
 mkdir -p "$DOWNLOAD_LOCATION"
 
 # Use default prefix if nothing is exported
