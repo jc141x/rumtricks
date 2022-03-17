@@ -31,7 +31,7 @@ export WINEDEBUG="-all"
 [ ! -x "$WINESERVER" ] && echo "${WINESERVER} is not an executable, exiting" && exit 1
 
 # Pre execution checks (validating requirements)
-pre_checks() {
+pre-checks() {
     # Validate if unzstd is installed
     if ! command -v unzstd &>/dev/null; then
         echo "ERROR: Missing zstd package. Zstd is required to be installed, please follow our requirements."
@@ -46,7 +46,7 @@ pre_checks() {
     fi
 }
 
-print_usage() {
+print-usage() {
     # Display Help
     echo "Usage: runtricks.sh [OPTION] [COMMAND]"
     echo "Installer-less proper alternative to winetricks focused on speed and reliability."
@@ -58,8 +58,8 @@ print_usage() {
     echo "  -l, --list     List all available COMMANDs."
 }
 
-print_commands() {
-    print_usage
+print-commands() {
+    print-usage
     echo
     echo "Available commands:"
     echo "cinepak        Cinepak Codec"
@@ -765,7 +765,7 @@ wine-jc141() {
 }
 
 ## Main ##
-pre_checks
+pre-checks
 
 # Transform long options to short ones
 for arg in "$@"; do
@@ -787,11 +787,11 @@ OPTIND=1
 while getopts "hvlu" opt; do
     case "$opt" in
     "h")
-        print_usage
+        print-usage
         exit 0
         ;;
     "l")
-        print_commands
+        print-commands
         exit 0
         ;;
     "u")
@@ -799,7 +799,7 @@ while getopts "hvlu" opt; do
         ;;
     "v") verbose=true ;;
     "?")
-        print_usage >&2
+        print-usage >&2
         exit 1
         ;;
     esac
@@ -809,7 +809,7 @@ shift $(expr $OPTIND - 1) # remove options from positional parameters
 if [ $# = 0 ]; then
     echo "INFO: Nothing provided. Provide some command(s)"
     echo
-    print_usage
+    print-usage
     exit 1
 else
     echo "INFO: Executing rumtricks"
@@ -822,6 +822,6 @@ for i in "$@"; do
     else
         echo "WARN: Command: '$i' does not exists. Try another command/option."
         echo
-        print_usage
+        print-usage
     fi
 done
