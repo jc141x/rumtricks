@@ -36,13 +36,13 @@ RUMTRICKS_LOGFILE="$WINEPREFIX/rumtricks.log"
 pre-checks() {
     # Validate if unzstd is installed
     if ! command -v unzstd &>/dev/null; then
-        echo "ERROR: Missing zstd package. Zstd is required to be installed, please follow our requirements."
+        echo "ERROR: Missing zstd package. Zstd is not installed, please follow our requirements."
         echo "Visit: ${REQUIREMENTS_URL}"
         exit 1
     fi
     # Validate if wine is installed
     if ! command -v wine &>/dev/null; then
-        echo "ERROR: Missing wine package. Wine is required to be installed, please follow our requirements."
+        echo "ERROR: Missing wine package. Wine is not installed, please follow our requirements."
         echo "Visit: ${REQUIREMENTS_URL}"
         exit 1
     fi
@@ -136,9 +136,9 @@ update() {
     echo "INFO: Installing ${FUNCNAME[1]}" && DISPLAY="" "$WINE" wineboot && "$WINESERVER" -w
 }
 
-installed() {
+applied() {
     echo "${FUNCNAME[1]}" >>"$RUMTRICKS_LOGFILE"
-    echo "INFO: ${FUNCNAME[1]} installed"
+    echo "INFO: ${FUNCNAME[1]} applied."
 }
 
 check() {
@@ -147,7 +147,7 @@ check() {
 }
 
 status() {
-    [[ ! -f "$RUMTRICKS_LOGFILE" || -z "$(awk "/^${FUNCNAME[1]}\$/ {print \$1}" "$RUMTRICKS_LOGFILE" 2>/dev/null)" ]] || { echo "INFO: ${FUNCNAME[1]} already installed, skipping" && return 1; }
+    [[ ! -f "$RUMTRICKS_LOGFILE" || -z "$(awk "/^${FUNCNAME[1]}\$/ {print \$1}" "$RUMTRICKS_LOGFILE" 2>/dev/null)" ]] || { echo "INFO: ${FUNCNAME[1]} already applied, skipping" && return 1; }
 }
 
 regsvr32() {
@@ -181,7 +181,7 @@ isolate() {
     rm -rf "$PWD/AppData/Roaming/Microsoft/Windows/Templates"
     mkdir -p "$PWD/AppData/Roaming/Microsoft/Windows/Templates"
     cd "$OLDPWD" || exit
-    installed
+    applied
 }
 
 directx() {
@@ -196,7 +196,7 @@ directx() {
     regsvr32 xactengine3_0.dll xactengine3_1.dll xactengine3_2.dll xactengine3_3.dll xactengine3_4.dll xactengine3_5.dll xactengine3_6.dll xactengine3_7.dll
     regsvr32 xaudio2_0.dll xaudio2_1.dll xaudio2_2.dll xaudio2_3.dll xaudio2_4.dll xaudio2_5.dll xaudio2_6.dll xaudio2_7.dll
     rm -rf "$PWD"/directx
-    installed
+    applied
 }
 
 vcrun2003() {
@@ -207,7 +207,7 @@ vcrun2003() {
     extract vcrun2003.tar.zst
     cp -r "$PWD"/vcrun2003/files/drive_c/windows/* "$WINEPREFIX/drive_c/windows/"
     rm -rf "$PWD"/vcrun2003
-    installed
+    applied
 }
 
 vcrun2005() {
@@ -219,7 +219,7 @@ vcrun2005() {
     cp -r "$PWD"/vcrun2005/files/drive_c/* "$WINEPREFIX/drive_c/"
     regedit "$PWD"/vcrun2005/vcrun2005.reg
     rm -rf "$PWD"/vcrun2005
-    installed
+    applied
 }
 
 vcrun2008() {
@@ -231,7 +231,7 @@ vcrun2008() {
     cp -r "$PWD"/vcrun2008/files/drive_c/* "$WINEPREFIX/drive_c/"
     regedit "$PWD"/vcrun2008/vcrun2008.reg
     rm -rf "$PWD"/vcrun2008
-    installed
+    applied
 }
 
 vcrun2010() {
@@ -243,7 +243,7 @@ vcrun2010() {
     cp -r "$PWD"/vcrun2010/files/drive_c/windows/* "$WINEPREFIX/drive_c/windows/"
     regedit "$PWD"/vcrun2010/vcrun2010.reg
     rm -rf "$PWD"/vcrun2010
-    installed
+    applied
 }
 
 vcrun2012() {
@@ -255,7 +255,7 @@ vcrun2012() {
     cp -r "$PWD"/vcrun2012/files/drive_c/windows/* "$WINEPREFIX/drive_c/windows/"
     regedit "$PWD"/vcrun2012/vcrun2012.reg
     rm -rf "$PWD"/vcrun2012
-    installed
+    applied
 }
 
 vcrun2013() {
@@ -267,7 +267,7 @@ vcrun2013() {
     cp -r "$PWD"/vcrun2013/files/drive_c/windows/* "$WINEPREFIX/drive_c/windows/"
     regedit "$PWD"/vcrun2013/vcrun2013.reg
     rm -rf "$PWD"/vcrun2013
-    installed
+    applied
 }
 
 vcrun2015() {
@@ -279,7 +279,7 @@ vcrun2015() {
     cp -r "$PWD"/vcrun2015/files/drive_c/windows/* "$WINEPREFIX/drive_c/windows/"
     regedit "$PWD"/vcrun2015/vcrun2015.reg
     rm -rf "$PWD"/vcrun2015
-    installed
+    applied
 }
 
 vcrun2017() {
@@ -291,7 +291,7 @@ vcrun2017() {
     cp -r "$PWD"/vcrun2017/drive_c/windows/* "$WINEPREFIX/drive_c/windows/"
     regedit "$PWD"/vcrun2017/vcrun2017.reg
     rm -rf "$PWD"/vcrun2017
-    installed
+    applied
 }
 
 vcrun2019() {
@@ -303,7 +303,7 @@ vcrun2019() {
     cp -r "$PWD"/vcrun2019/files/drive_c/windows/* "$WINEPREFIX/drive_c/windows/"
     regedit "$PWD"/vcrun2019/vcrun2019.reg
     rm -rf "$PWD"/vcrun2019
-    installed
+    applied
 }
 
 mf() {
@@ -316,7 +316,7 @@ mf() {
     regedit "$PWD"/mf/mf.reg
     regsvr32 colorcnv.dll msmpeg2adec.dll msmpeg2vdec.dll
     rm -rf "$PWD"/mf
-    installed
+    applied
 }
 
 vdesktop() {
@@ -339,7 +339,7 @@ physx() {
     cp -r "$PWD"/physx/files/drive_c/* "$WINEPREFIX/drive_c/"
     regedit "$PWD"/physx/physx.reg
     rm -rf "$PWD"/physx
-    installed
+    applied
 }
 
 github_dxvk() {
@@ -358,7 +358,7 @@ dxvk() {
     SYSDXVK="$(command -v setup_dxvk 2>/dev/null)"
     dxvk() {
         update
-        [ -n "$SYSDXVK" ] && echo "INFO: Using local dxvk" && DISPLAY="" "$SYSDXVK" install --symlink && "$WINESERVER" -w && installed
+        [ -n "$SYSDXVK" ] && echo "INFO: Using local dxvk" && DISPLAY="" "$SYSDXVK" install --symlink && "$WINESERVER" -w && applied
         [ -z "$SYSDXVK" ] && echo "INFO: Using dxvk from github" && github_dxvk && echo "$DXVKVER" >"$WINEPREFIX/.dxvk"
     }
     [[ ! -f "$WINEPREFIX/.dxvk" && -z "$(status)" ]] && dxvk
@@ -378,7 +378,7 @@ dxvk-async() {
         chmod +x ./setup_dxvk.sh && DISPLAY="" ./setup_dxvk.sh install && "$WINESERVER" -w
         cd "$OLDPWD" || exit
         rm -rf "${DXVK//.tar.gz/}"
-        installed
+        applied
         echo "$DXVKVER" >"$WINEPREFIX/.dxvk-async"
     }
     [[ -z "$(status)" ]] && dxvk-async
@@ -400,7 +400,7 @@ dxvk-custom() {
     [ ! -f setup_dxvk.sh ] && [ "$WINEARCH" = "win64" ] && cd x64 && ./setup_dxvk.sh && "$WINESERVER" -w && cd ..
     cd ..
     rm -rf "${DXVK//.tar.gz/}"
-    installed
+    applied
 }
 
 wmp11() {
@@ -414,7 +414,7 @@ wmp11() {
     regedit "$PWD"/wmp11/wmp11.reg
     regsvr32 dispex.dll jscript.dll scrobj.dll scrrun.dll vbscript.dll wshcon.dll wshext.dll
     rm -rf "$PWD"/wmp11
-    installed
+    applied
 }
 
 mono() {
@@ -426,7 +426,7 @@ mono() {
         [ ! -f "$MONO" ] && download "$DL_URL"
         remove-mono
         "$WINE" msiexec /i "$MONO"
-        installed
+        applied
         echo "$MONOVER" >"$WINEPREFIX/.mono"
     }
     [[ -z "$(awk '/mono/ {print $1}' "$RUMTRICKS_LOGFILE" 2>/dev/null)" ]] && mono
@@ -456,7 +456,7 @@ vkd3d() {
     SYSVKD3D="$(command -v setup_vkd3d_proton)"
     vkd3d() {
         update
-        [ -n "$SYSVKD3D" ] && echo "INFO: Using local vkd3d" && DISPLAY="" "$SYSVKD3D" install --symlink && "$WINESERVER" -w && installed
+        [ -n "$SYSVKD3D" ] && echo "INFO: Using local vkd3d" && DISPLAY="" "$SYSVKD3D" install --symlink && "$WINESERVER" -w && applied
         [ -z "$SYSVKD3D" ] && echo "INFO: Using vkd3d from github" && github_vkd3d && echo "$VKD3DVER" >"$WINEPREFIX/.vkd3d"
     }
     [[ ! -f "$WINEPREFIX/.vkd3d" && -z "$(status)" ]] && vkd3d
@@ -493,7 +493,7 @@ vkd3d-jc141() {
         status || return
         update
         provided_vkd3d
-        installed
+        applied
     fi
 }
 
@@ -507,7 +507,7 @@ directshow() {
     regedit "$PWD"/directshow/directshow.reg
     regsvr32 amstream.dll qasf.dll qcap.dll qdvd.dll qedit.dll quartz.dll
     rm -rf "$PWD"/directshow
-    installed
+    applied
 }
 
 cinepak() {
@@ -519,7 +519,7 @@ cinepak() {
     cp -r "$PWD"/cinepak/files/drive_c/windows/* "$WINEPREFIX/drive_c/windows/"
     regedit "$PWD"/cinepak/cinepak.reg
     rm -rf "$PWD"/cinepak
-    installed
+    applied
 }
 
 corefonts() {
@@ -531,7 +531,7 @@ corefonts() {
     cp -r "$PWD"/corefonts/files/drive_c/windows/* "$WINEPREFIX/drive_c/windows/"
     regedit "$PWD"/corefonts/corefonts.reg
     rm -rf "$PWD"/corefonts
-    installed
+    applied
 }
 
 quicktime() {
@@ -543,7 +543,7 @@ quicktime() {
     cp -r "$PWD"/quicktime/files/drive_c/* "$WINEPREFIX/drive_c/"
     regedit "$PWD"/quicktime/quicktime.reg
     rm -rf "$PWD"/quicktime
-    installed
+    applied
 }
 
 directplay() {
@@ -556,7 +556,7 @@ directplay() {
     regedit "$PWD"/directplay/directplay.reg
     regsvr32 dplayx.dll dpnet.dll dpnhpast.dll dpnhupnp.dll
     rm -rf "$PWD"/directplay
-    installed
+    applied
 }
 
 dotnet35() {
@@ -569,7 +569,7 @@ dotnet35() {
     cp -r "$PWD"/dotnet35/files/drive_c/* "$WINEPREFIX/drive_c/"
     regedit "$PWD"/dotnet35/dotnet35.reg
     rm -rf "$PWD/dotnet35"
-    installed
+    applied
 }
 
 template() {
@@ -582,63 +582,63 @@ template() {
     #regedit "$PWD"/template/template.reg
     #echo "template" >> "$RUMTRICKS_LOGFILE"
     #rm -rf "$PWD"/template
-    installed
+    applied
 }
 
 win10() {
     status || return
     update
     "$WINE" winecfg -v win10
-    installed
+    applied
 }
 
 win81() {
     status || return
     update
     "$WINE" winecfg -v win81
-    installed
+    applied
 }
 
 win8() {
     status || return
     update
     "$WINE" winecfg -v win8
-    installed
+    applied
 }
 
 win2008r2() {
     status || return
     update
     "$WINE" winecfg -v win2008r2
-    installed
+    applied
 }
 
 win2008() {
     status || return
     update
     "$WINE" winecfg -v win2008
-    installed
+    applied
 }
 
 win7() {
     status || return
     update
     "$WINE" winecfg -v win7
-    installed
+    applied
 }
 
 winvista() {
     status || return
     update
     "$WINE" winecfg -v vista
-    installed
+    applied
 }
 
 win2003() {
     status || return
     update
     "$WINE" winecfg -v win2003
-    installed
+    applied
 }
 
 winxp() {
@@ -646,77 +646,77 @@ winxp() {
     update
     [ "$WINEARCH" = "win64" ] && "$WINE" winecfg -v winxp64
     [ "$WINEARCH" = "win32" ] && "$WINE" winecfg -v winxp
-    installed
+    applied
 }
 
 win2k() {
     status || return
     update
     "$WINE" winecfg -v win2k
-    installed
+    applied
 }
 
 winme() {
     status || return
     update
     "$WINE" winecfg -v winme
-    installed
+    applied
 }
 
 win98() {
     status || return
     update
     "$WINE" winecfg -v win98
-    installed
+    applied
 }
 
 win95() {
     status || return
     update
     "$WINE" winecfg -v win95
-    installed
+    applied
 }
 
 win98() {
     status || return
     update
     "$WINE" winecfg -v win98
-    installed
+    applied
 }
 
 winnt40() {
     status || return
     update
     "$WINE" winecfg -v nt40
-    installed
+    applied
 }
 
 winnt351() {
     status || return
     update
     "$WINE" winecfg -v nt351
-    installed
+    applied
 }
 
 win31() {
     status || return
     update
     "$WINE" winecfg -v win31
-    installed
+    applied
 }
 
 win30() {
     status || return
     update
     "$WINE" winecfg -v win30
-    installed
+    applied
 }
 
 win20() {
     status || return
     update
     "$WINE" winecfg -v win20
-    installed
+    applied
 }
 
 check_connectivity() {
