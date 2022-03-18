@@ -573,16 +573,15 @@ dotnet35() {
 }
 
 template() {
+    #status || return
     #update
     #[ ! -f "template.tar.zst" ] && download "$BASE_URL/template.tar.zst"
-    #check 2bcf9852b02f6e707905f0be0a96542225814a3fc19b3b9dcf066f4dd2781337
-    #[ $? -eq 1 ] && echo "ERROR: Download is corrupted (invalid hash), skipping" && rm template.tar.zst && return
+    #check 2bcf9852b02f6e707905f0be0a96542225814a3fc19b3b9dcf066f4dd2781337 || return
     #extract template.tar.zst
     #cp -r "$PWD"/template/files/drive_c/windows/* "$WINEPREFIX/drive_c/windows/"
     #regedit "$PWD"/template/template.reg
-    #echo "template" >> "$RUMTRICKS_LOGFILE"
     #rm -rf "$PWD"/template
-    applied
+    #applied
 }
 
 win10() {
