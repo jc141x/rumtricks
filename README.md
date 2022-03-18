@@ -3,7 +3,7 @@
 </div>
 
 <p align="center">
-  Installer-less proper alternative to winetricks focused on speed and reliability.
+  Installer-less proper alternative to winetricks focused on speed and reliability made by johncena141 hacker group for pirates on GNU/Linux who don't care about stupid intellectual property laws.
 </p>
 
 ## Features
