@@ -130,7 +130,7 @@ extract() {
 }
 
 update() {
-    echo "INFO: Installing ${FUNCNAME[1]}." && DISPLAY="" "$WINE" wineboot && "$WINESERVER" -w
+    echo "INFO: Applying ${FUNCNAME[1]}." && DISPLAY="" "$WINE" wineboot && "$WINESERVER" -w
 }
 
 applied() {
