@@ -3,11 +3,12 @@
 # All operations are relative to rumtricks' location
 cd "$(dirname "$(realpath "$0")")" || exit 1
 
+# General vars
+JQ="$(command -v jq)"
 REQUIREMENTS_URL="https://johncena141.eu.org:8141/reqs"
 RUMTRICKS_LOGFILE="$WINEPREFIX/rumtricks.log"
 BASE_URL="https://johncena141.eu.org:8141/johncena141/rumtricks/media/branch/main/archives"
-DOWNLOAD_LOCATION="${XDG_CACHE_HOME:-$HOME/.cache}/rumtricks"
-mkdir -p "$DOWNLOAD_LOCATION"
+DOWNLOAD_LOCATION="${XDG_CACHE_HOME:-$HOME/.cache}/rumtricks"; mkdir -p "$DOWNLOAD_LOCATION"
 
 # Use default prefix if nothing is exported
 [ -z "$WINEPREFIX" ] && export WINEPREFIX="$HOME/.wine"
@@ -713,7 +714,7 @@ check_connectivity() {
 
 wine-jc141() {
     check_connectivity
-    JQ="$(command -v jq)"; WINEJC="groot"; VERSION_FILE="$PWD/.wine-jc141-current-version"
+    WINEJC="groot"; VERSION_FILE="$PWD/.wine-jc141-current-version"
     [ ! -x "$JQ" ] && exit 1 && echo "ERROR: jq not found, skipping updates. (read the requirements guide)" || echo "INFO: jq found"
     latest_release="$(curl -s https://johncena141.eu.org:8141/api/v1/repos/johncena141/wine-jc141/releases?limit=1)"
     tag_name=$(echo "$latest_release" | jq -r '[.[].tag_name][0]')
@@ -744,7 +745,7 @@ wine-jc141() {
 
 wine-jc141-nomingw() {
     check_connectivity
-    JQ="$(command -v jq)"; WINEJC="groot"; VERSION_FILE="$PWD/.wine-jc141-current-version"
+    WINEJC="groot"; VERSION_FILE="$PWD/.wine-jc141-current-version"
     [ ! -x "$JQ" ] && exit 1 && echo "ERROR: jq not found, skipping updates. (read the requirements guide)" || echo "INFO: jq found"
     latest_release="$(curl -s https://johncena141.eu.org:8141/api/v1/repos/johncena141/wine-jc141-nomingw/releases?limit=1)"
     tag_name=$(echo "$latest_release" | jq -r '[.[].tag_name][0]')
