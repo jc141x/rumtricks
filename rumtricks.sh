@@ -3,7 +3,8 @@
 # All operations are relative to rumtricks' location
 cd "$(dirname "$(realpath "$0")")" || exit 1
 
-# Base download URL for the archives
+REQUIREMENTS_URL="https://johncena141.eu.org:8141/reqs"
+RUMTRICKS_LOGFILE="$WINEPREFIX/rumtricks.log"
 BASE_URL="https://johncena141.eu.org:8141/johncena141/rumtricks/media/branch/main/archives"
 DOWNLOAD_LOCATION="${XDG_CACHE_HOME:-$HOME/.cache}/rumtricks"
 mkdir -p "$DOWNLOAD_LOCATION"
@@ -27,10 +28,6 @@ export WINEDEBUG="-all"
 
 [ -z "$WINESERVER" ] && WINESERVER="${WINE}server"
 [ ! -x "$WINESERVER" ] && echo "${WINESERVER} is not an executable, exiting" && exit 1
-
-# Global vars
-REQUIREMENTS_URL="https://johncena141.eu.org:8141/reqs"
-RUMTRICKS_LOGFILE="$WINEPREFIX/rumtricks.log"
 
 # Pre execution checks (validating requirements)
 pre-checks() {
@@ -143,7 +140,7 @@ applied() {
 
 check() {
     echo "$1  ${FUNCNAME[1]}.tar.zst" | sha256sum -c -
-    [ $? -ne 1 ] || { echo "ERROR: Archive is corrupted, skipping" && rm "${FUNCNAME[1]}".tar.zst && return 1; }
+    [ $? -ne 1 ] || { echo "ERROR: Archive is corrupted, skipping." && rm "${FUNCNAME[1]}".tar.zst && return 1; }
 }
 
 status() {
@@ -151,7 +148,7 @@ status() {
 }
 
 regsvr32() {
-    echo "INFO: Registering dlls"
+    echo "INFO: Registering dlls."
     for i in "$@"; do
         "$WINE" regsvr32 /s "$i" &
         "$WINE64" regsvr32 /s "$i"
@@ -160,17 +157,17 @@ regsvr32() {
 }
 
 update-self() {
-    echo "INFO: Updating rumtricks"
+    echo "INFO: Updating rumtricks."
     download "https://johncena141.eu.org:8141/johncena141/rumtricks/raw/branch/main/rumtricks.sh"
     chmod +x "$PWD/rumtricks.sh"
     [ "$PWD/rumtricks.sh" != "$(realpath "$0")" ] && mv "$PWD/rumtricks.sh" "$(realpath "$0")"
-    echo "INFO: Updated rumtricks"
+    echo "INFO: Updated rumtricks."
 }
 
 isolate() {
     status || return
     update
-    echo "INFO: Disabling desktop integrations (isolation)"
+    echo "INFO: Disabling desktop integrations. (isolation)"
     cd "$WINEPREFIX/drive_c/users/${USER}" || exit
     for entry in *; do
         if [ -L "$entry" ] && [ -d "$entry" ]; then
@@ -322,12 +319,6 @@ mf() {
 vdesktop() {
     [ ! -f rres ] && curl -L "$(curl -s https://api.github.com/repos/rokbma/rres/releases/latest | awk -F '["]' '/"browser_download_url":/ {print $4}')" -o rres && chmod +x rres
     echo "explorer /desktop=Game,$(./rres)"
-}
-
-vdesktop-d() {
-    [ ! -f "$PWD"/vdesktop-d.reg ] && printf 'Windows Registry Editor Version 5.00\n\n[HKEY_CURRENT_USER\Software\Wine\\Explorer]\n"Desktop"=-\n[HKEY_CURRENT_USER\Software\Wine\\Explorer\Desktops]\n"Default"=-' >vdesktop-d.reg
-    "$WINE" regedit vdesktop-d.reg
-    rm vdesktop-d.reg
 }
 
 physx() {
@@ -572,18 +563,6 @@ dotnet35() {
     applied
 }
 
-template() {
-    #status || return
-    #update
-    #[ ! -f "template.tar.zst" ] && download "$BASE_URL/template.tar.zst"
-    #check 2bcf9852b02f6e707905f0be0a96542225814a3fc19b3b9dcf066f4dd2781337 || return
-    #extract template.tar.zst
-    #cp -r "$PWD"/template/files/drive_c/windows/* "$WINEPREFIX/drive_c/windows/"
-    #regedit "$PWD"/template/template.reg
-    #rm -rf "$PWD"/template
-    #applied
-}
-
 win10() {
     status || return
     update
@@ -808,12 +787,12 @@ done
 shift $(expr $OPTIND - 1) # remove options from positional parameters
 
 if [ $# = 0 ]; then
-    echo "INFO: Nothing provided. Provide some command(s)"
+    echo "INFO: Nothing to do. Provide some command(s)."
     echo
     print-usage
     exit 1
 else
-    echo "INFO: Executing rumtricks"
+    echo "INFO: Executing rumtricks."
 fi
 
 for i in "$@"; do
