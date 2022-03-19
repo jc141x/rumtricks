@@ -713,10 +713,8 @@ check_connectivity() {
 
 wine-jc141() {
     check_connectivity
-    JQ="$(command -v jq)"
+    JQ="$(command -v jq)"; WINEJC="groot"; VERSION_FILE="$PWD/.wine-jc141-current-version"
     [ ! -x "$JQ" ] && exit 1 && echo "ERROR: jq not found, skipping updates. (read the requirements guide)" || echo "INFO: jq found"
-    WINEJC="groot"
-    VERSION_FILE="$PWD/.wine-jc141-current-version"
     latest_release="$(curl -s https://johncena141.eu.org:8141/api/v1/repos/johncena141/wine-jc141/releases?limit=1)"
     tag_name=$(echo "$latest_release" | jq -r '[.[].tag_name][0]')
     update=1
@@ -741,6 +739,37 @@ wine-jc141() {
         [ -d "$WINEJC/wine-backup" ] && mv "$WINEJC/wine-backup" "$WINEJC/wine-old"
         [ -d "$WINEJC/wine" ] && mv "$WINEJC/wine" "$WINEJC/wine-backup"
         echo "INFO: Extracting wine-jc141" && tar -xvf "$DOWNLOAD_FILE" && mv "$PWD/wine" "$WINEJC/wine" && rm -rf "$WINEJC/wine-old" && rm -f "$WINEJC/$DOWNLOAD_FILE"
+    fi
+}
+
+wine-jc141-nomingw() {
+    check_connectivity
+    JQ="$(command -v jq)"; WINEJC="groot"; VERSION_FILE="$PWD/.wine-jc141-current-version"
+    [ ! -x "$JQ" ] && exit 1 && echo "ERROR: jq not found, skipping updates. (read the requirements guide)" || echo "INFO: jq found"
+    latest_release="$(curl -s https://johncena141.eu.org:8141/api/v1/repos/johncena141/wine-jc141-nomingw/releases?limit=1)"
+    tag_name=$(echo "$latest_release" | jq -r '[.[].tag_name][0]')
+    update=1
+    if [ -f "$VERSION_FILE" ]; then
+        version=$(cat "$VERSION_FILE")
+        if [ "$tag_name" = "$version" ]; then
+            echo "INFO: You have the latest wine version ($version)."
+            update=0
+        else
+            echo "INFO: New version found! Updating.."
+        fi
+    fi
+    if [ "$update" -eq "1" ]; then
+        download_url=$(echo "$latest_release" | jq -r '[.[].assets[0].browser_download_url][0]')
+        if [ "$download_url" = "null" ]; then
+            echo "ERROR: Could not find the download URL. Abort"
+            exit 1
+        fi
+        echo "$tag_name" >"$VERSION_FILE" && echo "INFO: Downloading... $download_url"
+        DOWNLOAD_FILE=wine.tar.zst && rm -f "$DOWNLOAD_FILE"
+        [ ! -f "$WINEJC/$DOWNLOAD_FILE" ] && wget -O "$DOWNLOAD_FILE" "$download_url"
+        [ -d "$WINEJC/wine-backup" ] && mv "$WINEJC/wine-backup" "$WINEJC/wine-old"
+        [ -d "$WINEJC/wine" ] && mv "$WINEJC/wine" "$WINEJC/wine-backup"
+        echo "INFO: Extracting wine-jc141-nomingw" && tar -xvf "$DOWNLOAD_FILE" && mv "$PWD/wine" "$WINEJC/wine" && rm -rf "$WINEJC/wine-old" && rm -f "$WINEJC/$DOWNLOAD_FILE"
     fi
 }
 
