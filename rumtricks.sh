@@ -88,7 +88,6 @@ print-commands() {
     echo "vcrun2017      Microsoft Visual C++ 2017 Redistributable"
     echo "vcrun2019      Microsoft Visual C++ 2019 Redistributable"
     echo "vdesktop       Virtual desktop"
-    echo "vkdestop-d     Disable virtual desktop"
     echo "vkd3d          Direct3D 12 API on top of Vulkan"
     echo "vkd3d-jc141    Use our master builds of vkd3d"
     echo "wine-jc141     Wine with patches needed somtimes"
@@ -131,7 +130,7 @@ extract() {
 }
 
 update() {
-    echo "INFO: Installing ${FUNCNAME[1]}" && DISPLAY="" "$WINE" wineboot && "$WINESERVER" -w
+    echo "INFO: Installing ${FUNCNAME[1]}." && DISPLAY="" "$WINE" wineboot && "$WINESERVER" -w
 }
 
 applied() {
