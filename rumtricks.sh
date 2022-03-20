@@ -337,7 +337,7 @@ github_dxvk() {
     DL_URL="$(curl -s https://api.github.com/repos/doitsujin/dxvk/releases/latest | awk -F '["]' '/"browser_download_url":/ {print $4}')"
     DXVK="$(basename "$DL_URL")"
     [ ! -f "$DXVK" ] && download "$DL_URL"
-    extract "$DXVK" || { rm "$DXVK" && echo "ERROR: Failed to extract dxvk, skipping" && return 1; }
+    extract "$DXVK" || { rm "$DXVK" && echo "ERROR: Failed to extract dxvk, skipping." && return 1; }
     cd "${DXVK//.tar.gz/}" || exit
     DISPLAY="" ./setup_dxvk.sh install && "$WINESERVER" -w
     cd "$OLDPWD" || exit
@@ -354,7 +354,7 @@ dxvk() {
     }
     [[ ! -f "$WINEPREFIX/.dxvk" && -z "$(status)" ]] && dxvk
     [[ -f "$WINEPREFIX/.dxvk" && -n "$DXVKVER" && "$DXVKVER" != "$(awk '{print $1}' "$WINEPREFIX/.dxvk")" ]] && { rm -f dxvk-*.tar.gz || true; } && echo "updating dxvk" && dxvk
-    echo "INFO: dxvk is up-to-date"
+    echo "INFO: dxvk is up-to-date."
 }
 
 dxvk-async() {
