@@ -421,8 +421,8 @@ mono() {
         echo "$MONOVER" >"$WINEPREFIX/.mono"
     }
     [[ -z "$(awk '/mono/ {print $1}' "$RUMTRICKS_LOGFILE" 2>/dev/null)" ]] && mono
-    [[ -f "$WINEPREFIX/.mono" && -n "$MONOVER" && "$MONOVER" != "$(awk '{print $1}' "$WINEPREFIX/.mono")" ]] && { rm -f wine-mono-*.msi || true; } && echo "updating mono" && mono
-    echo "INFO: mono is up-to-date."
+    [[ -f "$WINEPREFIX/.mono" && -n "$MONOVER" && "$MONOVER" != "$(awk '{print $1}' "$WINEPREFIX/.mono")" ]] && { rm -f wine-mono-*.msi || true; } && echo "INFO: Updating mono" && mono
+    echo "INFO: Mono is up-to-date."
 }
 
 remove-mono() {
