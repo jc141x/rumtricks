@@ -3,16 +3,18 @@
 # All operations are relative to rumtricks' location
 cd "$(dirname "$(realpath "$0")")" || exit 1
 
-# Base download URL for the archives
-BASE_URL="https://johncena141.eu.org:8141/johncena141/rumtricks/media/branch/main/archives"
-DOWNLOAD_LOCATION="${XDG_CACHE_HOME:-$HOME/.cache}/rumtricks"
-mkdir -p "$DOWNLOAD_LOCATION"
-
 # Use default prefix if nothing is exported
 [ -z "$WINEPREFIX" ] && export WINEPREFIX="$HOME/.wine"
 
 # Use 64bit prefix if nothing is exported
 [ -z "$WINEARCH" ] && export WINEARCH="win64"
+
+# General vars (do not move the section higher)
+JQ="$(command -v jq)"
+REQUIREMENTS_URL="https://johncena141.eu.org:8141/reqs"
+RUMTRICKS_LOGFILE="$WINEPREFIX/rumtricks.log"
+BASE_URL="https://johncena141.eu.org:8141/johncena141/rumtricks/media/branch/main/archives"
+DOWNLOAD_LOCATION="${XDG_CACHE_HOME:-$HOME/.cache}/rumtricks"; mkdir -p "$DOWNLOAD_LOCATION"
 
 # Wine: don't complain about mono/gecko
 export WINEDLLOVERRIDES="mscoree=d;mshtml=d"
@@ -28,73 +30,147 @@ export WINEDEBUG="-all"
 [ -z "$WINESERVER" ] && WINESERVER="${WINE}server"
 [ ! -x "$WINESERVER" ] && echo "${WINESERVER} is not an executable, exiting." && exit 1
 
-download()
-{
-    command -v curl >/dev/null 2>&1 && curl --etag-save $DOWNLOAD_LOCATION/${1##*/}.etag --etag-compare $DOWNLOAD_LOCATION/${1##*/}.etag --output-dir "$DOWNLOAD_LOCATION" -LO "$1"
+# Pre execution checks (validating requirements)
+pre-checks() {
+    # Validate if unzstd is installed
+    if ! command -v unzstd &>/dev/null; then
+        echo "ERROR: Missing zstd package. Zstd is not installed, please follow our requirements."
+        echo "Visit: ${REQUIREMENTS_URL}"
+        exit 1
+    fi
+    # Validate if wine is installed
+    if ! command -v wine &>/dev/null; then
+        echo "ERROR: Missing wine package. Wine is not installed, please follow our requirements."
+        echo "Visit: ${REQUIREMENTS_URL}"
+        exit 1
+    fi
+}
+
+print-usage() {
+    # Display Help
+    echo "Usage: runtricks.sh [OPTION] [COMMAND]"
+    echo "Installer-less proper alternative to winetricks focused on speed and reliability."
+    echo
+    echo "Options:"
+    echo "  -h, --help     Print this Help."
+    echo "  -v, --verbose  Verbose mode."
+    echo "  -u, --update   Update rumstricks.sh."
+    echo "  -l, --list     List all available COMMANDs."
+}
+
+print-commands() {
+    print-usage
+    echo
+    echo "Available commands:"
+    echo "cinepak        Cinepak Codec"
+    echo "corefonts      Microsoft Core fonts"
+    echo "directshow     Microsoft DirectShow runtime (amstream and quartz)"
+    echo "directplay     Microsoft Directplay"
+    echo "directx        Microsoft DirectX End-User Runtime (June 2010)"
+    echo "dxvk           Vulkan-based translation layer for Direct3D 9/10/11"
+    echo "dxvk-async     dxvk with async patches"
+    echo "dxvk-custom    install any dxvk version (usage: ./rumtricks.sh dxvk-custom <<< \"0.54\")"
+    echo "dotnet35       Microsoft .NET 3.5"
+    echo "isolate        Isolate the prefix by removing symbolinks to \$HOME"
+    echo "mf             Microsoft Media Foundation"
+    echo "mono           Open-source and cross-platform implementation of the .NET Framework"
+    echo "remove-mono    Remove mono installation from the prefix"
+    echo "physx          Nvidia PhysX"
+    echo "quicktime      Apple QuickTime"
+    echo "update-self    Update rumtricks.sh to the latest version"
+    echo "vcrun2003      Microsoft Visual C++ 2003 Redistributable"
+    echo "vcrun2005      Microsoft Visual C++ 2005 Redistributable"
+    echo "vcrun2008      Microsoft Visual C++ 2008 Redistributable"
+    echo "vcrun2010      Microsoft Visual C++ 2010 Redistributable"
+    echo "vcrun2012      Microsoft Visual C++ 2012 Redistributable"
+    echo "vcrun2013      Microsoft Visual C++ 2013 Redistributable"
+    echo "vcrun2015      Microsoft Visual C++ 2015 Redistributable"
+    echo "vcrun2017      Microsoft Visual C++ 2017 Redistributable"
+    echo "vcrun2019      Microsoft Visual C++ 2019 Redistributable"
+    echo "vdesktop       Virtual desktop"
+    echo "vkd3d          Direct3D 12 API on top of Vulkan"
+    echo "vkd3d-jc141    Use our master builds of vkd3d"
+    echo "wine-jc141     Wine with patches needed somtimes"
+    echo "win10          Set wineprefix version Windows to 10"
+    echo "win81          Set wineprefix version Windows to 8.1"
+    echo "win8           Set wineprefix version to Windows 8"
+    echo "win7           Set wineprefix version to Windows 7"
+    echo "win2008r2      Set wineprefix version to Windows 2008 R2"
+    echo "win2008        Set wineprefix version to Windows 2008"
+    echo "winvista       Set wineprefix version to Windows Vista"
+    echo "win2003        Set wineprefix version to Windows 2003"
+    echo "winxp          Set wineprefix version to Windows XP"
+    echo "winme          Set wineprefix version to Windows ME (32bit only)"
+    echo "win2k          Set wineprefix version to Windows 2000 (32bit only)"
+    echo "win98          Set wineprefix version to Windows 98 (32bit only)"
+    echo "winnt40        Set wineprefix version to Windows NT 4.0 (32bit only)"
+    echo "win95          Set wineprefix version to Windows 95 (32bit only)"
+    echo "winnt351       Set wineprefix version to Windows NT 3.51 (32bit only)"
+    echo "win31          Set wineprefix version to Windows 3.1 (32bit only)"
+    echo "win30          Set wineprefix version to Windows 3.0 (32bit only)"
+    echo "win20          Set wineprefix version to Windows 2.0 (32bit only)"
+    echo
+}
+
+download() {
+    cd "$DOWNLOAD_LOCATION"
+    # Avoid using --output-dir option (for older distros that doesn't have the latest greatest cURL)
+    command -v curl >/dev/null 2>&1 && curl --etag-save $DOWNLOAD_LOCATION/${1##*/}.etag --etag-compare $DOWNLOAD_LOCATION/${1##*/}.etag -LO "$1"
+    cd "$OLDPWD"
     cp "$DOWNLOAD_LOCATION/${1##*/}" "./"
 }
 
-regedit()
-{
-    echo "INFO: Adding registry." && "$WINE" regedit "$1" & "$WINE64" regedit "$1" && "$WINESERVER" -w
+regedit() {
+    echo "INFO: Adding registry." && "$WINE" regedit "$1" &
+    "$WINE64" regedit "$1" && "$WINESERVER" -w
 }
 
-extract()
-{
-    echo "INFO: Extracting $1 ." && tar -xf "$1"
+extract() {
+    echo "INFO: Extracting $1." && tar --use-compress-program=unzstd -xf "$1"
 }
 
-update()
-{
-    echo "INFO: Applied ${FUNCNAME[1]} ." && DISPLAY="" "$WINE" wineboot && "$WINESERVER" -w
+update() {
+    echo "INFO: Applying ${FUNCNAME[1]}." && DISPLAY="" "$WINE" wineboot && "$WINESERVER" -w
 }
 
-applied()
-{
-    echo "${FUNCNAME[1]}" >> "$WINEPREFIX/rumtricks.log"
-    echo "${FUNCNAME[1]} applied."
+applied() {
+    echo "${FUNCNAME[1]}" >>"$RUMTRICKS_LOGFILE"
+    echo "INFO: ${FUNCNAME[1]} applied."
 }
 
-check()
-{
+check() {
     echo "$1  ${FUNCNAME[1]}.tar.zst" | sha256sum -c -
     [ $? -ne 1 ] || { echo "ERROR: Archive is corrupted, skipping." && rm "${FUNCNAME[1]}".tar.zst && return 1; }
 }
 
-status()
-{
-    [[ ! -f "$WINEPREFIX/rumtricks.log" || -z "$(awk "/^${FUNCNAME[1]}\$/ {print \$1}" "$WINEPREFIX/rumtricks.log" 2>/dev/null)" ]] || { echo "INFO: ${FUNCNAME[1]} already applied, skipping." && return 1; }
+status() {
+    [[ ! -f "$RUMTRICKS_LOGFILE" || -z "$(awk "/^${FUNCNAME[1]}\$/ {print \$1}" "$RUMTRICKS_LOGFILE" 2>/dev/null)" ]] || { echo "INFO: ${FUNCNAME[1]} already applied, skipping." && return 1; }
 }
 
-regsvr32()
-{
+regsvr32() {
     echo "INFO: Registering dlls."
-    for i in "$@"
-    do
-    "$WINE" regsvr32 /s "$i" & "$WINE64" regsvr32 /s "$i"
+    for i in "$@"; do
+        "$WINE" regsvr32 /s "$i" &
+        "$WINE64" regsvr32 /s "$i"
     done
     "$WINESERVER" -w
 }
 
-update-self()
-{
-    echo "INFO: Updating rumtricks"
+update-self() {
+    echo "INFO: Updating rumtricks."
     download "https://johncena141.eu.org:8141/johncena141/rumtricks/raw/branch/main/rumtricks.sh"
     chmod +x "$PWD/rumtricks.sh"
     [ "$PWD/rumtricks.sh" != "$(realpath "$0")" ] && mv "$PWD/rumtricks.sh" "$(realpath "$0")"
     echo "INFO: Updated rumtricks."
 }
 
-isolate()
-{
+isolate() {
     status || return
     update
     echo "INFO: Disabling desktop integrations. (isolation)"
     cd "$WINEPREFIX/drive_c/users/${USER}" || exit
-    for entry in *
-    do
-        if [ -L "$entry" ] && [ -d "$entry" ]
-        then
+    for entry in *; do
+        if [ -L "$entry" ] && [ -d "$entry" ]; then
             rm -f "$entry"
             mkdir -p "$entry"
         fi
@@ -105,8 +181,7 @@ isolate()
     applied
 }
 
-directx()
-{
+directx() {
     status || return
     update
     [ ! -f "directx.tar.zst" ] && download "$BASE_URL/directx.tar.zst"
@@ -124,8 +199,7 @@ directx()
     applied
 }
 
-vcrun2003()
-{
+vcrun2003() {
     status || return
     update
     [ ! -f "vcrun2003.tar.zst" ] && download "$BASE_URL/vcrun2003.tar.zst"
@@ -136,8 +210,7 @@ vcrun2003()
     applied
 }
 
-vcrun2005()
-{
+vcrun2005() {
     status || return
     update
     [ ! -f "vcrun2005.tar.zst" ] && download "$BASE_URL/vcrun2005.tar.zst"
@@ -149,8 +222,7 @@ vcrun2005()
     applied
 }
 
-vcrun2008()
-{
+vcrun2008() {
     status || return
     update
     [ ! -f "vcrun2008.tar.zst" ] && download "$BASE_URL/vcrun2008.tar.zst"
@@ -162,8 +234,7 @@ vcrun2008()
     applied
 }
 
-vcrun2010()
-{
+vcrun2010() {
     status || return
     update
     [ ! -f "vcrun2010.tar.zst" ] && download "$BASE_URL/vcrun2010.tar.zst"
@@ -175,8 +246,7 @@ vcrun2010()
     applied
 }
 
-vcrun2012()
-{
+vcrun2012() {
     status || return
     update
     [ ! -f "vcrun2012.tar.zst" ] && download "$BASE_URL/vcrun2012.tar.zst"
@@ -188,8 +258,7 @@ vcrun2012()
     applied
 }
 
-vcrun2013()
-{
+vcrun2013() {
     status || return
     update
     [ ! -f "vcrun2013.tar.zst" ] && download "$BASE_URL/vcrun2013.tar.zst"
@@ -201,8 +270,7 @@ vcrun2013()
     applied
 }
 
-vcrun2015()
-{
+vcrun2015() {
     status || return
     update
     [ ! -f "vcrun2015.tar.zst" ] && download "$BASE_URL/vcrun2015.tar.zst"
@@ -214,8 +282,7 @@ vcrun2015()
     applied
 }
 
-vcrun2017()
-{
+vcrun2017() {
     status || return
     update
     [ ! -f "vcrun2017.tar.zst" ] && download "$BASE_URL/vcrun2017.tar.zst"
@@ -227,8 +294,7 @@ vcrun2017()
     applied
 }
 
-vcrun2019()
-{
+vcrun2019() {
     status || return
     update
     [ ! -f "vcrun2019.tar.zst" ] && download "$BASE_URL/vcrun2019.tar.zst"
@@ -240,8 +306,7 @@ vcrun2019()
     applied
 }
 
-mf()
-{
+mf() {
     status || return
     update
     [ ! -f "mf.tar.zst" ] && download "$BASE_URL/mf.tar.zst"
@@ -254,14 +319,12 @@ mf()
     applied
 }
 
-vdesktop()
-{
+vdesktop() {
     [ ! -f rres ] && curl -L "$(curl -s https://api.github.com/repos/rokbma/rres/releases/latest | awk -F '["]' '/"browser_download_url":/ {print $4}')" -o rres && chmod +x rres
     echo "explorer /desktop=Game,$(./rres)"
 }
 
-physx()
-{
+physx() {
     status || return
     update
     [ ! -f "physx.tar.zst" ] && download "$BASE_URL/physx.tar.zst"
@@ -273,8 +336,7 @@ physx()
     applied
 }
 
-github_dxvk()
-{
+github_dxvk() {
     DL_URL="$(curl -s https://api.github.com/repos/doitsujin/dxvk/releases/latest | awk -F '["]' '/"browser_download_url":/ {print $4}')"
     DXVK="$(basename "$DL_URL")"
     [ ! -f "$DXVK" ] && download "$DL_URL"
@@ -285,21 +347,20 @@ github_dxvk()
     rm -rf "${DXVK//.tar.gz/}"
 }
 
-dxvk()
-{
-    DXVKVER="$(curl -s -m 5 https://api.github.com/repos/doitsujin/dxvk/releases/latest | awk -F '["/]' '/"browser_download_url":/ {print $11}' | cut -c 2-)"; SYSDXVK="$(command -v setup_dxvk 2>/dev/null)"
+dxvk() {
+    DXVKVER="$(curl -s -m 5 https://api.github.com/repos/doitsujin/dxvk/releases/latest | awk -F '["/]' '/"browser_download_url":/ {print $11}' | cut -c 2-)"
+    SYSDXVK="$(command -v setup_dxvk 2>/dev/null)"
     dxvk() {
         update
         [ -n "$SYSDXVK" ] && echo "INFO: Using local dxvk." && DISPLAY="" "$SYSDXVK" install --symlink && "$WINESERVER" -w && applied
-        [ -z "$SYSDXVK" ] && echo "INFO: Using dxvk from github." && github_dxvk && echo "$DXVKVER" > "$WINEPREFIX/.dxvk"
+        [ -z "$SYSDXVK" ] && echo "INFO: Using dxvk from github." && github_dxvk && echo "$DXVKVER" >"$WINEPREFIX/.dxvk"
     }
     [[ ! -f "$WINEPREFIX/.dxvk" && -z "$(status)" ]] && dxvk
-    [[ -f "$WINEPREFIX/.dxvk" && -n "$DXVKVER" && "$DXVKVER" != "$(awk '{print $1}' "$WINEPREFIX/.dxvk")" ]] && { rm -f dxvk-*.tar.gz || true; } && echo "INFO: Updating dxvk." && dxvk
+    [[ -f "$WINEPREFIX/.dxvk" && -n "$DXVKVER" && "$DXVKVER" != "$(awk '{print $1}' "$WINEPREFIX/.dxvk")" ]] && { rm -f dxvk-*.tar.gz || true; } && echo "updating dxvk" && dxvk
     echo "INFO: dxvk is up-to-date."
 }
 
-dxvk-async()
-{
+dxvk-async() {
     DXVKVER="$(curl -s -m 5 https://api.github.com/repos/Sporif/dxvk-async/releases/latest | awk -F '["/]' '/"browser_download_url":/ {print $11}')"
     dxvk-async() {
         update
@@ -311,15 +372,15 @@ dxvk-async()
         chmod +x ./setup_dxvk.sh && DISPLAY="" ./setup_dxvk.sh install && "$WINESERVER" -w
         cd "$OLDPWD" || exit
         rm -rf "${DXVK//.tar.gz/}"
-        applied; echo "$DXVKVER" > "$WINEPREFIX/.dxvk-async"
+        applied
+        echo "$DXVKVER" >"$WINEPREFIX/.dxvk-async"
     }
     [[ -z "$(status)" ]] && dxvk-async
-    [[ -f "$WINEPREFIX/.dxvk-async" && -n "$DXVKVER" && "$DXVKVER" != "$(awk '{print $1}' "$WINEPREFIX/.dxvk-async")" ]] && { rm -f dxvk-async-*.tar.gz || true; } && echo "INFO: Updating dxvk-async." && dxvk-async
+    [[ -f "$WINEPREFIX/.dxvk-async" && -n "$DXVKVER" && "$DXVKVER" != "$(awk '{print $1}' "$WINEPREFIX/.dxvk-async")" ]] && { rm -f dxvk-async-*.tar.gz || true; } && echo "updating dxvk-async" && dxvk-async
     echo "INFO: dxvk-async is up-to-date."
 }
 
-dxvk-custom()
-{
+dxvk-custom() {
     status || return
     update
     read -r -p "What version do you want? (0.54, 1.8.1, etc.): " DXVKVER
@@ -336,8 +397,7 @@ dxvk-custom()
     applied
 }
 
-wmp11()
-{
+wmp11() {
     status || return
     mf
     update
@@ -351,8 +411,7 @@ wmp11()
     applied
 }
 
-mono()
-{
+mono() {
     MONOVER="$(curl -s https://api.github.com/repos/madewokherd/wine-mono/releases/latest | awk -F '["]' '/"browser_download_url":/ {print $4}' | awk -F '[-]' '/.msi/ {print $6}')"
     mono() {
         update
@@ -361,22 +420,21 @@ mono()
         [ ! -f "$MONO" ] && download "$DL_URL"
         remove-mono
         "$WINE" msiexec /i "$MONO"
-        applied ; echo "$MONOVER" > "$WINEPREFIX/.mono"
+        applied
+        echo "$MONOVER" >"$WINEPREFIX/.mono"
     }
-    [[ -z "$(awk '/mono/ {print $1}' "$WINEPREFIX/rumtricks.log" 2>/dev/null)" ]] && mono
-    [[ -f "$WINEPREFIX/.mono" && -n "$MONOVER" && "$MONOVER" != "$(awk '{print $1}' "$WINEPREFIX/.mono")" ]] && { rm -f wine-mono-*.msi || true; } && echo "INFO: Updating mono." && mono
-    echo "INFO: mono is up-to-date."
+    [[ -z "$(awk '/mono/ {print $1}' "$RUMTRICKS_LOGFILE" 2>/dev/null)" ]] && mono
+    [[ -f "$WINEPREFIX/.mono" && -n "$MONOVER" && "$MONOVER" != "$(awk '{print $1}' "$WINEPREFIX/.mono")" ]] && { rm -f wine-mono-*.msi || true; } && echo "INFO: Updating mono" && mono
+    echo "INFO: Mono is up-to-date."
 }
 
-remove-mono()
-{
+remove-mono() {
     echo "INFO: Removing mono."
     for i in $("$WINE" uninstaller --list | awk -F '[|]' '/Wine Mono/ {print $1}'); do "$WINE" uninstaller --remove "$i"; done
     echo "INFO: Mono removed."
 }
 
-github_vkd3d()
-{
+github_vkd3d() {
     DL_URL="$(curl -s https://api.github.com/repos/HansKristian-Work/vkd3d-proton/releases/latest | awk -F '["]' '/"browser_download_url":/ {print $4}')"
     VKD3D="$(basename "$DL_URL")"
     [ ! -f "$VKD3D" ] && download "$DL_URL"
@@ -387,26 +445,28 @@ github_vkd3d()
     rm -rf "${VKD3D//.tar.zst/}"
 }
 
-vkd3d()
-{
-    VKD3DVER="$(curl -s -m 5 https://api.github.com/repos/HansKristian-Work/vkd3d-proton/releases/latest | awk -F '["/]' '/"browser_download_url":/ {print $11}' | cut -c 2-)"; SYSVKD3D="$(command -v setup_vkd3d_proton)"
+vkd3d() {
+    VKD3DVER="$(curl -s -m 5 https://api.github.com/repos/HansKristian-Work/vkd3d-proton/releases/latest | awk -F '["/]' '/"browser_download_url":/ {print $11}' | cut -c 2-)"
+    SYSVKD3D="$(command -v setup_vkd3d_proton)"
     vkd3d() {
         update
         [ -n "$SYSVKD3D" ] && echo "INFO: Using local vkd3d." && DISPLAY="" "$SYSVKD3D" install --symlink && "$WINESERVER" -w && applied
-        [ -z "$SYSVKD3D" ] && echo "INFO: Using vkd3d from github." && github_vkd3d && echo "$VKD3DVER" > "$WINEPREFIX/.vkd3d"
+        [ -z "$SYSVKD3D" ] && echo "INFO: Using vkd3d from github." && github_vkd3d && echo "$VKD3DVER" >"$WINEPREFIX/.vkd3d"
     }
     [[ ! -f "$WINEPREFIX/.vkd3d" && -z "$(status)" ]] && vkd3d
-    [[ -f "$WINEPREFIX/.vkd3d" && -n "$VKD3DVER" && "$VKD3DVER" != "$(awk '{print $1}' "$WINEPREFIX/.vkd3d")" ]] && { rm -f vkd3d-proton-*.tar.zst || true; } && echo "INFO: Updating vkd3d." && vkd3d
+    [[ -f "$WINEPREFIX/.vkd3d" && -n "$VKD3DVER" && "$VKD3DVER" != "$(awk '{print $1}' "$WINEPREFIX/.vkd3d")" ]] && { rm -f vkd3d-proton-*.tar.zst || true; } && echo "updating vkd3d" && vkd3d
     echo "INFO: vkd3d is up-to-date."
 }
 
-provided_vkd3d()
-{
+provided_vkd3d() {
     TARGET="vkd3d-proton-master.tar.zst"
     if [ ! -f "$TARGET" ]; then
         echo "INFO: Downloading latest vkd3d..."
         DL_URL="$(curl -s 'https://johncena141.eu.org:8141/api/v1/repos/johncena141/vkd3d-jc141/releases?draft=false&pre-release=false&limit=1' -H 'accept: application/json' | jq '.[].assets[0].browser_download_url' | awk -F'"' '{print $2}')"
-        [ -z "$DL_URL" ] && { echo "ERROR: Couldn't download latest vkd3d."; return 1; }
+        [ -z "$DL_URL" ] && {
+            echo "ERROR: Couldn't download latest vkd3d."
+            return 1
+        }
         curl -L "$DL_URL" -o "$TARGET"
     fi
     extract "$TARGET" || { rm "$TARGET" && echo "ERROR: Failed to extract vkd3d." && return 1; }
@@ -416,8 +476,7 @@ provided_vkd3d()
     rm -rf "${TARGET//.tar.zst/}"
 }
 
-vkd3d-jc141()
-{
+vkd3d-jc141() {
     read -r -p "Game: " GAME
     [ -z "$GAME" ] && GAME="all"
     USE_GITHUB="$(curl -sL -m 5 "https://johncena141.eu.org:8141/johncena141/vkd3d-jc141/raw/branch/main/use-github/$GAME")"
@@ -432,8 +491,7 @@ vkd3d-jc141()
     fi
 }
 
-directshow()
-{
+directshow() {
     status || return
     update
     [ ! -f "directshow.tar.zst" ] && download "$BASE_URL/directshow.tar.zst"
@@ -446,8 +504,7 @@ directshow()
     applied
 }
 
-cinepak()
-{
+cinepak() {
     status || return
     update
     [ ! -f "cinepak.tar.zst" ] && download "$BASE_URL/cinepak.tar.zst"
@@ -459,8 +516,7 @@ cinepak()
     applied
 }
 
-corefonts()
-{
+corefonts() {
     status || return
     update
     [ ! -f "corefonts.tar.zst" ] && download "$BASE_URL/corefonts.tar.zst"
@@ -472,8 +528,7 @@ corefonts()
     applied
 }
 
-quicktime()
-{
+quicktime() {
     status || return
     update
     [ ! -f "quicktime.tar.zst" ] && download "$BASE_URL/quicktime.tar.zst"
@@ -485,8 +540,7 @@ quicktime()
     applied
 }
 
-directplay()
-{
+directplay() {
     status || return
     update
     [ ! -f "directplay.tar.zst" ] && download "$BASE_URL/directplay.tar.zst"
@@ -499,8 +553,7 @@ directplay()
     applied
 }
 
-dotnet35()
-{
+dotnet35() {
     status || return
     remove-mono
     update
@@ -513,72 +566,63 @@ dotnet35()
     applied
 }
 
-win10()
-{
+win10() {
     status || return
     update
     "$WINE" winecfg -v win10
     applied
 }
 
-win81()
-{
+win81() {
     status || return
     update
     "$WINE" winecfg -v win81
     applied
 }
 
-win8()
-{
+win8() {
     status || return
     update
     "$WINE" winecfg -v win8
     applied
 }
 
-win2008r2()
-{
+win2008r2() {
     status || return
     update
     "$WINE" winecfg -v win2008r2
     applied
 }
 
-win2008()
-{
+win2008() {
     status || return
     update
     "$WINE" winecfg -v win2008
     applied
 }
 
-win7()
-{
+win7() {
     status || return
     update
     "$WINE" winecfg -v win7
     applied
 }
 
-winvista()
-{
+winvista() {
     status || return
     update
     "$WINE" winecfg -v vista
     applied
 }
 
-win2003()
-{
+win2003() {
     status || return
     update
     "$WINE" winecfg -v win2003
     applied
 }
 
-winxp()
-{
+winxp() {
     status || return
     update
     [ "$WINEARCH" = "win64" ] && "$WINE" winecfg -v winxp64
@@ -586,80 +630,70 @@ winxp()
     applied
 }
 
-win2k()
-{
+win2k() {
     status || return
     update
     "$WINE" winecfg -v win2k
     applied
 }
 
-winme()
-{
+winme() {
     status || return
     update
     "$WINE" winecfg -v winme
     applied
 }
 
-win98()
-{
+win98() {
     status || return
     update
     "$WINE" winecfg -v win98
     applied
 }
 
-win95()
-{
+win95() {
     status || return
     update
     "$WINE" winecfg -v win95
     applied
 }
 
-win98()
-{
+win98() {
     status || return
     update
     "$WINE" winecfg -v win98
     applied
 }
 
-winnt40()
-{
+winnt40() {
     status || return
     update
     "$WINE" winecfg -v nt40
     applied
 }
 
-winnt351()
-{
+winnt351() {
     status || return
     update
     "$WINE" winecfg -v nt351
     applied
 }
 
-win31()
-{
+win31() {
     status || return
     update
     "$WINE" winecfg -v win31
     applied
 }
 
-win30()
-{
+win30() {
     status || return
     update
     "$WINE" winecfg -v win30
     applied
 }
 
-win20()
-{
+win20() {
     status || return
     update
     "$WINE" winecfg -v win20
@@ -673,16 +707,16 @@ check_connectivity() {
     test_ip="johncena141.eu.org"
     test_count=1
 
-    if ping -c ${test_count} ${test_ip} > /dev/null; then
-       echo "INFO: Internet connectivity present."
+    if ping -c ${test_count} ${test_ip} >/dev/null; then
+        echo "INFO: Internet connectivity present."
     else
-       echo "INFO: Internet connectivity not present." && exit 1
+        echo "INFO: Internet connectivity not present." && exit 1
     fi
 }
 
 wine-jc141() {
     check_connectivity
-    JQ="$(command -v jq)"; WINEJC="groot"; VERSION_FILE="$PWD/.wine-jc141-current-version"
+    WINEJC="groot"; VERSION_FILE="$PWD/.wine-jc141-current-version"
     [ ! -x "$JQ" ] && exit 1 && echo "ERROR: jq not found, skipping updates. (read the requirements guide)" || echo "INFO: jq found"
     latest_release="$(curl -s https://johncena141.eu.org:8141/api/v1/repos/johncena141/wine-jc141/releases?limit=1)"
     tag_name=$(echo "$latest_release" | jq -r '[.[].tag_name][0]')
@@ -713,7 +747,7 @@ wine-jc141() {
 
 wine-jc141-nomingw() {
     check_connectivity
-    JQ="$(command -v jq)"; WINEJC="groot"; VERSION_FILE="$PWD/.wine-jc141-current-version"
+    WINEJC="groot"; VERSION_FILE="$PWD/.wine-jc141-current-version"
     [ ! -x "$JQ" ] && exit 1 && echo "ERROR: jq not found, skipping updates. (read the requirements guide)" || echo "INFO: jq found"
     latest_release="$(curl -s https://johncena141.eu.org:8141/api/v1/repos/johncena141/wine-jc141-nomingw/releases?limit=1)"
     tag_name=$(echo "$latest_release" | jq -r '[.[].tag_name][0]')
@@ -738,13 +772,68 @@ wine-jc141-nomingw() {
         [ ! -f "$WINEJC/$DOWNLOAD_FILE" ] && wget -O "$DOWNLOAD_FILE" "$download_url"
         [ -d "$WINEJC/wine-backup" ] && mv "$WINEJC/wine-backup" "$WINEJC/wine-old"
         [ -d "$WINEJC/wine" ] && mv "$WINEJC/wine" "$WINEJC/wine-backup"
-        echo "INFO: Extracting wine-jc141-nomingw" && tar -xvf "$DOWNLOAD_FILE" && mv "$PWD/wine" "$WINEJC/wine" && rm -rf "$WINEJC/wine-old" && rm -f "$WINEJC/$DOWNLOAD_FILE"
+        echo "INFO: Extracting wine-jc141-nomingw." && tar -xvf "$DOWNLOAD_FILE" && mv "$PWD/wine" "$WINEJC/wine" && rm -rf "$WINEJC/wine-old" && rm -f "$WINEJC/$DOWNLOAD_FILE"
     fi
 }
 
-# Running rumtricks
-[ $# = 0 ] && exit 1
-for i in "$@"
-do
-   "$i"
+## Main ##
+pre-checks
+
+# Transform long options to short ones
+for arg in "$@"; do
+    shift
+    case "$arg" in
+    "--help") set -- "$@" "-h" ;;
+    "--list") set -- "$@" "-l" ;;
+    "--update") set -- "$@" "-u" ;;
+    "--verbose") set -- "$@" "-v" ;;
+    *) set -- "$@" "$arg" ;;
+    esac
+done
+
+# Default values
+verbose=false
+
+# Parsing paramater using getopts
+OPTIND=1
+while getopts "hvlu" opt; do
+    case "$opt" in
+    "h")
+        print-usage
+        exit 0
+        ;;
+    "l")
+        print-commands
+        exit 0
+        ;;
+    "u")
+        update-self
+        ;;
+    "v") verbose=true ;;
+    "?")
+        print-usage >&2
+        exit 1
+        ;;
+    esac
+done
+shift $(expr $OPTIND - 1) # remove options from positional parameters
+
+if [ $# = 0 ]; then
+    echo "INFO: Nothing to do. Provide some command(s)."
+    echo
+    print-usage
+    exit 1
+else
+    echo "INFO: Executing rumtricks."
+fi
+
+for i in "$@"; do
+    # Check if function exists
+    if type "$i" &>/dev/null; then
+        "$i"
+    else
+        echo "WARN: Command: '$i' does not exists. Try another command/option."
+        echo
+        print-usage
+    fi
 done
