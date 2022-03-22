@@ -9,9 +9,7 @@ cd "$(dirname "$(realpath "$0")")" || exit 1
 # Use 64bit prefix if nothing is exported
 [ -z "$WINEARCH" ] && export WINEARCH="win64"
 
-# General vars (do not move the section higher)
-JQ="$(command -v jq)"
-REQUIREMENTS_URL="https://johncena141.eu.org:8141/reqs"
+# General
 RUMTRICKS_LOGFILE="$WINEPREFIX/rumtricks.log"
 BASE_URL="https://johncena141.eu.org:8141/johncena141/rumtricks/media/branch/main/archives"
 DOWNLOAD_LOCATION="${XDG_CACHE_HOME:-$HOME/.cache}/rumtricks"; mkdir -p "$DOWNLOAD_LOCATION"
@@ -30,18 +28,16 @@ export WINEDEBUG="-all"
 [ -z "$WINESERVER" ] && WINESERVER="${WINE}server"
 [ ! -x "$WINESERVER" ] && echo "${WINESERVER} is not an executable, exiting." && exit 1
 
-# Pre execution checks (validating requirements)
+# Pre execution checks
 pre-checks() {
     # Validate if unzstd is installed
     if ! command -v unzstd &>/dev/null; then
         echo "ERROR: Missing zstd package. Zstd is not installed, please follow our requirements."
-        echo "Visit: ${REQUIREMENTS_URL}"
         exit 1
     fi
     # Validate if wine is installed
     if ! command -v wine &>/dev/null; then
         echo "ERROR: Missing wine package. Wine is not installed, please follow our requirements."
-        echo "Visit: ${REQUIREMENTS_URL}"
         exit 1
     fi
 }
@@ -49,7 +45,6 @@ pre-checks() {
 print-usage() {
     # Display Help
     echo "Usage: runtricks.sh [OPTION] [COMMAND]"
-    echo "Installer-less proper alternative to winetricks focused on speed and reliability."
     echo
     echo "Options:"
     echo "  -h, --help     Print this Help."
@@ -90,7 +85,6 @@ print-commands() {
     echo "vdesktop       Virtual desktop"
     echo "vkd3d          Direct3D 12 API on top of Vulkan"
     echo "vkd3d-jc141    Use our master builds of vkd3d"
-    echo "wine-jc141     Wine with patches needed somtimes"
     echo "win10          Set wineprefix version Windows to 10"
     echo "win81          Set wineprefix version Windows to 8.1"
     echo "win8           Set wineprefix version to Windows 8"
@@ -698,82 +692,6 @@ win20() {
     update
     "$WINE" winecfg -v win20
     applied
-}
-
-check_connectivity() {
-    local test_ip
-    local test_count
-
-    test_ip="johncena141.eu.org"
-    test_count=1
-
-    if ping -c ${test_count} ${test_ip} >/dev/null; then
-        echo "INFO: Internet connectivity present."
-    else
-        echo "INFO: Internet connectivity not present." && exit 1
-    fi
-}
-
-wine-jc141() {
-    check_connectivity
-    WINEJC="groot"; VERSION_FILE="$PWD/.wine-jc141-current-version"
-    [ ! -x "$JQ" ] && exit 1 && echo "ERROR: jq not found, skipping updates. (read the requirements guide)" || echo "INFO: jq found"
-    latest_release="$(curl -s https://johncena141.eu.org:8141/api/v1/repos/johncena141/wine-jc141/releases?limit=1)"
-    tag_name=$(echo "$latest_release" | jq -r '[.[].tag_name][0]')
-    update=1
-    if [ -f "$VERSION_FILE" ]; then
-        version=$(cat "$VERSION_FILE")
-        if [ "$tag_name" = "$version" ]; then
-            echo "INFO: You have the latest wine version ($version)."
-            update=0
-        else
-            echo "INFO: New version found! Updating.."
-        fi
-    fi
-    if [ "$update" -eq "1" ]; then
-        download_url=$(echo "$latest_release" | jq -r '[.[].assets[0].browser_download_url][0]')
-        if [ "$download_url" = "null" ]; then
-            echo "ERROR: Could not find the download URL. Abort"
-            exit 1
-        fi
-        echo "$tag_name" >"$VERSION_FILE" && echo "INFO: Downloading... $download_url"
-        DOWNLOAD_FILE=wine.tar.zst && rm -f "$DOWNLOAD_FILE"
-        [ ! -f "$WINEJC/$DOWNLOAD_FILE" ] && wget -O "$DOWNLOAD_FILE" "$download_url"
-        [ -d "$WINEJC/wine-backup" ] && mv "$WINEJC/wine-backup" "$WINEJC/wine-old"
-        [ -d "$WINEJC/wine" ] && mv "$WINEJC/wine" "$WINEJC/wine-backup"
-        echo "INFO: Extracting wine-jc141" && tar -xvf "$DOWNLOAD_FILE" && mv "$PWD/wine" "$WINEJC/wine" && rm -rf "$WINEJC/wine-old" && rm -f "$WINEJC/$DOWNLOAD_FILE"
-    fi
-}
-
-wine-jc141-nomingw() {
-    check_connectivity
-    WINEJC="groot"; VERSION_FILE="$PWD/.wine-jc141-current-version"
-    [ ! -x "$JQ" ] && exit 1 && echo "ERROR: jq not found, skipping updates. (read the requirements guide)" || echo "INFO: jq found"
-    latest_release="$(curl -s https://johncena141.eu.org:8141/api/v1/repos/johncena141/wine-jc141-nomingw/releases?limit=1)"
-    tag_name=$(echo "$latest_release" | jq -r '[.[].tag_name][0]')
-    update=1
-    if [ -f "$VERSION_FILE" ]; then
-        version=$(cat "$VERSION_FILE")
-        if [ "$tag_name" = "$version" ]; then
-            echo "INFO: You have the latest wine version ($version)."
-            update=0
-        else
-            echo "INFO: New version found! Updating.."
-        fi
-    fi
-    if [ "$update" -eq "1" ]; then
-        download_url=$(echo "$latest_release" | jq -r '[.[].assets[0].browser_download_url][0]')
-        if [ "$download_url" = "null" ]; then
-            echo "ERROR: Could not find the download URL. Abort"
-            exit 1
-        fi
-        echo "$tag_name" >"$VERSION_FILE" && echo "INFO: Downloading... $download_url"
-        DOWNLOAD_FILE=wine.tar.zst && rm -f "$DOWNLOAD_FILE"
-        [ ! -f "$WINEJC/$DOWNLOAD_FILE" ] && wget -O "$DOWNLOAD_FILE" "$download_url"
-        [ -d "$WINEJC/wine-backup" ] && mv "$WINEJC/wine-backup" "$WINEJC/wine-old"
-        [ -d "$WINEJC/wine" ] && mv "$WINEJC/wine" "$WINEJC/wine-backup"
-        echo "INFO: Extracting wine-jc141-nomingw." && tar -xvf "$DOWNLOAD_FILE" && mv "$PWD/wine" "$WINEJC/wine" && rm -rf "$WINEJC/wine-old" && rm -f "$WINEJC/$DOWNLOAD_FILE"
-    fi
 }
 
 ## Main ##
