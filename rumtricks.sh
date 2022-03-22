@@ -30,21 +30,21 @@ export WINEDEBUG="-all"
 
 # Pre execution checks
 pre-checks() {
-    # Validate if unzstd is installed
+    # Validate if zstd is installed
     if ! command -v unzstd &>/dev/null; then
-        echo "ERROR: Missing zstd package. Zstd is not installed, please follow our requirements."
+        echo "ERROR: Missing zstd package. zstd is not installed, please follow our requirements."
         exit 1
     fi
     # Validate if wine is installed
     if ! command -v wine &>/dev/null; then
-        echo "ERROR: Missing wine package. Wine is not installed, please follow our requirements."
+        echo "ERROR: Missing wine package. wine is not installed, please follow our requirements."
         exit 1
     fi
 }
 
 print-usage() {
     # Display Help
-    echo "Usage: runtricks.sh [OPTION] [COMMAND]"
+    echo "Usage: rumtricks.sh [OPTION] [COMMAND]"
     echo
     echo "Options:"
     echo "  -h, --help     Print this Help."
@@ -108,7 +108,6 @@ print-commands() {
 
 download() {
     cd "$DOWNLOAD_LOCATION"
-    # Avoid using --output-dir option (for older distros that doesn't have the latest greatest cURL)
     command -v curl >/dev/null 2>&1 && curl --etag-save $DOWNLOAD_LOCATION/${1##*/}.etag --etag-compare $DOWNLOAD_LOCATION/${1##*/}.etag -LO "$1"
     cd "$OLDPWD"
     cp "$DOWNLOAD_LOCATION/${1##*/}" "./"
@@ -735,15 +734,6 @@ while getopts "hvlu" opt; do
     esac
 done
 shift $(expr $OPTIND - 1) # remove options from positional parameters
-
-if [ $# = 0 ]; then
-    echo "INFO: Nothing to do. Provide some command(s)."
-    echo
-    print-usage
-    exit 1
-else
-    echo "INFO: Executing rumtricks."
-fi
 
 for i in "$@"; do
     # Check if function exists
