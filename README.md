@@ -1,18 +1,20 @@
 <div align="center">
+  <img src="https://i.postimg.cc/447fH7YN/45345.png">
+</div>
+<div align="center">
   <h1>Rumtricks</h1>
 </div>
-
 <p align="center">
-  Installer-less proper alternative to winetricks focused on speed and reliability made by johncena141 hacker group for pirates on GNU/Linux who don't care about stupid intellectual property laws.
+  Installer-less, fast, reliable and proper alternative to winetricks made by johncena141 hacker group for GNU/Linux users who disregard intellectual property.
 </p>
 
 ## Features
 
-* Stability: not relying on exes to install means better reliability
-* Small size: uses ZSTD to compress and decompress files
-* Hash check: checking hashes to be sure our installation works
-* Install speed: everything installs faster due to minimal and better code
-* Dependencies: depends only on wine and zstd
+* Stability: not relying on exes to install means better reliability.
+* Small size: uses ZSTD to compress and decompress files.
+* Hash check: checking hashes to be sure our installation works.
+* Install speed: everything installs faster due to minimal and better code.
+* Dependencies: depends only on wine and zstd.
 
 ## Installation
 
@@ -107,8 +109,4 @@ We welcome any type of contribution, not only code. You can help with:
 - **Suggestions**: Give suggestions on what to add next.
 - **QA**: Send bug reports, the more details you can give the better. (e.g. console logs)
 
-<br>
-<div align="center">
-  <img src="https://i.postimg.cc/bvj89mLW/434.png">
-</div>
 Donations (Monero): 4ABGQLAeAgiauvay11VRrWXRRtraRCU6oaC6uG9RUnNCHN4eepzWjEB6sHF92sUrSED5b8GyY7Ayh57R1jUdcKZg7is2DW3
