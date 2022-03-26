@@ -4,7 +4,7 @@
 <div align="center">
   <h1>Rumtricks</h1>
 </div>
-Installer-less, fast, reliable and proper alternative to winetricks made by johncena141 hacker group for GNU/Linux users who disregard intellectual property.
+Installer-less, fast, reliable and proper alternative to winetricks made by johncena141 hacker group for GNU/Linux users.
 </p>
 
 ## Features
