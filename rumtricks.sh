@@ -51,6 +51,7 @@ print-usage() {
     echo "  -v, --verbose  Verbose mode."
     echo "  -u, --update   Update rumstricks.sh."
     echo "  -l, --list     List all available COMMANDs."
+    echo "  -c, --cache    Download and cache all COMMANDs. if no COMMAND is specified, all will be cached."
 }
 
 print-commands() {
@@ -807,3 +808,7 @@ for i in "$@"; do
         print-usage
     fi
 done
+
+if [ $# -eq 0 ]; then
+    $only_cache && all
+fi
