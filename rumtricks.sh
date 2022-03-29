@@ -51,11 +51,10 @@ print-usage() {
     echo "  -v, --verbose  Verbose mode."
     echo "  -u, --update   Update rumstricks.sh."
     echo "  -l, --list     List all available COMMANDs."
+    echo "  -c, --cache    Download and cache all COMMANDs. if no COMMAND is specified, all will be cached."
 }
 
 print-commands() {
-    print-usage
-    echo
     echo "Available commands:"
     echo "cinepak        Cinepak Codec"
     echo "corefonts      Microsoft Core fonts"
@@ -110,6 +109,7 @@ download() {
     cd "$DOWNLOAD_LOCATION"
     command -v curl >/dev/null 2>&1 && curl --etag-save $DOWNLOAD_LOCATION/${1##*/}.etag --etag-compare $DOWNLOAD_LOCATION/${1##*/}.etag -LO "$1"
     cd "$OLDPWD"
+    $only_cache && return
     cp "$DOWNLOAD_LOCATION/${1##*/}" "./"
 }
 
@@ -152,12 +152,14 @@ regsvr32() {
 update-self() {
     echo "INFO: Updating rumtricks."
     download "https://johncena141.eu.org:8141/johncena141/rumtricks/raw/branch/main/rumtricks.sh"
+    $only_cache && return
     chmod +x "$PWD/rumtricks.sh"
     [ "$PWD/rumtricks.sh" != "$(realpath "$0")" ] && mv "$PWD/rumtricks.sh" "$(realpath "$0")"
     echo "INFO: Updated rumtricks."
 }
 
 isolate() {
+    $only_cache && return
     status || return
     update
     echo "INFO: Disabling desktop integrations. (isolation)"
@@ -178,6 +180,7 @@ directx() {
     status || return
     update
     [ ! -f "directx.tar.zst" ] && download "$BASE_URL/directx.tar.zst"
+    $only_cache && return
     check 1e5c94ab1a4546ecc0281bc0c491178d77650cb2fc59460f03ebd5762af0d9f6 || return
     extract directx.tar.zst
     cp -r "$PWD"/directx/files/drive_c/windows/* "$WINEPREFIX/drive_c/windows/"
@@ -196,6 +199,7 @@ vcrun2003() {
     status || return
     update
     [ ! -f "vcrun2003.tar.zst" ] && download "$BASE_URL/vcrun2003.tar.zst"
+    $only_cache && return
     check 6af8efa5829b489b70a72b0e13510e9a1e3f92e700fca6d27140483d15364244 || return
     extract vcrun2003.tar.zst
     cp -r "$PWD"/vcrun2003/files/drive_c/windows/* "$WINEPREFIX/drive_c/windows/"
@@ -207,6 +211,7 @@ vcrun2005() {
     status || return
     update
     [ ! -f "vcrun2005.tar.zst" ] && download "$BASE_URL/vcrun2005.tar.zst"
+    $only_cache && return
     check 8d365bd38ddf341cec4f93b6a89027fe3d7065797e6062aa7b5b5cad7ef98099 || return
     extract vcrun2005.tar.zst
     cp -r "$PWD"/vcrun2005/files/drive_c/* "$WINEPREFIX/drive_c/"
@@ -219,6 +224,7 @@ vcrun2008() {
     status || return
     update
     [ ! -f "vcrun2008.tar.zst" ] && download "$BASE_URL/vcrun2008.tar.zst"
+    $only_cache && return
     check 38cf9eb253324ef27ccf3b4e47e3281287acf9e1db48a19bc21c226d53cf8299 || return
     extract vcrun2008.tar.zst
     cp -r "$PWD"/vcrun2008/files/drive_c/* "$WINEPREFIX/drive_c/"
@@ -231,6 +237,7 @@ vcrun2010() {
     status || return
     update
     [ ! -f "vcrun2010.tar.zst" ] && download "$BASE_URL/vcrun2010.tar.zst"
+    $only_cache && return
     check 5ba7ffed884cb25ef77f9f2470a85a31743f79ca1610b6d7cbeda31ce0ac3a35 || return
     extract vcrun2010.tar.zst
     cp -r "$PWD"/vcrun2010/files/drive_c/windows/* "$WINEPREFIX/drive_c/windows/"
@@ -243,6 +250,7 @@ vcrun2012() {
     status || return
     update
     [ ! -f "vcrun2012.tar.zst" ] && download "$BASE_URL/vcrun2012.tar.zst"
+    $only_cache && return
     check 561716aaee554ab34eb79111c6a0e1aeff6394d0d534450a25c34d8e30609640 || return
     extract vcrun2012.tar.zst
     cp -r "$PWD"/vcrun2012/files/drive_c/windows/* "$WINEPREFIX/drive_c/windows/"
@@ -255,6 +263,7 @@ vcrun2013() {
     status || return
     update
     [ ! -f "vcrun2013.tar.zst" ] && download "$BASE_URL/vcrun2013.tar.zst"
+    $only_cache && return
     check a9e4a474a433b03feaf1f520d3941d2a5946b07b7700fd3a22dff025b883997d || return
     extract vcrun2013.tar.zst
     cp -r "$PWD"/vcrun2013/files/drive_c/windows/* "$WINEPREFIX/drive_c/windows/"
@@ -267,6 +276,7 @@ vcrun2015() {
     status || return
     update
     [ ! -f "vcrun2015.tar.zst" ] && download "$BASE_URL/vcrun2015.tar.zst"
+    $only_cache && return
     check 51c9364e4791d7dddcba8fc01cfba1e8dd25da40d8df86b9c012446b573ffd5a || return
     extract "vcrun2015.tar.zst"
     cp -r "$PWD"/vcrun2015/files/drive_c/windows/* "$WINEPREFIX/drive_c/windows/"
@@ -279,6 +289,7 @@ vcrun2017() {
     status || return
     update
     [ ! -f "vcrun2017.tar.zst" ] && download "$BASE_URL/vcrun2017.tar.zst"
+    $only_cache && return
     check b76a4ac0a4231594816aad58f676ee68da12d0e7ef47e2fdd1ce1e4249ddc5df || return
     extract vcrun2017.tar.zst
     cp -r "$PWD"/vcrun2017/drive_c/windows/* "$WINEPREFIX/drive_c/windows/"
@@ -291,6 +302,7 @@ vcrun2019() {
     status || return
     update
     [ ! -f "vcrun2019.tar.zst" ] && download "$BASE_URL/vcrun2019.tar.zst"
+    $only_cache && return
     check 0a04b662319a9344f42efc70168990b0085b9e42fea43568ab224b73b2ca08bb || return
     extract vcrun2019.tar.zst
     cp -r "$PWD"/vcrun2019/files/drive_c/windows/* "$WINEPREFIX/drive_c/windows/"
@@ -303,6 +315,7 @@ mf() {
     status || return
     update
     [ ! -f "mf.tar.zst" ] && download "$BASE_URL/mf.tar.zst"
+    $only_cache && return
     check 42612d19396d791576de9e56ca30de5ae0cd5afd0ba2ac9d411347a2efe5114c || return
     extract "mf.tar.zst"
     cp -r "$PWD"/mf/files/drive_c/windows/* "$WINEPREFIX/drive_c/windows/"
@@ -313,6 +326,7 @@ mf() {
 }
 
 vdesktop() {
+    $only_cache && return
     [ ! -f rres ] && curl -L "$(curl -s https://api.github.com/repos/rokbma/rres/releases/latest | awk -F '["]' '/"browser_download_url":/ {print $4}')" -o rres && chmod +x rres
     echo "explorer /desktop=Game,$(./rres)"
 }
@@ -321,6 +335,7 @@ physx() {
     status || return
     update
     [ ! -f "physx.tar.zst" ] && download "$BASE_URL/physx.tar.zst"
+    $only_cache && return
     check eb275e31687173f3accada30c0c8af6456977ac94b52a0fdd17cbbdd5d68f488 || return
     extract physx.tar.zst
     cp -r "$PWD"/physx/files/drive_c/* "$WINEPREFIX/drive_c/"
@@ -333,6 +348,7 @@ github_dxvk() {
     DL_URL="$(curl -s https://api.github.com/repos/doitsujin/dxvk/releases/latest | awk -F '["]' '/"browser_download_url":/ {print $4}')"
     DXVK="$(basename "$DL_URL")"
     [ ! -f "$DXVK" ] && download "$DL_URL"
+    $only_cache && return
     extract "$DXVK" || { rm "$DXVK" && echo "ERROR: Failed to extract dxvk, skipping." && return 1; }
     cd "${DXVK//.tar.gz/}" || exit
     DISPLAY="" ./setup_dxvk.sh install && "$WINESERVER" -w
@@ -341,6 +357,7 @@ github_dxvk() {
 }
 
 dxvk() {
+    $only_cache && return
     DXVKVER="$(curl -s -m 5 https://api.github.com/repos/doitsujin/dxvk/releases/latest | awk -F '["/]' '/"browser_download_url":/ {print $11}' | cut -c 2-)"
     SYSDXVK="$(command -v setup_dxvk 2>/dev/null)"
     dxvk() {
@@ -360,6 +377,7 @@ dxvk-async() {
         DL_URL="$(curl -s https://api.github.com/repos/Sporif/dxvk-async/releases/latest | awk -F '["]' '/"browser_download_url":/ {print $4}')"
         DXVK="$(basename "$DL_URL")"
         [ ! -f "$DXVK" ] && download "$DL_URL"
+        $only_cache && return
         extract "$DXVK" || { rm "$DXVK" && echo "ERROR: Failed to extract dxvk, skipping." && return 1; }
         cd "${DXVK//.tar.gz/}" || exit
         chmod +x ./setup_dxvk.sh && DISPLAY="" ./setup_dxvk.sh install && "$WINESERVER" -w
@@ -374,6 +392,7 @@ dxvk-async() {
 }
 
 dxvk-custom() {
+    $only_cache && return
     status || return
     update
     read -r -p "What version do you want? (0.54, 1.8.1, etc.): " DXVKVER
@@ -395,6 +414,7 @@ wmp11() {
     mf
     update
     [ ! -f "wmp11.tar.zst" ] && download "$BASE_URL/wmp11.tar.zst"
+    $only_cache && return
     check 7e68b15655c450a1912e0d5f1fc21c66ee2037d676da1949c6ee93a00d792a3c || return
     extract wmp11.tar.zst
     cp -r "$PWD"/wmp11/files/drive_c/* "$WINEPREFIX/drive_c/"
@@ -411,6 +431,7 @@ mono() {
         DL_URL="$(curl -s https://api.github.com/repos/madewokherd/wine-mono/releases/latest | awk -F '["]' '/"browser_download_url":/ {print $4}' | awk '/msi/ {print $0}')"
         MONO="$(basename "$DL_URL")"
         [ ! -f "$MONO" ] && download "$DL_URL"
+        $only_cache && return
         remove-mono
         "$WINE" msiexec /i "$MONO"
         applied
@@ -422,6 +443,7 @@ mono() {
 }
 
 remove-mono() {
+    $only_cache && return
     echo "INFO: Removing mono."
     for i in $("$WINE" uninstaller --list | awk -F '[|]' '/Wine Mono/ {print $1}'); do "$WINE" uninstaller --remove "$i"; done
     echo "INFO: Mono removed."
@@ -431,6 +453,7 @@ github_vkd3d() {
     DL_URL="$(curl -s https://api.github.com/repos/HansKristian-Work/vkd3d-proton/releases/latest | awk -F '["]' '/"browser_download_url":/ {print $4}')"
     VKD3D="$(basename "$DL_URL")"
     [ ! -f "$VKD3D" ] && download "$DL_URL"
+    $only_cache && return
     extract "$VKD3D" || { rm "$VKD3D" && echo "ERROR: Failed to extract vkd3d, skipping." && return 1; }
     cd "${VKD3D//.tar.zst/}" || exit
     DISPLAY="" ./setup_vkd3d_proton.sh install && "$WINESERVER" -w
@@ -439,6 +462,7 @@ github_vkd3d() {
 }
 
 vkd3d() {
+    $only_cache && return
     VKD3DVER="$(curl -s -m 5 https://api.github.com/repos/HansKristian-Work/vkd3d-proton/releases/latest | awk -F '["/]' '/"browser_download_url":/ {print $11}' | cut -c 2-)"
     SYSVKD3D="$(command -v setup_vkd3d_proton)"
     vkd3d() {
@@ -452,6 +476,7 @@ vkd3d() {
 }
 
 provided_vkd3d() {
+    $only_cache && return
     TARGET="vkd3d-proton-master.tar.zst"
     if [ ! -f "$TARGET" ]; then
         echo "INFO: Downloading latest vkd3d..."
@@ -470,6 +495,7 @@ provided_vkd3d() {
 }
 
 vkd3d-jc141() {
+    $only_cache && return
     read -r -p "Game: " GAME
     [ -z "$GAME" ] && GAME="all"
     USE_GITHUB="$(curl -sL -m 5 "https://johncena141.eu.org:8141/johncena141/vkd3d-jc141/raw/branch/main/use-github/$GAME")"
@@ -488,6 +514,7 @@ directshow() {
     status || return
     update
     [ ! -f "directshow.tar.zst" ] && download "$BASE_URL/directshow.tar.zst"
+    $only_cache && return
     check 5fb584ca65c8f8fc6b4910210f355c002fa12dfd4186805ef6e7708e41595e32 || return
     extract directshow.tar.zst
     cp -r "$PWD"/directshow/files/drive_c/windows/* "$WINEPREFIX/drive_c/windows/"
@@ -501,6 +528,7 @@ cinepak() {
     status || return
     update
     [ ! -f "cinepak.tar.zst" ] && download "$BASE_URL/cinepak.tar.zst"
+    $only_cache && return
     check fb1daa15378f8a70a90617044691e1c5318610939adc0e79ad365bdb31513a38 || return
     extract cinepak.tar.zst
     cp -r "$PWD"/cinepak/files/drive_c/windows/* "$WINEPREFIX/drive_c/windows/"
@@ -513,6 +541,7 @@ corefonts() {
     status || return
     update
     [ ! -f "corefonts.tar.zst" ] && download "$BASE_URL/corefonts.tar.zst"
+    $only_cache && return
     check fb6a4fffaae3c5ae849c0bb5ebf1ed7649ea521fab171166c35f6068b87dc80f || return
     extract corefonts.tar.zst
     cp -r "$PWD"/corefonts/files/drive_c/windows/* "$WINEPREFIX/drive_c/windows/"
@@ -525,6 +554,7 @@ quicktime() {
     status || return
     update
     [ ! -f "quicktime.tar.zst" ] && download "$BASE_URL/quicktime.tar.zst"
+    $only_cache && return
     check 5adc5d05c94339d17814cb1a831c994e2b14ba9fbda0339d2add19c856f483a6 || return
     extract quicktime.tar.zst
     cp -r "$PWD"/quicktime/files/drive_c/* "$WINEPREFIX/drive_c/"
@@ -537,6 +567,7 @@ directplay() {
     status || return
     update
     [ ! -f "directplay.tar.zst" ] && download "$BASE_URL/directplay.tar.zst"
+    $only_cache && return
     check 8e4c467685011ac0818b99333061758f69cc5f0bd0680b83a507c8a6765c79fd || return
     extract directplay.tar.zst
     cp -r "$PWD"/directplay/files/drive_c/windows/syswow64/* "$WINEPREFIX/drive_c/windows/syswow64"
@@ -551,6 +582,7 @@ dotnet35() {
     remove-mono
     update
     [ ! -f "dotnet35.tar.zst" ] && download "$BASE_URL/dotnet35.tar.zst"
+    $only_cache && return
     check 146f567c0b4ee080600d2cd7343238058e28008fc0c7d80d968da8611e63563a || return
     extract dotnet35.tar.zst
     cp -r "$PWD"/dotnet35/files/drive_c/* "$WINEPREFIX/drive_c/"
@@ -560,6 +592,7 @@ dotnet35() {
 }
 
 win10() {
+    $only_cache && return
     status || return
     update
     "$WINE" winecfg -v win10
@@ -567,6 +600,7 @@ win10() {
 }
 
 win81() {
+    $only_cache && return
     status || return
     update
     "$WINE" winecfg -v win81
@@ -574,6 +608,7 @@ win81() {
 }
 
 win8() {
+    $only_cache && return
     status || return
     update
     "$WINE" winecfg -v win8
@@ -581,6 +616,7 @@ win8() {
 }
 
 win2008r2() {
+    $only_cache && return
     status || return
     update
     "$WINE" winecfg -v win2008r2
@@ -588,6 +624,7 @@ win2008r2() {
 }
 
 win2008() {
+    $only_cache && return
     status || return
     update
     "$WINE" winecfg -v win2008
@@ -595,6 +632,7 @@ win2008() {
 }
 
 win7() {
+    $only_cache && return
     status || return
     update
     "$WINE" winecfg -v win7
@@ -602,6 +640,7 @@ win7() {
 }
 
 winvista() {
+    $only_cache && return
     status || return
     update
     "$WINE" winecfg -v vista
@@ -609,6 +648,7 @@ winvista() {
 }
 
 win2003() {
+    $only_cache && return
     status || return
     update
     "$WINE" winecfg -v win2003
@@ -616,6 +656,7 @@ win2003() {
 }
 
 winxp() {
+    $only_cache && return
     status || return
     update
     [ "$WINEARCH" = "win64" ] && "$WINE" winecfg -v winxp64
@@ -624,6 +665,7 @@ winxp() {
 }
 
 win2k() {
+    $only_cache && return
     status || return
     update
     "$WINE" winecfg -v win2k
@@ -631,6 +673,7 @@ win2k() {
 }
 
 winme() {
+    $only_cache && return
     status || return
     update
     "$WINE" winecfg -v winme
@@ -638,6 +681,7 @@ winme() {
 }
 
 win98() {
+    $only_cache && return
     status || return
     update
     "$WINE" winecfg -v win98
@@ -645,6 +689,7 @@ win98() {
 }
 
 win95() {
+    $only_cache && return
     status || return
     update
     "$WINE" winecfg -v win95
@@ -652,6 +697,7 @@ win95() {
 }
 
 win98() {
+    $only_cache && return
     status || return
     update
     "$WINE" winecfg -v win98
@@ -659,6 +705,7 @@ win98() {
 }
 
 winnt40() {
+    $only_cache && return
     status || return
     update
     "$WINE" winecfg -v nt40
@@ -666,6 +713,7 @@ winnt40() {
 }
 
 winnt351() {
+    $only_cache && return
     status || return
     update
     "$WINE" winecfg -v nt351
@@ -673,6 +721,7 @@ winnt351() {
 }
 
 win31() {
+    $only_cache && return
     status || return
     update
     "$WINE" winecfg -v win31
@@ -680,6 +729,7 @@ win31() {
 }
 
 win30() {
+    $only_cache && return
     status || return
     update
     "$WINE" winecfg -v win30
@@ -687,10 +737,20 @@ win30() {
 }
 
 win20() {
+    $only_cache && return
     status || return
     update
     "$WINE" winecfg -v win20
     applied
+}
+
+all() {
+    $only_cache || (echo "Only use all with --cache" && return)
+    echo "Downloading all"
+    for x in $(print-commands | tail -n +2 | grep -oE "^(\S+)\s")
+    do
+        $x
+    done
 }
 
 ## Main ##
@@ -704,16 +764,18 @@ for arg in "$@"; do
     "--list") set -- "$@" "-l" ;;
     "--update") set -- "$@" "-u" ;;
     "--verbose") set -- "$@" "-v" ;;
+    "--cache") set -- "$@" "-c" ;;
     *) set -- "$@" "$arg" ;;
     esac
 done
 
 # Default values
 verbose=false
+only_cache=false
 
 # Parsing paramater using getopts
 OPTIND=1
-while getopts "hvlu" opt; do
+while getopts "hvluc" opt; do
     case "$opt" in
     "h")
         print-usage
@@ -727,6 +789,7 @@ while getopts "hvlu" opt; do
         update-self
         ;;
     "v") verbose=true ;;
+    "c") only_cache=true ;;
     "?")
         print-usage >&2
         exit 1
@@ -745,3 +808,7 @@ for i in "$@"; do
         print-usage
     fi
 done
+
+if [ $# -eq 0 ]; then
+    $only_cache && all
+fi
