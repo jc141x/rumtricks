@@ -1,3 +1,5 @@
+- Join us on our [Matrix](https://matrix.to/#/!SlYhhmreXjJylcsjfn:tedomum.net?via=matrix.org&via=envs.net&via=tedomum.net) community.
+
 <div align="center">
   <img src="https://i.postimg.cc/447fH7YN/45345.png">
 </div>
@@ -19,25 +21,27 @@ Installer-less, fast, reliable and proper alternative to winetricks made by john
 
 ## Installation
 
-Rumtricks AUR and MPR package is planned to be released in the near future.
+Rumtricks is available on [AUR](https://aur.archlinux.org/packages/rumtricks-git).
+  - Install with 
+  ```sh
+  yay rumtricks-git
+  ```
 
-Make sure you have `wine` and `zstd` installed before you continue.
+- Or you can download rumtricks with this simple one liner:
 
-You can download rumtricks with this simple one liner:
-
-```bash
-wget https://johncena141.eu.org:8141/johncena141/rumtricks/raw/branch/main/rumtricks.sh
+```sh
+wget https://johncena141.eu.org:8141/johncena141/rumtricks/raw/branch/main/rumtricks.sh && chmod +x rumtricks.sh
 ```
 
-The script will be placed in the root of the directory you ran the command from.
+- The script will be placed in the root of the directory you ran the command from.
 
 ## Basic usage
 
-Rumtricks needs a `WINEPREFIX` to install verbs into
+- Rumtricks needs a `WINEPREFIX` to install verbs into
 
 `export WINEPREFIX="/path/to/prefix" ./rumtricks.sh (verb)`
 
-If `WINEPREFIX` isn't provided rumtricks will install everything into the default wine prefix in `~/.wine`
+If `WINEPREFIX` isn't provided, rumtricks will install everything into the default wine prefix in `~/.wine`.
 
 
 ## List of available verbs
@@ -102,12 +106,6 @@ win20 | Set wineprefix version to Windows 2.0 (32bit only)
 * [ ] dotnet 1.1-4.8
 * [ ] xna40
 
-## Contributing
-
-If you would like to participate, you are welcome on our [matrix](https://matrix.to/#/!SlYhhmreXjJylcsjfn:tedomum.net?via=matrix.org&via=envs.net&via=tedomum.net) room.
-
-We welcome any type of contribution, not only code. You can help with:
-- **Suggestions**: Give suggestions on what to add next.
-- **QA**: Send bug reports, the more details you can give the better. (e.g. console logs)
+--------------------------------------------------------------
 
 Donations (Monero): 4ABGQLAeAgiauvay11VRrWXRRtraRCU6oaC6uG9RUnNCHN4eepzWjEB6sHF92sUrSED5b8GyY7Ayh57R1jUdcKZg7is2DW3
