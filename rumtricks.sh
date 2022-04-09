@@ -444,9 +444,7 @@ mono() {
 
 remove-mono() {
     $only_cache && return
-    echo "INFO: Removing mono."
     for i in $("$WINE" uninstaller --list | awk -F '[|]' '/Wine Mono/ {print $1}'); do "$WINE" uninstaller --remove "$i"; done
-    echo "INFO: Mono removed."
 }
 
 github_vkd3d() {
