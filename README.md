@@ -7,17 +7,9 @@
   <h1>Rumtricks</h1>
 </div>
 <div align="center">
-Installer-less, fast, reliable and proper alternative to winetricks made by johncena141 hacker group for GNU/Linux users.
+Dependency provider for windows software using wine.
 </div>
 </p>
-
-## Features
-
-* Stability: not relying on exes to install means better reliability.
-* Small size: uses ZSTD to compress and decompress files.
-* Hash check: checking hashes to be sure our installation works.
-* Install speed: everything installs faster due to minimal and better code.
-* Dependencies: depends only on wine and zstd.
 
 ## Installation
 
@@ -27,7 +19,7 @@ Rumtricks is available on [AUR](https://aur.archlinux.org/packages/rumtricks-git
   yay rumtricks-git
   ```
 
-- Or you can download rumtricks with this simple one liner:
+- Or you can download rumtricks with:
 
 ```sh
 wget https://johncena141.eu.org:8141/johncena141/rumtricks/raw/branch/main/rumtricks.sh && chmod +x rumtricks.sh
@@ -105,7 +97,3 @@ win20 | Set wineprefix version to Windows 2.0 (32bit only)
 * [ ] faudio
 * [ ] dotnet 1.1-4.8
 * [ ] xna40
-
---------------------------------------------------------------
-
-Donations (Monero): 4ABGQLAeAgiauvay11VRrWXRRtraRCU6oaC6uG9RUnNCHN4eepzWjEB6sHF92sUrSED5b8GyY7Ayh57R1jUdcKZg7is2DW3
