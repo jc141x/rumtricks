@@ -19,14 +19,18 @@ export WINEDLLOVERRIDES="mscoree=d;mshtml=d"
 export WINEDEBUG="-all"
 
 # Support custom Wine versions
-[ -z "$WINE" ] && WINE="$(command -v wine)"
+[ -z "$WINE" ] && export WINE="$(command -v wine)"
 [ ! -x "$WINE" ] && echo "${WINE} is not an executable, exiting." && exit 1
 
-[ -z "$WINE64" ] && WINE64="${WINE}64"
+[ -z "$WINE64" ] && export WINE64="${WINE}64"
 [ ! -x "$WINE64" ] && echo "${WINE64} is not an executable, exiting." && exit 1
 
-[ -z "$WINESERVER" ] && WINESERVER="${WINE}server"
+[ -z "$WINESERVER" ] && export WINESERVER="${WINE}server"
 [ ! -x "$WINESERVER" ] && echo "${WINESERVER} is not an executable, exiting." && exit 1
+
+# blame dxvk I guess?
+wine() { "$WINE" $@; }; wine64() { "$WINE64" $@; }; wineboot() { "$WINEBOOT" $@; }
+export -f wine wine64 wineboot
 
 # Pre execution checks
 pre-checks() {
