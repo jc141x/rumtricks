@@ -16,7 +16,6 @@ DOWNLOAD_LOCATION="${XDG_CACHE_HOME:-$HOME/.cache}/rumtricks"; mkdir -p "$DOWNLO
 
 # Wine: don't complain about mono/gecko
 export WINEDLLOVERRIDES="mscoree=d;mshtml=d"
-export WINEDEBUG="-all"
 
 # Support custom Wine versions
 [ -z "$WINE" ] && export WINE="$(command -v wine)"
