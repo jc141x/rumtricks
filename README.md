@@ -7,7 +7,7 @@
   <h1>Rumtricks</h1>
 </div>
 <div align="center">
-Dependency provider for windows software using wine.
+Dependency provider for windows software using wine made by johncena141 hacker group.
 </div>
 </p>
 
