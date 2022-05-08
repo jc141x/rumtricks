@@ -72,7 +72,6 @@ print-commands() {
     echo "isolate        Isolate the prefix by removing symbolinks to \$HOME"
     echo "mf             Microsoft Media Foundation"
     echo "mono           Open-source and cross-platform implementation of the .NET Framework"
-    echo "remove-mono    Remove mono installation from the prefix"
     echo "physx          Nvidia PhysX"
     echo "quicktime      Apple QuickTime"
     echo "update-self    Update rumtricks.sh to the latest version"
@@ -85,7 +84,6 @@ print-commands() {
     echo "vcrun2015      Microsoft Visual C++ 2015 Redistributable"
     echo "vcrun2017      Microsoft Visual C++ 2017 Redistributable"
     echo "vcrun2019      Microsoft Visual C++ 2019 Redistributable"
-    echo "vdesktop       Virtual desktop"
     echo "vkd3d          Direct3D 12 API on top of Vulkan"
     echo "vkd3d-jc141    Use our master builds of vkd3d"
     echo "win10          Set wineprefix version Windows to 10"
@@ -327,12 +325,6 @@ mf() {
     regsvr32 colorcnv.dll msmpeg2adec.dll msmpeg2vdec.dll
     rm -rf "$PWD"/mf
     applied
-}
-
-vdesktop() {
-    $only_cache && return
-    [ ! -f rres ] && curl -L "$(curl -s https://api.github.com/repos/rokbma/rres/releases/latest | awk -F '["]' '/"browser_download_url":/ {print $4}')" -o rres && chmod +x rres
-    echo "explorer /desktop=Game,$(./rres)"
 }
 
 physx() {
