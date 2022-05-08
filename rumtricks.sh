@@ -36,12 +36,12 @@ export -f wine wine64 wineboot
 pre-checks() {
     # Validate if zstd is installed
     if ! command -v unzstd &>/dev/null; then
-        echo "ERROR: Missing zstd package. zstd is not installed, please follow our requirements."
+        echo "RMT-ERROR: Missing zstd package. zstd is not installed, please follow our requirements."
         exit 1
     fi
     # Validate if wine is installed
     if ! command -v wine &>/dev/null; then
-        echo "ERROR: Missing wine package. wine is not installed, please follow our requirements."
+        echo "RMT-ERROR: Missing wine package. wine is not installed, please follow our requirements."
         exit 1
     fi
 }
@@ -116,34 +116,34 @@ download() {
 }
 
 regedit() {
-    echo "INFO: Adding registry." && "$WINE" regedit "$1" &
+    echo "RMT: Adding registry." && "$WINE" regedit "$1" &
     "$WINE64" regedit "$1" && "$WINESERVER" -w
 }
 
 extract() {
-    echo "INFO: Extracting $1." && tar --use-compress-program=unzstd -xf "$1"
+    echo "RMT: Extracting $1." && tar --use-compress-program=unzstd -xf "$1"
 }
 
 update() {
-    echo "INFO: Applying ${FUNCNAME[1]}." && DISPLAY="" "$WINE" wineboot && "$WINESERVER" -w
+    echo "RMT: Applying ${FUNCNAME[1]}." && DISPLAY="" "$WINE" wineboot && "$WINESERVER" -w
 }
 
 applied() {
     echo "${FUNCNAME[1]}" >>"$RUMTRICKS_LOGFILE"
-    echo "INFO: ${FUNCNAME[1]} applied."
+    echo "RMT: ${FUNCNAME[1]} applied."
 }
 
 check() {
     echo "$1  ${FUNCNAME[1]}.tar.zst" | sha256sum -c -
-    [ $? -ne 1 ] || { echo "ERROR: Archive is corrupted, skipping." && rm "${FUNCNAME[1]}".tar.zst && return 1; }
+    [ $? -ne 1 ] || { echo "RMT-ERROR: Archive is corrupted, skipping." && rm "${FUNCNAME[1]}".tar.zst && return 1; }
 }
 
 status() {
-    [[ ! -f "$RUMTRICKS_LOGFILE" || -z "$(awk "/^${FUNCNAME[1]}\$/ {print \$1}" "$RUMTRICKS_LOGFILE" 2>/dev/null)" ]] || { echo "INFO: ${FUNCNAME[1]} present." && return 1; }
+    [[ ! -f "$RUMTRICKS_LOGFILE" || -z "$(awk "/^${FUNCNAME[1]}\$/ {print \$1}" "$RUMTRICKS_LOGFILE" 2>/dev/null)" ]] || { echo "RMT: ${FUNCNAME[1]} present." && return 1; }
 }
 
 regsvr32() {
-    echo "INFO: Registering dlls."
+    echo "RMT: Registering DLLs."
     for i in "$@"; do
         "$WINE" regsvr32 /s "$i" &
         "$WINE64" regsvr32 /s "$i"
@@ -152,19 +152,19 @@ regsvr32() {
 }
 
 update-self() {
-    echo "INFO: Updating rumtricks."
+    echo "RMT: Updating rumtricks."
     download "https://johncena141.eu.org:8141/johncena141/rumtricks/raw/branch/main/rumtricks.sh"
     $only_cache && return
     chmod +x "$PWD/rumtricks.sh"
     [ "$PWD/rumtricks.sh" != "$(realpath "$0")" ] && mv "$PWD/rumtricks.sh" "$(realpath "$0")"
-    echo "INFO: Updated rumtricks."
+    echo "RMT: Updated rumtricks."
 }
 
 isolate() {
     $only_cache && return
     status || return
     update
-    echo "INFO: Disabling desktop integrations. (isolation)"
+    echo "RMT: Isolating prefix."
     cd "$WINEPREFIX/drive_c/users/${USER}" || exit
     for entry in *; do
         if [ -L "$entry" ] && [ -d "$entry" ]; then
@@ -345,7 +345,7 @@ github_dxvk() {
     DXVK="$(basename "$DL_URL")"
     [ ! -f "$DXVK" ] && download "$DL_URL"
     $only_cache && return
-    extract "$DXVK" || { rm "$DXVK" && echo "ERROR: Failed to extract dxvk, skipping." && return 1; }
+    extract "$DXVK" || { rm "$DXVK" && echo "RMT-ERROR: Failed to extract dxvk, skipping." && return 1; }
     cd "${DXVK//.tar.gz/}" || exit
     DISPLAY="" ./setup_dxvk.sh install && "$WINESERVER" -w
     cd "$OLDPWD" || exit
@@ -358,12 +358,12 @@ dxvk() {
     SYSDXVK="$(command -v setup_dxvk 2>/dev/null)"
     dxvk() {
         update
-        [ -n "$SYSDXVK" ] && echo "INFO: Using local dxvk." && DISPLAY="" "$SYSDXVK" install --symlink && "$WINESERVER" -w && applied
-        [ -z "$SYSDXVK" ] && echo "INFO: Using dxvk from github." && github_dxvk && echo "$DXVKVER" >"$WINEPREFIX/.dxvk"
+        [ -n "$SYSDXVK" ] && echo "RMT: Using local dxvk." && DISPLAY="" "$SYSDXVK" install --symlink && "$WINESERVER" -w && applied
+        [ -z "$SYSDXVK" ] && echo "RMT: Using dxvk from github." && github_dxvk && echo "$DXVKVER" >"$WINEPREFIX/.dxvk"
     }
     [[ ! -f "$WINEPREFIX/.dxvk" && -z "$(status)" ]] && dxvk
     [[ -f "$WINEPREFIX/.dxvk" && -n "$DXVKVER" && "$DXVKVER" != "$(awk '{print $1}' "$WINEPREFIX/.dxvk")" ]] && { rm -f dxvk-*.tar.gz || true; } && echo "updating dxvk" && dxvk
-    echo "INFO: dxvk is up-to-date."
+    echo "RMT: dxvk is up-to-date."
 }
 
 dxvk-async() {
@@ -374,7 +374,7 @@ dxvk-async() {
         DXVK="$(basename "$DL_URL")"
         [ ! -f "$DXVK" ] && download "$DL_URL"
         $only_cache && return
-        extract "$DXVK" || { rm "$DXVK" && echo "ERROR: Failed to extract dxvk, skipping." && return 1; }
+        extract "$DXVK" || { rm "$DXVK" && echo "RMT-ERROR: Failed to extract dxvk, skipping." && return 1; }
         cd "${DXVK//.tar.gz/}" || exit
         chmod +x ./setup_dxvk.sh && DISPLAY="" ./setup_dxvk.sh install && "$WINESERVER" -w
         cd "$OLDPWD" || exit
@@ -384,7 +384,7 @@ dxvk-async() {
     }
     [[ -z "$(status)" ]] && dxvk-async
     [[ -f "$WINEPREFIX/.dxvk-async" && -n "$DXVKVER" && "$DXVKVER" != "$(awk '{print $1}' "$WINEPREFIX/.dxvk-async")" ]] && { rm -f dxvk-async-*.tar.gz || true; } && echo "updating dxvk-async" && dxvk-async
-    echo "INFO: dxvk-async is up-to-date."
+    echo "RMT: dxvk-async is up-to-date."
 }
 
 dxvk-custom() {
@@ -434,8 +434,8 @@ mono() {
         echo "$MONOVER" >"$WINEPREFIX/.mono"
     }
     [[ -z "$(awk '/mono/ {print $1}' "$RUMTRICKS_LOGFILE" 2>/dev/null)" ]] && mono
-    [[ -f "$WINEPREFIX/.mono" && -n "$MONOVER" && "$MONOVER" != "$(awk '{print $1}' "$WINEPREFIX/.mono")" ]] && { rm -f wine-mono-*.msi || true; } && echo "INFO: Updating mono" && mono
-    echo "INFO: Mono is up-to-date."
+    [[ -f "$WINEPREFIX/.mono" && -n "$MONOVER" && "$MONOVER" != "$(awk '{print $1}' "$WINEPREFIX/.mono")" ]] && { rm -f wine-mono-*.msi || true; } && echo "RMT: Updating mono" && mono
+    echo "RMT: Mono is up-to-date."
 }
 
 remove-mono() {
@@ -448,7 +448,7 @@ github_vkd3d() {
     VKD3D="$(basename "$DL_URL")"
     [ ! -f "$VKD3D" ] && download "$DL_URL"
     $only_cache && return
-    extract "$VKD3D" || { rm "$VKD3D" && echo "ERROR: Failed to extract vkd3d, skipping." && return 1; }
+    extract "$VKD3D" || { rm "$VKD3D" && echo "RMT-ERROR: Failed to extract vkd3d, skipping." && return 1; }
     cd "${VKD3D//.tar.zst/}" || exit
     DISPLAY="" ./setup_vkd3d_proton.sh install && "$WINESERVER" -w
     cd "$OLDPWD" || exit
@@ -461,27 +461,27 @@ vkd3d() {
     SYSVKD3D="$(command -v setup_vkd3d_proton)"
     vkd3d() {
         update
-        [ -n "$SYSVKD3D" ] && echo "INFO: Using local vkd3d." && DISPLAY="" "$SYSVKD3D" install --symlink && "$WINESERVER" -w && applied
-        [ -z "$SYSVKD3D" ] && echo "INFO: Using vkd3d from github." && github_vkd3d && echo "$VKD3DVER" >"$WINEPREFIX/.vkd3d"
+        [ -n "$SYSVKD3D" ] && echo "RMT: Using local vkd3d." && DISPLAY="" "$SYSVKD3D" install --symlink && "$WINESERVER" -w && applied
+        [ -z "$SYSVKD3D" ] && echo "RMT: Using vkd3d from github." && github_vkd3d && echo "$VKD3DVER" >"$WINEPREFIX/.vkd3d"
     }
     [[ ! -f "$WINEPREFIX/.vkd3d" && -z "$(status)" ]] && vkd3d
     [[ -f "$WINEPREFIX/.vkd3d" && -n "$VKD3DVER" && "$VKD3DVER" != "$(awk '{print $1}' "$WINEPREFIX/.vkd3d")" ]] && { rm -f vkd3d-proton-*.tar.zst || true; } && echo "updating vkd3d" && vkd3d
-    echo "INFO: vkd3d is up-to-date."
+    echo "RMT: vkd3d is up-to-date."
 }
 
 provided_vkd3d() {
     $only_cache && return
     TARGET="vkd3d-proton-master.tar.zst"
     if [ ! -f "$TARGET" ]; then
-        echo "INFO: Downloading latest vkd3d..."
+        echo "RMT: Downloading latest vkd3d..."
         DL_URL="$(curl -s 'https://johncena141.eu.org:8141/api/v1/repos/johncena141/vkd3d-jc141/releases?draft=false&pre-release=false&limit=1' -H 'accept: application/json' | jq '.[].assets[0].browser_download_url' | awk -F'"' '{print $2}')"
         [ -z "$DL_URL" ] && {
-            echo "ERROR: Couldn't download latest vkd3d."
+            echo "RMT-ERROR: Couldn't download latest vkd3d."
             return 1
         }
         curl -L "$DL_URL" -o "$TARGET"
     fi
-    extract "$TARGET" || { rm "$TARGET" && echo "ERROR: Failed to extract vkd3d." && return 1; }
+    extract "$TARGET" || { rm "$TARGET" && echo "RMT-ERROR: Failed to extract vkd3d." && return 1; }
     cd "${TARGET//.tar.zst/}" || exit
     DISPLAY="" ./setup_vkd3d_proton.sh install && "$WINESERVER" -w
     cd "$OLDPWD" || exit
