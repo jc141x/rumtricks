@@ -10,7 +10,7 @@ cd "$(dirname "$(realpath "$0")")" || exit 1
 [ -z "$WINEARCH" ] && export WINEARCH="win64"
 
 # General
-RUMTRICKS_LOGFILE="$WINEPREFIX/rumtricks.log"
+RUMTRICKS_LOGFILE="$PWD/rumtricks.log"
 BASE_URL="https://johncena141.eu.org:8141/johncena141/rumtricks/media/branch/main/archives"
 DOWNLOAD_LOCATION="${XDG_CACHE_HOME:-$HOME/.cache}/rumtricks"; mkdir -p "$DOWNLOAD_LOCATION"
 
