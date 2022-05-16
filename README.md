@@ -52,7 +52,7 @@ dotnet35| Microsoft .NET 3.5
 isolate | Isolate the prefix by removing symbolinks to $HOME
 mf | Microsoft Media Foundation
 mono | Open-source and cross-platform implementation of the .NET Framework
-remove-mono | Remove mono installation from the prefix
+hardlink | Convert symlinks to hardlinks
 physx | Nvidia PhysX
 quicktime | Apple QuickTime
 update-self | Update rumtricks.sh to the latest version
