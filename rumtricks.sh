@@ -180,7 +180,7 @@ isolate() {
 
 hardlink() {
     status || return
-    find -type l -exec bash -c 'ln -f "$(readlink -m "$0")" "$0"' {} \;
+    find -type l -exec bash -c 'ln -f "$(readlink -m "$0")" "$0"' {} \; &>/dev/null
     applied
 }
 
