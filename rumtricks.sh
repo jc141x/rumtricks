@@ -10,7 +10,7 @@ cd "$(dirname "$(realpath "$0")")" || exit 1
 [ -z "$WINEARCH" ] && export WINEARCH="win64"
 
 # General
-RUMTRICKS_LOGFILE="$PWD/rumtricks.log"
+RUMTRICKS_LOGFILE="$WINEPREFIX/rumtricks.log"
 BASE_URL="https://johncena141.eu.org:8141/johncena141/rumtricks/media/branch/main/archives"
 DOWNLOAD_LOCATION="${XDG_CACHE_HOME:-$HOME/.cache}/rumtricks"; mkdir -p "$DOWNLOAD_LOCATION"
 
@@ -175,12 +175,6 @@ isolate() {
     rm -rf "$PWD/AppData/Roaming/Microsoft/Windows/Templates"
     mkdir -p "$PWD/AppData/Roaming/Microsoft/Windows/Templates"
     cd "$OLDPWD" || exit
-    applied
-}
-
-hardlink() {
-    status || return
-    find -type l -exec bash -c 'ln -f "$(readlink -m "$0")" "$0"' {} \; &>/dev/null
     applied
 }
 
