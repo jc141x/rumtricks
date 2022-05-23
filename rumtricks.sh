@@ -347,7 +347,7 @@ github_dxvk() {
     $only_cache && return
     extract "$DXVK" || { rm "$DXVK" && echo "RMT-ERROR: Failed to extract dxvk, skipping." && return 1; }
     cd "${DXVK//.tar.gz/}" || exit
-    DISPLAY="" ./setup_dxvk.sh install && "$WINESERVER" -w
+    DISPLAY="" ./setup_dxvk.sh install &>/dev/null && "$WINESERVER" -w
     cd "$OLDPWD" || exit
     rm -rf "${DXVK//.tar.gz/}"
 }
@@ -355,14 +355,14 @@ github_dxvk() {
 dxvk() {
     $only_cache && return
     DXVKVER="$(curl -s -m 5 https://api.github.com/repos/doitsujin/dxvk/releases/latest | awk -F '["/]' '/"browser_download_url":/ {print $11}' | cut -c 2-)"
-    SYSDXVK="$(command -v setup_dxvk 2>/dev/null)"
+    SYSDXVK="$(command -v setup_dxvk &>/dev/null)"
     dxvk() {
         update
         [ -n "$SYSDXVK" ] && echo "RMT: Using local dxvk." && DISPLAY="" "$SYSDXVK" install --symlink && "$WINESERVER" -w && applied
-        [ -z "$SYSDXVK" ] && echo "RMT: Using dxvk from github." && github_dxvk && echo "$DXVKVER" >"$WINEPREFIX/.dxvk"
+        [ -z "$SYSDXVK" ] && echo "RMT: Local dxvk not present, using github release." && github_dxvk && echo "$DXVKVER" >"$WINEPREFIX/.dxvk"
     }
     [[ ! -f "$WINEPREFIX/.dxvk" && -z "$(status)" ]] && dxvk
-    [[ -f "$WINEPREFIX/.dxvk" && -n "$DXVKVER" && "$DXVKVER" != "$(awk '{print $1}' "$WINEPREFIX/.dxvk")" ]] && { rm -f dxvk-*.tar.gz || true; } && echo "updating dxvk" && dxvk
+    [[ -f "$WINEPREFIX/.dxvk" && -n "$DXVKVER" && "$DXVKVER" != "$(awk '{print $1}' "$WINEPREFIX/.dxvk")" ]] && { rm -f dxvk-*.tar.gz || true; } && echo "RMT: Updating dxvk." && dxvk
     echo "RMT: dxvk is up-to-date."
 }
 
@@ -376,14 +376,14 @@ dxvk-async() {
         $only_cache && return
         extract "$DXVK" || { rm "$DXVK" && echo "RMT-ERROR: Failed to extract dxvk, skipping." && return 1; }
         cd "${DXVK//.tar.gz/}" || exit
-        chmod +x ./setup_dxvk.sh && DISPLAY="" ./setup_dxvk.sh install && "$WINESERVER" -w
+        chmod +x ./setup_dxvk.sh && DISPLAY="" ./setup_dxvk.sh install &>/dev/null && "$WINESERVER" -w
         cd "$OLDPWD" || exit
         rm -rf "${DXVK//.tar.gz/}"
         applied
         echo "$DXVKVER" >"$WINEPREFIX/.dxvk-async"
     }
     [[ -z "$(status)" ]] && dxvk-async
-    [[ -f "$WINEPREFIX/.dxvk-async" && -n "$DXVKVER" && "$DXVKVER" != "$(awk '{print $1}' "$WINEPREFIX/.dxvk-async")" ]] && { rm -f dxvk-async-*.tar.gz || true; } && echo "updating dxvk-async" && dxvk-async
+    [[ -f "$WINEPREFIX/.dxvk-async" && -n "$DXVKVER" && "$DXVKVER" != "$(awk '{print $1}' "$WINEPREFIX/.dxvk-async")" ]] && { rm -f dxvk-async-*.tar.gz || true; } && echo "RMT: Updating dxvk-async." && dxvk-async
     echo "RMT: dxvk-async is up-to-date."
 }
 
@@ -395,11 +395,11 @@ dxvk-custom() {
     DL_URL="https://github.com/doitsujin/dxvk/releases/download/v$DXVKVER/dxvk-$DXVKVER.tar.gz"
     DXVK="$(basename "$DL_URL")"
     [ ! -f "$DXVK" ] && download "$DL_URL"
-    extract "$DXVK" || { rm "$DXVK" && echo "ERROR: Failed to extract dxvk-custom, skipping." && return 1; }
+    extract "$DXVK" || { rm "$DXVK" && echo "RMT-ERROR: Failed to extract dxvk-custom, skipping." && return 1; }
     cd "${DXVK//.tar.gz/}" || exit
-    [ -f setup_dxvk.sh ] && DISPLAY="" ./setup_dxvk.sh install && "$WINESERVER" -w
-    [ ! -f setup_dxvk.sh ] && cd x32 && ./setup_dxvk.sh && "$WINESERVER" -w && cd ..
-    [ ! -f setup_dxvk.sh ] && [ "$WINEARCH" = "win64" ] && cd x64 && ./setup_dxvk.sh && "$WINESERVER" -w && cd ..
+    [ -f setup_dxvk.sh ] && DISPLAY="" ./setup_dxvk.sh install &>/dev/null  && "$WINESERVER" -w
+    [ ! -f setup_dxvk.sh ] && cd x32 && ./setup_dxvk.sh &>/dev/null && "$WINESERVER" -w && cd ..
+    [ ! -f setup_dxvk.sh ] && [ "$WINEARCH" = "win64" ] && cd x64 && ./setup_dxvk.sh &>/dev/null && "$WINESERVER" -w && cd ..
     cd ..
     rm -rf "${DXVK//.tar.gz/}"
     applied
@@ -462,10 +462,10 @@ vkd3d() {
     vkd3d() {
         update
         [ -n "$SYSVKD3D" ] && echo "RMT: Using local vkd3d." && DISPLAY="" "$SYSVKD3D" install --symlink && "$WINESERVER" -w && applied
-        [ -z "$SYSVKD3D" ] && echo "RMT: Using vkd3d from github." && github_vkd3d && echo "$VKD3DVER" >"$WINEPREFIX/.vkd3d"
+        [ -z "$SYSVKD3D" ] && echo "RMT: Local vkd3d not present, using github release." && github_vkd3d && echo "$VKD3DVER" >"$WINEPREFIX/.vkd3d"
     }
     [[ ! -f "$WINEPREFIX/.vkd3d" && -z "$(status)" ]] && vkd3d
-    [[ -f "$WINEPREFIX/.vkd3d" && -n "$VKD3DVER" && "$VKD3DVER" != "$(awk '{print $1}' "$WINEPREFIX/.vkd3d")" ]] && { rm -f vkd3d-proton-*.tar.zst || true; } && echo "updating vkd3d" && vkd3d
+    [[ -f "$WINEPREFIX/.vkd3d" && -n "$VKD3DVER" && "$VKD3DVER" != "$(awk '{print $1}' "$WINEPREFIX/.vkd3d")" ]] && { rm -f vkd3d-proton-*.tar.zst || true; } && echo "RMT: Updating vkd3d." && vkd3d
     echo "RMT: vkd3d is up-to-date."
 }
 
