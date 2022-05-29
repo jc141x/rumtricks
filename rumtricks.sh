@@ -74,7 +74,6 @@ print-commands() {
     echo "mono           Open-source and cross-platform implementation of the .NET Framework"
     echo "physx          Nvidia PhysX"
     echo "quicktime      Apple QuickTime"
-    echo "update-self    Update rumtricks.sh to the latest version"
     echo "vcrun2003      Microsoft Visual C++ 2003 Redistributable"
     echo "vcrun2005      Microsoft Visual C++ 2005 Redistributable"
     echo "vcrun2008      Microsoft Visual C++ 2008 Redistributable"
@@ -121,7 +120,7 @@ regedit() {
 }
 
 extract() {
-    echo "RMT: Extracting $1." && tar --use-compress-program=unzstd -xf "$1"
+    echo "RMT: Extracting $1." && tar -xvf "$1"
 }
 
 update() {
@@ -149,15 +148,6 @@ regsvr32() {
         "$WINE64" regsvr32 /s "$i"
     done
     "$WINESERVER" -w
-}
-
-update-self() {
-    echo "RMT: Updating rumtricks."
-    download "https://johncena141.eu.org:8141/johncena141/rumtricks/raw/branch/main/rumtricks.sh"
-    $only_cache && return
-    chmod +x "$PWD/rumtricks.sh"
-    [ "$PWD/rumtricks.sh" != "$(realpath "$0")" ] && mv "$PWD/rumtricks.sh" "$(realpath "$0")"
-    echo "RMT: Updated rumtricks."
 }
 
 isolate() {
