@@ -1,5 +1,3 @@
-- Join us on our [Matrix](https://matrix.to/#/!SlYhhmreXjJylcsjfn:tedomum.net?via=matrix.org&via=envs.net&via=tedomum.net) community.
-
 <div align="center">
   <img src="https://i.postimg.cc/447fH7YN/45345.png">
 </div>
