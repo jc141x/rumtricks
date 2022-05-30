@@ -69,7 +69,7 @@ print-commands() {
     echo "dxvk-async     dxvk with async patches"
     echo "dxvk-custom    install any dxvk version (usage: ./rumtricks.sh dxvk-custom <<< \"0.54\")"
     echo "dotnet35       Microsoft .NET 3.5"
-    echo "isolate        Isolate the prefix by removing symbolinks to \$HOME"
+    echo "isolation        Isolating the prefix by removing symbolinks to \$HOME"
     echo "mf             Microsoft Media Foundation"
     echo "mono           Open-source and cross-platform implementation of the .NET Framework"
     echo "physx          Nvidia PhysX"
@@ -150,7 +150,7 @@ regsvr32() {
     "$WINESERVER" -w
 }
 
-isolate() {
+isolation() {
     $only_cache && return
     status || return
     update
