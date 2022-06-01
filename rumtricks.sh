@@ -120,7 +120,7 @@ regedit() {
 }
 
 extract() {
-    echo "RMT: Extracting $1." && tar -xvf "$1"
+    echo "RMT: Extracting $1." && tar -xvf "$1" &>/dev/null
 }
 
 update() {
