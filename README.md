@@ -50,7 +50,6 @@ dotnet35| Microsoft .NET 3.5
 isolation | Isolating the prefix by removing symbolinks to $HOME
 mf | Microsoft Media Foundation
 mono | Open-source and cross-platform implementation of the .NET Framework
-hardlink | Convert symlinks to hardlinks
 physx | Nvidia PhysX
 quicktime | Apple QuickTime
 update-self | Update rumtricks.sh to the latest version
@@ -64,7 +63,7 @@ vcrun2015 | Microsoft Visual C++ 2015 Redistributable
 vcrun2017 | Microsoft Visual C++ 2017 Redistributable
 vcrun2019 | Microsoft Visual C++ 2019 Redistributable
 vkd3d | Direct3D 12 API on top of Vulkan
-vkd3d-jc141 | Use our master builds of vkd3d 'till we say to stop
+wmp11 | Windows Media Player 11
 
 ## List of verbs for wineprefix windows version
 
