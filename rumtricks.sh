@@ -84,7 +84,6 @@ print-commands() {
     echo "vcrun2017      Microsoft Visual C++ 2017 Redistributable"
     echo "vcrun2019      Microsoft Visual C++ 2019 Redistributable"
     echo "vkd3d          Direct3D 12 API on top of Vulkan"
-    echo "vkd3d-jc141    Use our master builds of vkd3d"
     echo "win10          Set wineprefix version Windows to 10"
     echo "win81          Set wineprefix version Windows to 8.1"
     echo "win8           Set wineprefix version to Windows 8"
@@ -434,7 +433,7 @@ remove-mono() {
 }
 
 github_vkd3d() {
-    DL_URL="$(curl -s https://api.github.com/repos/HansKristian-Work/vkd3d-proton/releases/latest | awk -F '["]' '/"browser_download_url":/ {print $4}')"
+    DL_URL="$(curl -s https://api.github.com/repos/jc141x/vkd3d-proton/releases/latest | awk -F '["]' '/"browser_download_url":/ {print $4}')"
     VKD3D="$(basename "$DL_URL")"
     [ ! -f "$VKD3D" ] && download "$DL_URL"
     $only_cache && return
@@ -447,7 +446,7 @@ github_vkd3d() {
 
 vkd3d() {
     $only_cache && return
-    VKD3DVER="$(curl -s -m 5 https://api.github.com/repos/HansKristian-Work/vkd3d-proton/releases/latest | awk -F '["/]' '/"browser_download_url":/ {print $11}' | cut -c 2-)"
+    VKD3DVER="$(curl -s -m 5 https://api.github.com/jc141x/vkd3d-proton/releases/latest | awk -F '["/]' '/"browser_download_url":/ {print $11}' | cut -c 2-)"
     SYSVKD3D="$(command -v setup_vkd3d_proton)"
     vkd3d() {
         update
@@ -457,41 +456,6 @@ vkd3d() {
     [[ ! -f "$WINEPREFIX/.vkd3d" && -z "$(status)" ]] && vkd3d
     [[ -f "$WINEPREFIX/.vkd3d" && -n "$VKD3DVER" && "$VKD3DVER" != "$(awk '{print $1}' "$WINEPREFIX/.vkd3d")" ]] && { rm -f vkd3d-proton-*.tar.zst || true; } && echo "updating vkd3d" && vkd3d
     echo "RMT: vkd3d is up-to-date."
-}
-
-provided_vkd3d() {
-    $only_cache && return
-    TARGET="vkd3d-proton-master.tar.zst"
-    if [ ! -f "$TARGET" ]; then
-        echo "RMT: Downloading latest vkd3d..."
-        DL_URL="$(curl -s 'https://johncena141.eu.org:8141/api/v1/repos/johncena141/vkd3d-jc141/releases?draft=false&pre-release=false&limit=1' -H 'accept: application/json' | jq '.[].assets[0].browser_download_url' | awk -F'"' '{print $2}')"
-        [ -z "$DL_URL" ] && {
-            echo "RMT-ERROR: Couldn't download latest vkd3d."
-            return 1
-        }
-        curl -L "$DL_URL" -o "$TARGET"
-    fi
-    extract "$TARGET" || { rm "$TARGET" && echo "RMT-ERROR: Failed to extract vkd3d." && return 1; }
-    cd "${TARGET//.tar.zst/}" || exit
-    DISPLAY="" ./setup_vkd3d_proton.sh install && "$WINESERVER" -w
-    cd "$OLDPWD" || exit
-    rm -rf "${TARGET//.tar.zst/}"
-}
-
-vkd3d-jc141() {
-    $only_cache && return
-    read -r -p "Game: " GAME
-    [ -z "$GAME" ] && GAME="all"
-    USE_GITHUB="$(curl -sL -m 5 "https://johncena141.eu.org:8141/johncena141/vkd3d-jc141/raw/branch/main/use-github/$GAME")"
-    [ "$USE_GITHUB" = "true" ] && touch "$WINEPREFIX/.github-vkd3d"
-    if [ -f "$WINEPREFIX/.github-vkd3d" ]; then
-        vkd3d
-    else
-        status || return
-        update
-        provided_vkd3d
-        applied
-    fi
 }
 
 directshow() {
