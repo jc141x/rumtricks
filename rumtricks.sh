@@ -330,7 +330,7 @@ physx() {
 }
 
 github_dxvk() {
-    DL_URL="$(curl -s https://api.github.com/repos/doitsujin/dxvk/releases/latest | awk -F '["]' '/"browser_download_url":/ {print $4}')"
+    DL_URL="$(curl -s https://api.github.com/repos/jc141x/dxvk/releases/latest | awk -F '["]' '/"browser_download_url":/ {print $4}')"
     DXVK="$(basename "$DL_URL")"
     [ ! -f "$DXVK" ] && download "$DL_URL"
     $only_cache && return
@@ -343,7 +343,7 @@ github_dxvk() {
 
 dxvk() {
     $only_cache && return
-    DXVKVER="$(curl -s -m 5 https://api.github.com/repos/doitsujin/dxvk/releases/latest | awk -F '["/]' '/"browser_download_url":/ {print $11}' | cut -c 2-)"
+    DXVKVER="$(curl -s -m 5 https://api.github.com/repos/jc141x/dxvk/releases/latest | awk -F '["/]' '/"browser_download_url":/ {print $11}' | cut -c 2-)"
     SYSDXVK="$(command -v setup_dxvk 2>/dev/null)"
     dxvk() {
         update
