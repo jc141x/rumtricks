@@ -25,7 +25,7 @@ export -f wine wine64 wineboot
 # Pre execution checks
 pre-checks() {
     # Validate if zstd is installed
-    if ! command -v unzstd &>/dev/null; then
+    if ! command -v zstd &>/dev/null; then
         echo "RMT-ERROR: Missing zstd package. zstd is not installed, please follow our requirements."
         exit 1
     fi
@@ -147,6 +147,16 @@ wine-tkg() {
     [ ! -f "wine-tkg.tar.lzma" ] && echo "RMT: wine-tkg.tar.lzma not found, downloading" && curl -L "$download_url" -o "wine-tkg.tar.lzma"
     [ ! -f "wine-tkg.tar.lzma" ] && echo "RMT: Download failed, check internet connection" && exit || echo "RMT: wine-tkg.tar.lzma downloaded"
     echo "RMT: Extracting wine-tkg" && tar -xvf "wine-tkg.tar.lzma" && mv "wine" "$BINDIR/wine"
+}
+
+wine-ge() {
+    [ -x "/bin/wine-ge" ] && echo "RMT: Detected wine-ge installed on system." && exit || echo "RMT: wine-ge not detected on system."
+    [ -x "$BINDIR/wine/bin/wine" ]  && echo "RMT: wine-ge found on relative path." && exit || echo "RMT: wine-ge not found on relative path, downloading."
+    latest_release="$(curl -s https://api.github.com/repos/jc141x/wine-ge-custom/releases | jq '[.[] | select(.tag_name | test(".*[^LoL]$"))][0]')"
+    download_url="$(echo "$latest_release" | awk -F '["]' '/"browser_download_url":/ && /tar.lzma/ {print $4}')"
+    [ ! -f "wine-ge.tar.lzma" ] && echo "RMT: wine-ge.tar.lzma not found, downloading" && curl -L "$download_url" -o "wine-ge.tar.lzma"
+    [ ! -f "wine-ge.tar.lzma" ] && echo "RMT: Download failed, check internet connection" && exit || echo "RMT: wine-ge.tar.lzma downloaded"
+    echo "RMT: Extracting wine-ge" && tar -xvf "wine-ge.tar.lzma" && mv "wine" "$BINDIR/wine"
 }
 
 isolation() {
