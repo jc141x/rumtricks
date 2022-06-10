@@ -29,11 +29,6 @@ pre-checks() {
         echo "RMT-ERROR: Missing zstd package. zstd is not installed, please follow our requirements."
         exit 1
     fi
-    # Validate if wine is installed
-    if ! command -v wine &>/dev/null; then
-        echo "RMT-ERROR: Missing wine package. wine is not installed, please follow our requirements."
-        exit 1
-    fi
 }
 
 print-usage() {
