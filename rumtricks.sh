@@ -149,16 +149,6 @@ wine-tkg() {
     echo "RMT: Extracting wine-tkg" && tar -xvf "wine-tkg.tar.lzma" && mv "wine" "$BINDIR/wine"
 }
 
-# Support custom Wine versions
-[ -z "$WINE" ] && export WINE="$(command -v wine)"
-[ ! -x "$WINE" ] && echo "${WINE} is not an executable, exiting." && exit 1
-
-[ -z "$WINE64" ] && export WINE64="${WINE}64"
-[ ! -x "$WINE64" ] && echo "${WINE64} is not an executable, exiting." && exit 1
-
-[ -z "$WINESERVER" ] && export WINESERVER="${WINE}server"
-[ ! -x "$WINESERVER" ] && echo "${WINESERVER} is not an executable, exiting." && exit 1
-
 isolation() {
     $only_cache && return
     status || return
