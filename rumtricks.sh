@@ -149,6 +149,18 @@ regsvr32() {
     "$WINESERVER" -w
 }
 
+wine-tkg() {
+    status || return
+    update
+    [ -x "/bin/wine-tkg" ] && echo "RMT: Detected wine-tkg installed on system." && exit || "RMT: wine-tkg not detected locally, downloading from github."
+    latest_release="$(curl -s https://api.github.com/repos/jc141x/wine-tkg-git/releases | jq '[.[] | select(.tag_name | test(".*[^LoL]$"))][0]')"
+    download_url="$(echo "$latest_release" | awk -F '["]' '/"browser_download_url":/ && /tar.lzma/ {print $4}')"
+    [ ! -f "wine-tkg.tar.lzma" ] && echo "RMT: wine-tkg.tar.lzma not found, downloading" && curl -L "$download_url" -o "wine-tkg.tar.lzma"
+    [ ! -f "wine-tkg.tar.lzma" ] && echo "RMT: Download failed, check internet connection" && exit || echo "RMT: wine-tkg.tar.lzma downloaded"
+    echo "RMT: Extracting wine-tkg" && tar -xvf "wine-tkg.tar.lzma" && mv "wine" "$BINDIR/wine"
+    applied
+}
+
 isolation() {
     $only_cache && return
     status || return
