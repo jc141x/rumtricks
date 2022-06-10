@@ -18,6 +18,16 @@ DOWNLOAD_LOCATION="${XDG_CACHE_HOME:-$HOME/.cache}/rumtricks"; mkdir -p "$DOWNLO
 export WINEDLLOVERRIDES="mscoree=d;mshtml=d"
 export WINEDEBUG="-all"
 
+# Support custom Wine versions
+[ -z "$WINE" ] && export WINE="$(command -v wine)"
+[ ! -x "$WINE" ] && echo "${WINE} is not an executable, exiting." && exit 1
+
+[ -z "$WINE64" ] && export WINE64="${WINE}64"
+[ ! -x "$WINE64" ] && echo "${WINE64} is not an executable, exiting." && exit 1
+
+[ -z "$WINESERVER" ] && export WINESERVER="${WINE}server"
+[ ! -x "$WINESERVER" ] && echo "${WINESERVER} is not an executable, exiting." && exit 1
+
 # blame dxvk I guess?
 wine() { "$WINE" $@; }; wine64() { "$WINE64" $@; }; wineboot() { "$WINEBOOT" $@; }
 export -f wine wine64 wineboot
@@ -25,8 +35,13 @@ export -f wine wine64 wineboot
 # Pre execution checks
 pre-checks() {
     # Validate if zstd is installed
-    if ! command -v zstd &>/dev/null; then
+    if ! command -v unzstd &>/dev/null; then
         echo "RMT-ERROR: Missing zstd package. zstd is not installed, please follow our requirements."
+        exit 1
+    fi
+    # Validate if wine is installed
+    if ! command -v wine &>/dev/null; then
+        echo "RMT-ERROR: Missing wine package. wine is not installed, please follow our requirements."
         exit 1
     fi
 }
@@ -108,7 +123,7 @@ extract() {
 }
 
 update() {
-    echo "RMT: Applying ${FUNCNAME[1]}." && DISPLAY="" "$WINE" wineboot && "$WINESERVER" -w
+    echo "RMT: Applying ${FUNCNAME[1]}." && "$WINE" wineboot && "$WINESERVER" -w
 }
 
 applied() {
@@ -132,36 +147,6 @@ regsvr32() {
         "$WINE64" regsvr32 /s "$i"
     done
     "$WINESERVER" -w
-}
-
-wine-tkg() {
-    [ -x "/bin/wine-tkg" ] && echo "RMT: Detected wine-tkg installed on system." && exit || echo "RMT: wine-tkg not detected on system."
-    [ -x "$BINDIR/wine/bin/wine" ]  && echo "RMT: wine-tkg found on relative path." && exit || echo "RMT: wine-tkg not found on relative path, downloading."
-    latest_release="$(curl -s https://api.github.com/repos/jc141x/wine-tkg-git/releases | jq '[.[] | select(.tag_name | test(".*[^LoL]$"))][0]')"
-    download_url="$(echo "$latest_release" | awk -F '["]' '/"browser_download_url":/ && /tar.lzma/ {print $4}')"
-    [ ! -f "wine-tkg.tar.lzma" ] && echo "RMT: wine-tkg.tar.lzma not found, downloading" && curl -L "$download_url" -o "wine-tkg.tar.lzma"
-    [ ! -f "wine-tkg.tar.lzma" ] && echo "RMT: Download failed, check internet connection" && exit || echo "RMT: wine-tkg.tar.lzma downloaded"
-    echo "RMT: Extracting wine-tkg" && tar -xvf "wine-tkg.tar.lzma" && mv "wine" "$BINDIR/wine"
-}
-
-wine-ge() {
-    [ -x "/bin/wine-ge" ] && echo "RMT: Detected wine-ge installed on system." && exit || echo "RMT: wine-ge not detected on system."
-    [ -x "$BINDIR/wine/bin/wine" ]  && echo "RMT: wine-ge found on relative path." && exit || echo "RMT: wine-ge not found on relative path, downloading."
-    latest_release="$(curl -s https://api.github.com/repos/jc141x/wine-ge-custom/releases | jq '[.[] | select(.tag_name | test(".*[^LoL]$"))][0]')"
-    download_url="$(echo "$latest_release" | awk -F '["]' '/"browser_download_url":/ && /tar.lzma/ {print $4}')"
-    [ ! -f "wine-ge.tar.lzma" ] && echo "RMT: wine-ge.tar.lzma not found, downloading" && curl -L "$download_url" -o "wine-ge.tar.lzma"
-    [ ! -f "wine-ge.tar.lzma" ] && echo "RMT: Download failed, check internet connection" && exit || echo "RMT: wine-ge.tar.lzma downloaded"
-    echo "RMT: Extracting wine-ge" && tar -xvf "wine-ge.tar.lzma" && mv "wine" "$BINDIR/wine"
-}
-
-wine-tkg-nomingw() {
-    [ -x "/bin/wine-tkg-nomingw" ] && echo "RMT: Detected wine-tkg-nomingw installed on system." && exit || echo "RMT: wine-tkg-nomingw not detected on system."
-    [ -x "$BINDIR/wine/bin/wine" ]  && echo "RMT: wine-tkg-nomingw found on relative path." && exit || echo "RMT: wine-tkg-nomingw not found on relative path, downloading."
-    latest_release="$(curl -s https://api.github.com/repos/jc141x/wine-tkg-nomingw/releases | jq '[.[] | select(.tag_name | test(".*[^LoL]$"))][0]')"
-    download_url="$(echo "$latest_release" | awk -F '["]' '/"browser_download_url":/ && /tar.lzma/ {print $4}')"
-    [ ! -f "wine-tkg-nomingw.tar.lzma" ] && echo "RMT: wine-tkg-nomingw.tar.lzma not found, downloading" && curl -L "$download_url" -o "wine-tkg-nomingw.tar.lzma"
-    [ ! -f "wine-tkg-nomingw.tar.lzma" ] && echo "RMT: Download failed, check internet connection" && exit || echo "RMT: wine-tkg-nomingw.tar.lzma downloaded"
-    echo "RMT: Extracting wine-tkg-nomingw" && tar -xvf "wine-tkg-nomingw.tar.lzma" && mv "wine" "$BINDIR/wine"
 }
 
 isolation() {
@@ -351,7 +336,7 @@ github_dxvk() {
     $only_cache && return
     extract "$DXVK" || { rm "$DXVK" && echo "RMT-ERROR: Failed to extract dxvk, skipping." && return 1; }
     cd "${DXVK//.tar.gz/}" || exit
-    DISPLAY="" ./setup_dxvk.sh install && "$WINESERVER" -w
+    ./setup_dxvk.sh install && "$WINESERVER" -w
     cd "$OLDPWD" || exit
     rm -rf "${DXVK//.tar.gz/}"
 }
@@ -362,7 +347,7 @@ dxvk() {
     SYSDXVK="$(command -v setup_dxvk 2>/dev/null)"
     dxvk() {
         update
-        [ -n "$SYSDXVK" ] && echo "RMT: Using local dxvk." && DISPLAY="" "$SYSDXVK" install --symlink && "$WINESERVER" -w && applied
+        [ -n "$SYSDXVK" ] && echo "RMT: Using local dxvk." && "$SYSDXVK" install --symlink && "$WINESERVER" -w && applied
         [ -z "$SYSDXVK" ] && echo "RMT: Using dxvk from github." && github_dxvk && echo "$DXVKVER" >"$WINEPREFIX/.dxvk"
     }
     [[ ! -f "$WINEPREFIX/.dxvk" && -z "$(status)" ]] && dxvk
@@ -380,7 +365,7 @@ dxvk-async() {
         $only_cache && return
         extract "$DXVK" || { rm "$DXVK" && echo "RMT-ERROR: Failed to extract dxvk, skipping." && return 1; }
         cd "${DXVK//.tar.gz/}" || exit
-        chmod +x ./setup_dxvk.sh && DISPLAY="" ./setup_dxvk.sh install && "$WINESERVER" -w
+        chmod +x ./setup_dxvk.sh && ./setup_dxvk.sh install && "$WINESERVER" -w
         cd "$OLDPWD" || exit
         rm -rf "${DXVK//.tar.gz/}"
         applied
@@ -401,7 +386,7 @@ dxvk-custom() {
     [ ! -f "$DXVK" ] && download "$DL_URL"
     extract "$DXVK" || { rm "$DXVK" && echo "ERROR: Failed to extract dxvk-custom, skipping." && return 1; }
     cd "${DXVK//.tar.gz/}" || exit
-    [ -f setup_dxvk.sh ] && DISPLAY="" ./setup_dxvk.sh install && "$WINESERVER" -w
+    [ -f setup_dxvk.sh ] && ./setup_dxvk.sh install && "$WINESERVER" -w
     [ ! -f setup_dxvk.sh ] && cd x32 && ./setup_dxvk.sh && "$WINESERVER" -w && cd ..
     [ ! -f setup_dxvk.sh ] && [ "$WINEARCH" = "win64" ] && cd x64 && ./setup_dxvk.sh && "$WINESERVER" -w && cd ..
     cd ..
@@ -454,7 +439,7 @@ github_vkd3d() {
     $only_cache && return
     extract "$VKD3D" || { rm "$VKD3D" && echo "RMT-ERROR: Failed to extract vkd3d, skipping." && return 1; }
     cd "${VKD3D//.tar.zst/}" || exit
-    DISPLAY="" ./setup_vkd3d_proton.sh install && "$WINESERVER" -w
+    ./setup_vkd3d_proton.sh install && "$WINESERVER" -w
     cd "$OLDPWD" || exit
     rm -rf "${VKD3D//.tar.zst/}"
 }
@@ -465,7 +450,7 @@ vkd3d() {
     SYSVKD3D="$(command -v setup_vkd3d_proton)"
     vkd3d() {
         update
-        [ -n "$SYSVKD3D" ] && echo "RMT: Using local vkd3d." && DISPLAY="" "$SYSVKD3D" install --symlink && "$WINESERVER" -w && applied
+        [ -n "$SYSVKD3D" ] && echo "RMT: Using local vkd3d." && "$SYSVKD3D" install --symlink && "$WINESERVER" -w && applied
         [ -z "$SYSVKD3D" ] && echo "RMT: Using vkd3d from github." && github_vkd3d && echo "$VKD3DVER" >"$WINEPREFIX/.vkd3d"
     }
     [[ ! -f "$WINEPREFIX/.vkd3d" && -z "$(status)" ]] && vkd3d
