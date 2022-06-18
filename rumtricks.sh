@@ -166,6 +166,10 @@ isolation() {
     cd "$OLDPWD" || exit
     applied
 }
+isolate() {
+    # isolate deprecated: use isolation instead"
+    isolation
+}
 
 directx() {
     status || return
