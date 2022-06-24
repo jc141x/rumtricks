@@ -1,7 +1,7 @@
 #!/bin/bash
 wine-tkg() {
     [ -x "/bin/wine-tkg" ] && echo "RMT: Detected wine-tkg installed on system." && exit || echo "RMT: wine-tkg not detected locally, downloading from github."
-    [ -x "$BINDIR/wine/bin/wine" ]  && echo "RMT: wine-tkg found on relative path." && exit || echo "RMT: wine-ge not found on relative path, downloading."
+    [ -x "$BINDIR/wine/bin/wine" ]  && echo "RMT: wine-tkg found on relative path." && exit || echo "RMT: wine-tkg not found on relative path, downloading."
     latest_release="$(curl -s https://api.github.com/repos/jc141x/wine-tkg-git/releases | jq '[.[] | select(.tag_name | test(".*[^LoL]$"))][0]')"
     download_url="$(echo "$latest_release" | awk -F '["]' '/"browser_download_url":/ && /tar.lzma/ {print $4}')"
     [ ! -f "wine-tkg.tar.lzma" ] && echo "RMT: wine-tkg.tar.lzma not found, downloading" && curl -L "$download_url" -o "wine-tkg.tar.lzma"
