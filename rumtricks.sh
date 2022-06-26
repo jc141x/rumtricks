@@ -166,10 +166,6 @@ isolation() {
     cd "$OLDPWD" || exit
     applied
 }
-isolate() {
-    # isolate deprecated: use isolation instead"
-    isolation
-}
 
 directx() {
     status || return
@@ -340,7 +336,7 @@ github_dxvk() {
     $only_cache && return
     extract "$DXVK" || { rm "$DXVK" && echo "RMT-ERROR: Failed to extract dxvk, skipping." && return 1; }
     cd "${DXVK//.tar.gz/}" || exit
-    ./setup_dxvk.sh install && "$WINESERVER" -w
+    ./setup_dxvk.sh install > /dev/null && "$WINESERVER" -w
     cd "$OLDPWD" || exit
     rm -rf "${DXVK//.tar.gz/}"
 }
@@ -351,7 +347,7 @@ dxvk() {
     SYSDXVK="$(command -v setup_dxvk 2>/dev/null)"
     dxvk() {
         update
-        [ -n "$SYSDXVK" ] && echo "RMT: Using local dxvk." && "$SYSDXVK" install --symlink && "$WINESERVER" -w && applied
+        [ -n "$SYSDXVK" ] && echo "RMT: Using local dxvk." && "$SYSDXVK" install --symlink > /dev/null && "$WINESERVER" -w && applied
         [ -z "$SYSDXVK" ] && echo "RMT: Using dxvk from github." && github_dxvk && echo "$DXVKVER" >"$WINEPREFIX/.dxvk"
     }
     [[ ! -f "$WINEPREFIX/.dxvk" && -z "$(status)" ]] && dxvk
@@ -369,7 +365,7 @@ dxvk-async() {
         $only_cache && return
         extract "$DXVK" || { rm "$DXVK" && echo "RMT-ERROR: Failed to extract dxvk, skipping." && return 1; }
         cd "${DXVK//.tar.gz/}" || exit
-        chmod +x ./setup_dxvk.sh && ./setup_dxvk.sh install && "$WINESERVER" -w
+        chmod +x ./setup_dxvk.sh && ./setup_dxvk.sh install > /dev/null && "$WINESERVER" -w
         cd "$OLDPWD" || exit
         rm -rf "${DXVK//.tar.gz/}"
         applied
@@ -443,7 +439,7 @@ github_vkd3d() {
     $only_cache && return
     extract "$VKD3D" || { rm "$VKD3D" && echo "RMT-ERROR: Failed to extract vkd3d, skipping." && return 1; }
     cd "${VKD3D//.tar.zst/}" || exit
-    ./setup_vkd3d_proton.sh install && "$WINESERVER" -w
+    ./setup_vkd3d_proton.sh install > /dev/null && "$WINESERVER" -w
     cd "$OLDPWD" || exit
     rm -rf "${VKD3D//.tar.zst/}"
 }
@@ -454,7 +450,7 @@ vkd3d() {
     SYSVKD3D="$(command -v setup_vkd3d_proton)"
     vkd3d() {
         update
-        [ -n "$SYSVKD3D" ] && echo "RMT: Using local vkd3d." && "$SYSVKD3D" install --symlink && "$WINESERVER" -w && applied
+        [ -n "$SYSVKD3D" ] && echo "RMT: Using local vkd3d." && "$SYSVKD3D" install --symlink > /dev/null && "$WINESERVER" -w && applied
         [ -z "$SYSVKD3D" ] && echo "RMT: Using vkd3d from github." && github_vkd3d && echo "$VKD3DVER" >"$WINEPREFIX/.vkd3d"
     }
     [[ ! -f "$WINEPREFIX/.vkd3d" && -z "$(status)" ]] && vkd3d
