@@ -8,14 +8,6 @@ Rumtricks is available on [AUR](https://aur.archlinux.org/packages/rumtricks-git
   yay rumtricks-git
   ```
 
-- Or you can download rumtricks with:
-
-```sh
-wget https://johncena141.eu.org:8141/johncena141/rumtricks/raw/branch/main/rumtricks.sh && chmod +x rumtricks.sh
-```
-
-- The script will be placed in the root of the directory you ran the command from.
-
 ## Basic usage
 
 - Rumtricks needs a `WINEPREFIX` to install verbs into
@@ -25,7 +17,7 @@ wget https://johncena141.eu.org:8141/johncena141/rumtricks/raw/branch/main/rumtr
 If `WINEPREFIX` isn't provided, rumtricks will install everything into the default wine prefix in `~/.wine`.
 
 
-## List of available verbs
+### List of available verbs
 
 name | Description
 --- | ---
@@ -56,7 +48,7 @@ vcrun2019 | Microsoft Visual C++ 2019 Redistributable
 vkd3d | Direct3D 12 API on top of Vulkan
 wmp11 | Windows Media Player 11
 
-## List of verbs for wineprefix windows version
+### List of verbs for wineprefix windows version
 
 name | Description
 --- | ---
@@ -78,9 +70,3 @@ winnt351 | Set wineprefix version to Windows NT 3.51 (32bit only)
 win31 | Set wineprefix version to Windows 3.1 (32bit only)
 win30 | Set wineprefix version to Windows 3.0 (32bit only)
 win20 | Set wineprefix version to Windows 2.0 (32bit only)
-
-## Planned verbs in order
-
-* [ ] faudio
-* [ ] dotnet 1.1-4.8
-* [ ] xna40
