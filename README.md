@@ -1,5 +1,3 @@
-<img src="https://i.postimg.cc/7Ppyhq83/yes.png">
-
 ## Installation
 
 Rumtricks is available on [AUR](https://aur.archlinux.org/packages/rumtricks-git).
