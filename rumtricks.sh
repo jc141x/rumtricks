@@ -30,7 +30,7 @@ for i in "$@"; do
 done
 "$WINESERVER" -w; }
 
-isolation() { status || return; update; echo "RMT: Isolating prefix."
+isolation() { status || return; update
     cd "$WINEPREFIX/drive_c/users/${USER}" || exit
     for entry in *; do
         if [ -L "$entry" ] && [ -d "$entry" ]; then
