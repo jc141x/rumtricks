@@ -1,18 +1,8 @@
-## Installation
-
-Rumtricks is available on [AUR](https://aur.archlinux.org/packages/rumtricks-git).
-  - Install with 
-  ```sh
-  yay rumtricks-git
-  ```
-
 ## Basic usage
 
 - Rumtricks needs a `WINEPREFIX` to install verbs into
 
-`export WINEPREFIX="/path/to/prefix" ./rumtricks.sh (verb)`
-
-If `WINEPREFIX` isn't provided, rumtricks will install everything into the default wine prefix in `~/.wine`.
+`export WINEPREFIX="/path/to/prefix" bash rumtricks.sh (verb)`
 
 
 ### List of available verbs
@@ -34,15 +24,7 @@ mono | Open-source and cross-platform implementation of the .NET Framework
 physx | Nvidia PhysX
 quicktime | Apple QuickTime
 update-self | Update rumtricks.sh to the latest version
-vcrun2003 | Microsoft Visual C++ 2003 Redistributable
-vcrun2005 | Microsoft Visual C++ 2005 Redistributable
-vcrun2008 | Microsoft Visual C++ 2008 Redistributable
-vcrun2010 | Microsoft Visual C++ 2010 Redistributable
-vcrun2012 | Microsoft Visual C++ 2012 Redistributable
-vcrun2013 | Microsoft Visual C++ 2013 Redistributable
-vcrun2015 | Microsoft Visual C++ 2015 Redistributable
-vcrun2017 | Microsoft Visual C++ 2017 Redistributable
-vcrun2019 | Microsoft Visual C++ 2019 Redistributable
+vcrun | Microsoft Visual C++ Redistributable Bundle
 vkd3d | Direct3D 12 API on top of Vulkan
 wmp11 | Windows Media Player 11
 
