@@ -77,19 +77,6 @@ dxvk-custom() { status || return; update
     [ ! -f setup_dxvk.sh ] && [ "$WINEARCH" = "win64" ] && cd x64 && ./setup_dxvk.sh && "$WINESERVER" -w && cd ..
     cd ..; rm -rf "${DXVK//.tar.gz/}"; applied; }
 
-mono() { MONOVER="$(curl -s https://api.github.com/repos/madewokherd/wine-mono/releases/latest | awk -F '["]' '/"browser_download_url":/ {print $4}' | awk -F '[-]' '/.msi/ {print $6}')"
-    mono() { update
-        DL_URL="$(curl -s https://api.github.com/repos/madewokherd/wine-mono/releases/latest | awk -F '["]' '/"browser_download_url":/ {print $4}' | awk '/msi/ {print $0}')"
-        MONO="$(basename "$DL_URL")"
-        [ ! -f "$MONO" ] && download "$DL_URL"
-        remove-mono; "$WINE" msiexec /i "$MONO"
-        applied; echo "$MONOVER" >"$WINEPREFIX/.mono"; }
-[[ -z "$(awk '/mono/ {print $1}' "$RUMTRICKS_LOGFILE" 2>/dev/null)" ]] && mono
-[[ -f "$WINEPREFIX/.mono" && -n "$MONOVER" && "$MONOVER" != "$(awk '{print $1}' "$WINEPREFIX/.mono")" ]] && { rm -f wine-mono-*.msi || true; } && echo -n "RMT: Updating mono. | " && mono
-echo -n "RMT: Mono is up-to-date. | "; }
-
-remove-mono() { for i in $("$WINE" uninstaller --list | awk -F '[|]' '/Wine Mono/ {print $1}'); do "$WINE" uninstaller --remove "$i"; done; }
-
 github_vkd3d() { DL_URL="$(curl -s https://api.github.com/repos/jc141x/vkd3d-proton/releases/latest | awk -F '["]' '/"browser_download_url":/ {print $4}')"
     VKD3D="$(basename "$DL_URL")"
     [ ! -f "$VKD3D" ] && download "$DL_URL"
