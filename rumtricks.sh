@@ -3,10 +3,9 @@
 # All operations are relative to rumtricks' location
 cd "$(dirname "$(realpath "$0")")" || exit 1
 RMTDIR="${XDG_DATA_HOME:-$HOME/.local/share}/rumtricks"; RMTCONTENT="$RMTDIR/rumtricks-content"
-[ -z "$WINEARCH" ] && export WINEARCH="win64"; [ -z "$WINEPREFIX" ] && export WINEPREFIX="$HOME/.wine"
 export RUMTRICKS_LOGFILE="$WINEPREFIX/rumtricks.log"
 export WINEDLLOVERRIDES="mscoree=d;mshtml=d"; export WINEDEBUG="-all"
-DOWNLOAD_LOCATION="${XDG_CACHE_HOME:-$HOME/.cache}/rumtricks"; mkdir -p "$DOWNLOAD_LOCATION"
+DOWNLOAD_LOCATION="${XDG_CACHE_HOME:-$HOME/.cache}/rumtricks";
 
 # Support custom Wine versions
 [ -z "$WINE" ] && export WINE="$(command -v wine)"; [ ! -x "$WINE" ] && echo "${WINE} is not an executable, exiting." && exit 1
