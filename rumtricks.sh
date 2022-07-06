@@ -17,13 +17,13 @@ DOWNLOAD_LOCATION="${XDG_CACHE_HOME:-$HOME/.cache}/rumtricks"; mkdir -p "$DOWNLO
 wine() { "$WINE" $@; }; wine64() { "$WINE64" $@; }; wineboot() { "$WINEBOOT" $@; }
 export -f wine wine64 wineboot
 
-update() { echo "RMT: Applying ${FUNCNAME[1]}." && "$WINE" wineboot && "$WINESERVER" -w; }
-regedit() { echo "RMT: Adding registry." && "$WINE" regedit "$1" & "$WINE64" regedit "$1" && "$WINESERVER" -w; }
-extract() { echo "RMT: Extracting $1." && tar -xvf "$1" &>/dev/null; }
-applied() { echo "${FUNCNAME[1]}" >>"$RUMTRICKS_LOGFILE"; echo "RMT: ${FUNCNAME[1]} applied."; }
-status() { [[ ! -f "$RUMTRICKS_LOGFILE" || -z "$(awk "/^${FUNCNAME[1]}\$/ {print \$1}" "$RUMTRICKS_LOGFILE" 2>/dev/null)" ]] || { echo "RMT: ${FUNCNAME[1]} present." && return 1; }; }
+update() { echo -n "RMT: Applying ${FUNCNAME[1]}. | " && "$WINE" wineboot && "$WINESERVER" -w; }
+regedit() { echo -n "RMT: Adding registry. | " && "$WINE" regedit "$1" & "$WINE64" regedit "$1" && "$WINESERVER" -w; }
+extract() { echo -n "RMT: Extracting $1. | " && tar -xvf "$1" &>/dev/null; }
+applied() { echo "${FUNCNAME[1]}" >>"$RUMTRICKS_LOGFILE"; echo -n "RMT: ${FUNCNAME[1]} applied. | "; }
+status() { [[ ! -f "$RUMTRICKS_LOGFILE" || -z "$(awk "/^${FUNCNAME[1]}\$/ {print \$1}" "$RUMTRICKS_LOGFILE" 2>/dev/null)" ]] || { echo -n "RMT: ${FUNCNAME[1]} present. | " && return 1; }; }
 download() { cd "$DOWNLOAD_LOCATION"; command -v curl >/dev/null 2>&1 && curl --etag-save $DOWNLOAD_LOCATION/${1##*/}.etag --etag-compare $DOWNLOAD_LOCATION/${1##*/}.etag -LO "$1"; cd "$OLDPWD"; cp "$DOWNLOAD_LOCATION/${1##*/}" "./"; }
-regsvr32() { echo "RMT: Registering DLLs."
+regsvr32() { echo -n "RMT: Registering DLLs. | "
 for i in "$@"; do
 "$WINE" regsvr32 /s "$i" &
 "$WINE64" regsvr32 /s "$i"
@@ -46,11 +46,11 @@ cd "${DXVK//.tar.gz/}" || exit; ./setup_dxvk.sh install > /dev/null && "$WINESER
 
 dxvk() { DXVKVER="$(curl -s -m 5 https://api.github.com/repos/jc141x/dxvk/releases/latest | awk -F '["/]' '/"browser_download_url":/ {print $11}' | cut -c 2-)"; SYSDXVK="$(command -v setup_dxvk 2>/dev/null)"
     dxvk() { update
-    [ -n "$SYSDXVK" ] && echo "RMT: Using local dxvk." && "$SYSDXVK" install --symlink > /dev/null && "$WINESERVER" -w && applied
-    [ -z "$SYSDXVK" ] && echo "RMT: Using dxvk from github." && github_dxvk && echo "$DXVKVER" >"$WINEPREFIX/.dxvk"; }
+    [ -n "$SYSDXVK" ] && echo -n "RMT: Using local dxvk. | " && "$SYSDXVK" install --symlink > /dev/null && "$WINESERVER" -w && applied
+    [ -z "$SYSDXVK" ] && echo -n "RMT: Using dxvk from github. | " && github_dxvk && echo "$DXVKVER" >"$WINEPREFIX/.dxvk"; }
     [[ ! -f "$WINEPREFIX/.dxvk" && -z "$(status)" ]] && dxvk
-    [[ -f "$WINEPREFIX/.dxvk" && -n "$DXVKVER" && "$DXVKVER" != "$(awk '{print $1}' "$WINEPREFIX/.dxvk")" ]] && { rm -f dxvk-*.tar.gz || true; } && echo "RMT: Updating dxvk." && dxvk
-echo "RMT: dxvk is up-to-date."; }
+    [[ -f "$WINEPREFIX/.dxvk" && -n "$DXVKVER" && "$DXVKVER" != "$(awk '{print $1}' "$WINEPREFIX/.dxvk")" ]] && { rm -f dxvk-*.tar.gz || true; } && echo -n "RMT: Updating dxvk. | " && dxvk
+echo -n "RMT: dxvk is up-to-date. | "; }
 
 dxvk-async() { DXVKVER="$(curl -s -m 5 https://api.github.com/repos/Sporif/dxvk-async/releases/latest | awk -F '["/]' '/"browser_download_url":/ {print $11}')"
     dxvk-async() { update
@@ -62,8 +62,8 @@ dxvk-async() { DXVKVER="$(curl -s -m 5 https://api.github.com/repos/Sporif/dxvk-
     chmod +x ./setup_dxvk.sh && ./setup_dxvk.sh install && "$WINESERVER" -w
     cd "$OLDPWD" || exit; rm -rf "${DXVK//.tar.gz/}"; applied; echo "$DXVKVER" >"$WINEPREFIX/.dxvk-async";}
 [[ -z "$(status)" ]] && dxvk-async
-[[ -f "$WINEPREFIX/.dxvk-async" && -n "$DXVKVER" && "$DXVKVER" != "$(awk '{print $1}' "$WINEPREFIX/.dxvk-async")" ]] && { rm -f dxvk-async-*.tar.gz || true; } && echo "RMT: Updating dxvk-async." && dxvk-async
-echo "RMT: dxvk-async is up-to-date."; }
+[[ -f "$WINEPREFIX/.dxvk-async" && -n "$DXVKVER" && "$DXVKVER" != "$(awk '{print $1}' "$WINEPREFIX/.dxvk-async")" ]] && { rm -f dxvk-async-*.tar.gz || true; } && echo -n "RMT: Updating dxvk-async. | " && dxvk-async
+echo -n "RMT: dxvk-async is up-to-date. | "; }
 
 dxvk-custom() { status || return; update
     read -r -p "What version do you want? (0.54, 1.8.1, etc.): " DXVKVER
@@ -85,8 +85,8 @@ mono() { MONOVER="$(curl -s https://api.github.com/repos/madewokherd/wine-mono/r
         remove-mono; "$WINE" msiexec /i "$MONO"
         applied; echo "$MONOVER" >"$WINEPREFIX/.mono"; }
 [[ -z "$(awk '/mono/ {print $1}' "$RUMTRICKS_LOGFILE" 2>/dev/null)" ]] && mono
-[[ -f "$WINEPREFIX/.mono" && -n "$MONOVER" && "$MONOVER" != "$(awk '{print $1}' "$WINEPREFIX/.mono")" ]] && { rm -f wine-mono-*.msi || true; } && echo "RMT: Updating mono" && mono
-echo "RMT: Mono is up-to-date."; }
+[[ -f "$WINEPREFIX/.mono" && -n "$MONOVER" && "$MONOVER" != "$(awk '{print $1}' "$WINEPREFIX/.mono")" ]] && { rm -f wine-mono-*.msi || true; } && echo -n "RMT: Updating mono. | " && mono
+echo -n "RMT: Mono is up-to-date. | "; }
 
 remove-mono() { for i in $("$WINE" uninstaller --list | awk -F '[|]' '/Wine Mono/ {print $1}'); do "$WINE" uninstaller --remove "$i"; done; }
 
@@ -102,11 +102,11 @@ github_vkd3d() { DL_URL="$(curl -s https://api.github.com/repos/jc141x/vkd3d-pro
 vkd3d() { VKD3DVER="$(curl -s -m 5 https://api.github.com/jc141x/vkd3d-proton/releases/latest | awk -F '["/]' '/"browser_download_url":/ {print $11}' | cut -c 2-)"
     SYSVKD3D="$(command -v setup_vkd3d_proton)"
     vkd3d() { update
-        [ -n "$SYSVKD3D" ] && echo "RMT: Using local vkd3d." && "$SYSVKD3D" install --symlink && "$WINESERVER" -w && applied
-        [ -z "$SYSVKD3D" ] && echo "RMT: Using vkd3d from github." && github_vkd3d && echo "$VKD3DVER" >"$WINEPREFIX/.vkd3d"; }
+        [ -n "$SYSVKD3D" ] && echo -n "RMT: Using local vkd3d. | " && "$SYSVKD3D" install --symlink && "$WINESERVER" -w && applied
+        [ -z "$SYSVKD3D" ] && echo -n "RMT: Using vkd3d from github. | " && github_vkd3d && echo "$VKD3DVER" >"$WINEPREFIX/.vkd3d"; }
 [[ ! -f "$WINEPREFIX/.vkd3d" && -z "$(status)" ]] && vkd3d
 [[ -f "$WINEPREFIX/.vkd3d" && -n "$VKD3DVER" && "$VKD3DVER" != "$(awk '{print $1}' "$WINEPREFIX/.vkd3d")" ]] && { rm -f vkd3d-proton-*.tar.zst || true; } && echo "updating vkd3d" && vkd3d
-echo "RMT: vkd3d up-to-date."; }
+echo -n "RMT: vkd3d up-to-date. | "; }
 
 win10() { status || return; update; "$WINE" winecfg -v win10; applied; }; win81() { status || return; update; "$WINE" winecfg -v win81; applied; }
 win8() { status || return; update; "$WINE" winecfg -v win8; applied; }; win2008r2() { status || return; update; "$WINE" winecfg -v win2008r2; applied; }; win2008() { status || return; update; "$WINE" winecfg -v  win2008; applied; }; win7() { status || return; update; "$WINE" winecfg -v win7; applied; }; winvista() { status || return; update; "$WINE" winecfg -v winvista; applied; }; win2003() { status || return; update; "$WINE" winecfg -v win2003; applied; }; win2k() { status || return; update; "$WINE" winecfg -v win2k; applied; }; winme() { status || return; update; "$WINE" winecfg -v winme; applied; }
