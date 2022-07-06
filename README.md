@@ -20,7 +20,6 @@ dxvk-custom | install any dxvk version (usage: ./rumtricks.sh dxvk-custom <<< "0
 dotnet35| Microsoft .NET 3.5
 isolation | Isolating the prefix by removing symbolinks to $HOME
 mf | Microsoft Media Foundation
-mono | Open-source and cross-platform implementation of the .NET Framework
 physx | Nvidia PhysX
 quicktime | Apple QuickTime
 update-self | Update rumtricks.sh to the latest version
