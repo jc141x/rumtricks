@@ -81,14 +81,14 @@ github_vkd3d() { DL_URL="$(curl -s https://api.github.com/repos/jc141x/vkd3d-pro
     [ ! -f "$VKD3D" ] && download "$DL_URL"
     extract "$VKD3D" || { rm "$VKD3D" && echo "RMT-ERROR: Failed to extract vkd3d, skipping." && return 1; }
     cd "${VKD3D//.tar.zst/}" || exit
-    ./setup_vkd3d_proton.sh install && "$WINESERVER" -w
+    ./setup_vkd3d_proton.sh install > /dev/null && "$WINESERVER" -w
     cd "$OLDPWD" || exit
     rm -rf "${VKD3D//.tar.zst/}"; }
 
 vkd3d() { VKD3DVER="$(curl -s -m 5 https://api.github.com/jc141x/vkd3d-proton/releases/latest | awk -F '["/]' '/"browser_download_url":/ {print $11}' | cut -c 2-)"
     SYSVKD3D="$(command -v setup_vkd3d_proton)"
     vkd3d() { update
-        [ -n "$SYSVKD3D" ] && echo -n "RMT: Using local vkd3d. | " && "$SYSVKD3D" install --symlink && "$WINESERVER" -w && applied
+        [ -n "$SYSVKD3D" ] && echo -n "RMT: Using local vkd3d. | " && "$SYSVKD3D" install --symlink > /dev/null && "$WINESERVER" -w && applied
         [ -z "$SYSVKD3D" ] && echo -n "RMT: Using vkd3d from github. | " && github_vkd3d && echo "$VKD3DVER" >"$WINEPREFIX/.vkd3d"; }
 [[ ! -f "$WINEPREFIX/.vkd3d" && -z "$(status)" ]] && vkd3d
 [[ -f "$WINEPREFIX/.vkd3d" && -n "$VKD3DVER" && "$VKD3DVER" != "$(awk '{print $1}' "$WINEPREFIX/.vkd3d")" ]] && { rm -f vkd3d-proton-*.tar.zst || true; } && echo "updating vkd3d" && vkd3d
