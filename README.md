@@ -22,7 +22,6 @@ isolation | Isolating the prefix by removing symbolinks to $HOME
 mf | Microsoft Media Foundation
 physx | Nvidia PhysX
 quicktime | Apple QuickTime
-update-self | Update rumtricks.sh to the latest version
 vcrun | Microsoft Visual C++ Redistributable Bundle
 vkd3d | Direct3D 12 API on top of Vulkan
 wmp11 | Windows Media Player 11
