@@ -80,7 +80,7 @@ dotnet35() { status || return; remove-mono; update; ln -s -d -f "$RMTCONTENT"/do
 quicktime() { status || return; update; ln -s -d -f "$RMTCONTENT"/quicktime/files/drive_c/* "$WINEPREFIX/drive_c/"; regedit "$RMTCONTENT"quicktime/quicktime.reg; applied; }
 physx() { status || return; update; ln -s -d -f "$RMTCONTENT"/physx/files/drive_c/* "$WINEPREFIX/drive_c/"; regedit "$RMTCONTENT"/physx/physx.reg; applied; }
 cinepak() { status || return; update; ln -s -d -f "$RMTCONTENT"/cinepak/files/drive_c/windows/* "$WINEPREFIX/drive_c/windows/"; regedit "$RMTCONTENT"/cinepak/cinepak.reg; applied; };
-corefonts() { status || return; update; ln -s -d -f "$RMTCONTENT"/vcrun/files/drive_c/windows/* "$WINEPREFIX/drive_c/windows/"; regedit "$RMTCONTENT"/vcrun/vcrun.reg; applied; }
+corefonts() { status || return; update; ln -s -d -f "$RMTCONTENT"/corefonts/files/drive_c/windows/* "$WINEPREFIX/drive_c/windows/"; regedit "$RMTCONTENT"/corefonts/corefonts.reg; applied; }
 
 directx() { status || return; update
 cp -r "$RMTCONTENT"/directx/files/drive_c/windows/* "$WINEPREFIX/drive_c/windows/"; regedit "$RMTCONTENT"/directx/directx.reg
