@@ -72,15 +72,15 @@ vkd3d() { VKD3DVER="$(curl -s -m 5 https://api.github.com/jc141x/vkd3d-proton/re
 echo -n "vkd3d up-to-date | "; }
 
 mf() { status || return; update; regedit "$RMTCONTENT/mf/mf.reg"; regsvr32 colorcnv.dll msmpeg2adec.dll msmpeg2vdec.dll; applied; }
-wmp11() { status || return; mf; update; ln -s -d -f "$RMTCONTENT/wmp11/files/drive_c/"* "$WINEPREFIX/drive_c/"; regedit "$RMTCONTENT/wmp11/wmp11.reg"; regsvr32 dispex.dll jscript.dll scrobj.dll scrrun.dll vbscript.dll wshcon.dll wshext.dll; applied; }
-directshow() { status || return; update; ln -s -d -f "$RMTCONTENT/directshow/files/drive_c/windows/"* "$WINEPREFIX/drive_c/windows/"; regedit "$RMTCONTENT/directshow/directshow.reg"; regsvr32 amstream.dll qasf.dll qcap.dll qdvd.dll qedit.dll quartz.dll; applied; }
-directplay() { status || return; update; ln -s -d -f "$RMTCONTENT/directplay/files/drive_c/windows/syswow64/"* "$WINEPREFIX/drive_c/windows/syswow64"
+wmp11() { status || return; mf; update; cp -r "$RMTCONTENT/wmp11/files/drive_c/"* "$WINEPREFIX/drive_c/"; regedit "$RMTCONTENT/wmp11/wmp11.reg"; regsvr32 dispex.dll jscript.dll scrobj.dll scrrun.dll vbscript.dll wshcon.dll wshext.dll; applied; }
+directshow() { status || return; update; cp -r "$RMTCONTENT/directshow/files/drive_c/windows/"* "$WINEPREFIX/drive_c/windows/"; regedit "$RMTCONTENT/directshow/directshow.reg"; regsvr32 amstream.dll qasf.dll qcap.dll qdvd.dll qedit.dll quartz.dll; applied; }
+directplay() { status || return; update; cp -r "$RMTCONTENT/directplay/files/drive_c/windows/syswow64/"* "$WINEPREFIX/drive_c/windows/syswow64"
 regedit "$RMTCONTENT/directplay/directplay.reg"; regsvr32 dplayx.dll dpnet.dll dpnhpast.dll dpnhupnp.dll; applied; }
-dotnet35() { status || return; remove-mono; update; ln -s -d -f "$RMTCONTENT/dotnet35/files/drive_c/"* "$WINEPREFIX/drive_c/"; regedit "$RMTCONTENT/dotnet35/dotnet35.reg"; applied; }
-quicktime() { status || return; update; ln -s -d -f "$RMTCONTENT/quicktime/files/drive_c/"* "$WINEPREFIX/drive_c/"; regedit "$RMTCONTENT/quicktime/quicktime.reg"; applied; }
-physx() { status || return; update; ln -s -d -f "$RMTCONTENT/physx/files/drive_c/"* "$WINEPREFIX/drive_c/"; regedit "$RMTCONTENT/physx/physx.reg"; applied; }
-cinepak() { status || return; update; ln -s -d -f "$RMTCONTENT/cinepak/files/drive_c/windows/"* "$WINEPREFIX/drive_c/windows/"; regedit "$RMTCONTENT/cinepak/cinepak.reg"; applied; };
-corefonts() { status || return; update; ln -s -d -f "$RMTCONTENT/corefonts/files/drive_c/windows/"* "$WINEPREFIX/drive_c/windows/"; regedit "$RMTCONTENT/corefonts/corefonts.reg"; applied; }
+dotnet35() { status || return; remove-mono; update; cp -r "$RMTCONTENT/dotnet35/files/drive_c/"* "$WINEPREFIX/drive_c/"; regedit "$RMTCONTENT/dotnet35/dotnet35.reg"; applied; }
+quicktime() { status || return; update; cp -r "$RMTCONTENT/quicktime/files/drive_c/"* "$WINEPREFIX/drive_c/"; regedit "$RMTCONTENT/quicktime/quicktime.reg"; applied; }
+physx() { status || return; update; cp -r "$RMTCONTENT/physx/files/drive_c/"* "$WINEPREFIX/drive_c/"; regedit "$RMTCONTENT/physx/physx.reg"; applied; }
+cinepak() { status || return; update; cp -r "$RMTCONTENT/cinepak/files/drive_c/windows/"* "$WINEPREFIX/drive_c/windows/"; regedit "$RMTCONTENT/cinepak/cinepak.reg"; applied; };
+corefonts() { status || return; update; cp -r "$RMTCONTENT/corefonts/files/drive_c/windows/"* "$WINEPREFIX/drive_c/windows/"; regedit "$RMTCONTENT/corefonts/corefonts.reg"; applied; }
 
 directx() { status || return; update
 cp -r "$RMTCONTENT/directx/files/drive_c/windows/"* "$WINEPREFIX/drive_c/windows/"; regedit "$RMTCONTENT/directx/directx.reg"
