@@ -16,7 +16,6 @@ directplay | Microsoft Directplay
 directx | Microsoft DirectX End-User Runtime (June 2010)
 dxvk | Vulkan-based translation layer for Direct3D 9/10/11
 dxvk-async | dxvk with async patches
-dxvk-custom | install any dxvk version (usage: ./rumtricks.sh dxvk-custom <<< "0.54")
 dotnet35| Microsoft .NET 3.5
 isolation | Isolating the prefix by removing symbolinks to $HOME
 mf | Microsoft Media Foundation
