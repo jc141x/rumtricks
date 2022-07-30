@@ -47,16 +47,6 @@ dxvk-async() { DXVKVER="$(curl -s -m 5 https://api.github.com/repos/Sporif/dxvk-
 [[ -f "$WINEPREFIX/.dxvk-async" && -n "$DXVKVER" && "$DXVKVER" != "$(awk '{print $1}' "$WINEPREFIX/.dxvk-async")" ]] && { rm -f dxvk-async-*.tar.gz || true; } && echo -n "RMT: Updating dxvk-async. | " && dxvk-async
 echo -n "dxvk-async up-to-date | "; }
 
-dxvk-custom() { status || return; update
-read -r -p "What version do you want? (0.54, 1.8.1, etc.): " DXVKVER
-DL_URL="https://github.com/doitsujin/dxvk/releases/download/v$DXVKVER/dxvk-$DXVKVER.tar.gz"
-DXVK="$(basename "$DL_URL")"; [ ! -f "$DXVK" ] && download "$DL_URL"
-extract "$DXVK" || { rm "$DXVK" && echo "ERROR: failed to extract dxvk-custom | " && return 1; }; cd "${DXVK//.tar.gz/}" || exit
-[ -f setup_dxvk.sh ] && ./setup_dxvk.sh install && "$WINESERVER" -w
-[ ! -f setup_dxvk.sh ] && cd x32 && ./setup_dxvk.sh && "$WINESERVER" -w && cd ..
-[ ! -f setup_dxvk.sh ] && [ "$WINEARCH" = "win64" ] && cd x64 && ./setup_dxvk.sh && "$WINESERVER" -w && cd ..
-cd ..; rm -rf "${DXVK//.tar.gz/}"; applied; }
-
 github_vkd3d() { DL_URL="$(curl -s https://api.github.com/repos/jc141x/vkd3d-proton/releases/latest | awk -F '["]' '/"browser_download_url":/ {print $4}')"
 VKD3D="$(basename "$DL_URL")"; [ ! -f "$VKD3D" ] && download "$DL_URL"; extract "$VKD3D" || { rm "$VKD3D" && echo "failed to extract vkd3d" && return 1; }
 cd "${VKD3D//.tar.zst/}" || exit; ./setup_vkd3d_proton.sh install > /dev/null && "$WINESERVER" -w
